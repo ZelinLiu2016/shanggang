@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<style type="text/css">
+	.outline{
+		font-size:9pt;
+		margin-left:15pt;
+		text-indent:-28pt;
+		cursor:hand;
+		text-decoration:none
+	}
+	.outline1{
+		font-size: 9pt;
+		margin-left: 24pt;
+		text-indent: -36pt; 
+		cursor: hand;
+		text-decoration: none
+	}
+	.outline11 {
+		font-size: 9pt; 
+		margin-left: 38pt; 
+		text-indent: -50pt; 
+		cursor: hand;
+		text-decoration: none
+	}
+	.passage0 {
+		font-size: 9pt; 
+		margin-left: 15pt; 
+		text-indent: -28pt;
+		text-decoration: none
+	}
+	.passage1 {
+		font-size: 9pt; 
+		margin-left: 24pt; 
+		text-indent: -36pt; 
+		text-decoration: none
+	}
+	.passage11 {
+		font-size: 9pt; 
+		margin-left: 38pt; 
+		text-indent: -50pt; 
+		text-decoration: none
+	}
+	</style>
+</head>
+<body onload="main()">
+	<div id='root' class="outline">
+		<img id="rootImage" class="outline" alt="rootImage"
+									  src="image/plus.gif"/>root</div>
+	<div id='rootDetails'>
+		<div id='2D' class="passage1" onclick="draw2D()">
+			<img class="passage1" src="image/passage.gif" />2D</div>
+		</div>
+
+		<div id="3D" class="outline1">
+			<img id="3DImage" class="outline1" alt="childImage"
+									  src="image/plus.gif"/>3D</div>
+		<div id='3DDetails'>
+			<div id='3Dchild1' class="passage11" onclick="draw3D()">
+				<img class="passage11" src="image/passage.gif"/>多维显示</div>
+			<div id='3Dchild2' class="passage11" onclick="transection()">
+				<img class="passage11" src="image/passage.gif"/>横切面</div>
+			<div id='3Dchild3' class="passage11">
+				<img class="passage11" src="image/passage.gif"/>纵切面</div>
+		</div>
+		
+		<div id="4D" class="outline1">
+			<img id="3DImage" class="outline1" alt="childImage"
+									  src="image/plus.gif"/>4D</div>
+		<div id='4DDetails'>
+			<div id='4Dchild1' class="passage11" onclick="draw4D()">
+				<img class="passage11" src="image/passage.gif"/>多维显示</div>
+			<div id='4Dchild2' class="passage11" onclick="testForDataTransition()">
+				<img class="passage11" src="image/passage.gif"/>横切面</div>
+			<div id='4Dchild3' class="passage11">
+				<img class="passage11" src="image/passage.gif"/>纵切面</div>
+		</div>
+	</div>
+	<canvas id="webgl3d" width="800" height="800" style="position:absolute; z-index:0; top:0px;left:150px;border:1px solid black">
+		Please use a brower that support "canvas"
+	</canvas>
+	<canvas id="hud" width="800" height="800" style="position:absolute; z-index:1; top:0px;left:150px;border:1px solid black;display:none;" >
+    </canvas>
+	<script src="../lib/webgl-utils.js"></script>
+	<script src="../lib/webgl-debug.js"></script>
+	<script src="../lib/cuon-utils.js"></script>
+	<script src="../lib/cuon-matrix.js"></script>
+	<script src="./delaunay.js"></script>
+	<script src="./getData.js"></script>
+	<script src="./dataDealing.js"></script>
+	<script src="./draw.js"></script>
+	<script src="./main.js"></script>
+	<script src="../data/data0.js"></script>
+</body>
+</html>
+			
+

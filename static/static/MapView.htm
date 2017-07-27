@@ -1,0 +1,659 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head lang="en">
+    <meta charset="utf-8" />
+    <title>航道管理系统</title>       
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-width">
+    <!-- <link href="css/css.css" rel="stylesheet" type="text/css" />     -->
+    <link rel="stylesheet" href="YimaEncSDK/css/mapcss.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/loader-style.css">
+<!--     <link rel="stylesheet" href="wwwroot/css/style.css">
+    <link rel="stylesheet" href="wwwroot/css/base.css"> -->
+<!--     <link rel="stylesheet" href="assets/css/bootstrap.css"> -->
+    <link rel="stylesheet" href="assets/css/social.css">
+    <link href="assets/css/green.css" rel="stylesheet">
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-dialog.min.css" rel="stylesheet">
+    <link href="assets/css/customize.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/css.css">
+    <link rel="stylesheet" href="assets/css/mainMap.css">
+
+    <script src="YimaEncSDK/YimaEncSDK.js" type="text/javascript"></script>  
+    <script src="assets/js/SdkReturnInfo.js" type="text/javascript"></script>
+    <script src="assets/js/YimaEncDemo.js" type="text/javascript"></script>
+    <script src="assets/js/test.js" type="text/javascript"></script>
+
+    <script src="assets/js/jquery-1.11.3.min.js"></script>
+    <script src="assets/js/icheck.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/bootstrap-dialog.min.js"></script>
+    <script src="assets/js/sha-1.js"></script>
+    <script src="assets/js/form.js"></script>
+    <script src="assets/js/earthwork(2).js"></script>
+    <script src="assets/js/authority.js"></script>
+
+    <script type="text/javascript" src="assets/js/preloader.js"></script>
+    <!-- // <script type="text/javascript" src="assets/js/app.js"></script> -->
+    <script type="text/javascript" src="assets/js/load.js"></script>
+    <script type="text/javascript" src="assets/js/main.js"></script>
+    <script type="text/javascript" src="assets/js/upload/demos/js/demo.min.js"></script>
+    <script type="text/javascript" src="assets/js/upload/src/dmuploader.min.js"></script>
+  
+    
+    <script src="assets/js/data4.js" type="text/javascript"></script>
+    <script src="assets/js/coordinates.js" type="text/javascript"></script>
+    <script src="assets/js/customize.js" type="text/javascript"></script>
+    <script src="assets/js/addpoint.js" type="text/javascript"></script>
+    <script src="assets/js/delaunay.js" type="text/javascript"></script>
+    <script src="assets/js/surface-3.js" type="text/javascript"></script>
+    <script src="assets/js/buttom.js" type="text/javascript"></script>
+    <script src="assets/js/waring.js" type="text/javascript"></script>
+    <script src="assets/js/manage.js" type="text/javascript"></script>
+  
+
+</head>
+<body>
+<!-- Preloader -->
+    <!-- TOP NAVBAR -->
+
+
+
+    <div id="skin-select">
+        <div class="LeftLogo"><img src="image/logo.jpg">
+
+        <a id="toggle" onclick = "setMouse()">
+            <span class="entypo-menu"></span>
+        </a>
+        </div>
+ 
+        <div class="skin-part">
+            <div id="tree-wrap">
+                <div class="side-bar">
+                    <ul class="topnav menu-left-nest">
+                        <li >
+                            <a id = "set-buttom-depth" class="tooltip-tip ajax-load" href="#" title="水深基面设置" onclick = "buttomModal()">
+                                <img src = "image/i_6.png">
+                                <span class="LeftText">水深基面设置</span>
+
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="topnav menu-left-nest">
+                       <li>
+                            <a id="dataInput" class="tooltip-tip ajax-load" href="#" title="数据上传" onClick=window.open("MapView_new.htm")>
+                                <img src = "image/i_8.png">
+                                <span class="LeftText">数据上传</span>
+
+                            </a>
+                        </li>
+                        <li>
+                            <a id="dataOutput" class="tooltip-tip ajax-load" href="#" title="数据下载" onClick="downloadDialog()">
+                                <img src = "image/i_9.png">
+                                <span class="LeftText">数据下载</span>
+                            </a>
+                        </li>
+                        
+                       
+                        <li>
+                            <a id="data-delete" class="tooltip-tip ajax-load" href="#" title="数据删除" onClick="dataDelete()">
+                                <img src = "image/i_10.png">                                <span class="LeftText">数据删除</span>
+                            </a>
+                        </li>
+                         <li>
+                            <a id="data-backup" class="tooltip-tip ajax-load" href="#" title="数据备份" onclick = "dataBackup()">
+                                <img src = "image/i_11.png">
+                                <span class="LeftText">数据备份</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul id="menu-showhide" class="topnav menu-left-nest">
+                        <li>
+                            <a id = "switch-show" class="tooltip-tip ajax-load" href="#" title="切换显示" onclick = "switchview()">
+                                <img src = "image/i_1.png">
+                                <span id="switch" class="LeftText">三维显示</span>    
+                            </a>
+                        </li>
+
+                        <li>
+
+                            <a id = "fourD-view" class="tooltip-tip ajax-load" href="#" title="四维显示" onclick = "fourViewDialog()">
+                                <img src = "image/i_1.png">
+                                <span id="switch" class="LeftText">四维显示</span>
+                                
+                            </a>
+                        </li>
+
+                        <li>
+                            <a id = "set-view-level" class="tooltip-tip ajax-load" href="#" title="显示设置" onclick = "setDepthDialog()">
+                                <img src = "image/i_4.png">
+                                <span class="LeftText">显示设置</span>
+
+                            </a>
+                        </li>
+                         <!-- <li>
+
+                            <a id = "fourD-show" class="tooltip-tip ajax-load" href="#" title="四维播放" onclick = "fourDshow()">
+                                <i class="icon-preview"></i>
+                                <span id="switch">四维播放</span>
+                                
+                            </a>
+                        </li> -->
+                        <!-- <li>
+                            <a class="tooltip-tip ajax-load" href="#" title="警告">
+                                <i class="icon-location"></i>
+                                <span>警告</span><div class="noft-purple-number">3</div></a>
+
+                            </a>
+                        </li> -->
+                    </ul>
+                    <ul class="topnav menu-left-nest">
+                         
+                        <li>
+                            <a id="tufang-caculate" class="tooltip-tip" href="#" title="土方计算" onclick="earthWorkTable()">
+                                <img src = "image/i_7.png">
+                                <span class="LeftText">土方计算</span>
+                            </a>
+                            
+                        </li>
+                        <li>
+                            <a id = "future-data" class="tooltip-tip" href="#" title="淤积预测" onclick = "futureData()">
+                                <img src = "image/i_3.png">
+                                <span class="LeftText">淤积预测</span>
+                            </a>
+                        </li>
+                         <li>
+                            <a id = "history-data" class="tooltip-tip" href="#" title="查看历史" onclick="chooseDate()">
+                                <img src = "image/i_2.png">
+                                <span class="LeftText">查看历史</span>
+                            </a>
+                            
+                        </li>
+                        
+
+                    </ul>
+                    <ul class="topnav menu-left-nest">
+                        
+                        <!-- <li>
+                            <a class="tooltip-tip ajax-load" href="#" title="显示设置">
+                                <i class="icon-document-edit"></i>
+                                <span>显示设置</span>
+
+                            </a>
+                        </li> -->   
+                        <li>
+                            <a id = "set-warn-level" class="tooltip-tip ajax-load" href="#" title="预警设置" onclick = "setWarningDialog()">
+                                <img src = "image/i_5.png">
+                                <span class="LeftText">预警设置</span>
+
+                            </a>
+                        </li>
+                        <li>
+                            <a id = "part-warn-level" class="tooltip-tip ajax-load" href="#" title="分块计算" onclick = "DrawDynamicSymbol(1)">
+                                <img src = "image/i_7.png">
+                                <span class="LeftText">分块计算</span>
+
+                            </a>
+                        </li>
+                         
+                    </ul>
+
+                    <ul class="topnav menu-left-nest">
+                        <li>
+                            <a id="user-control" class="tooltip-tip ajax-load" href="#" title="工程管理" onClick="window.open('MapView_new.htm')"> 
+                                <img src = "image/i_1.png">
+                                <span class="LeftText">工程管理</span>
+                            </a>                            
+                        </li>
+                    </ul>
+
+                    <ul class="topnav menu-left-nest">
+                        <li>
+                            <a id="user-control" class="tooltip-tip ajax-load" href="#" title="用户管理" onClick="deleteUserDialog()"> 
+                                <img src = "image/i_12.png">
+                                <span class="LeftText">用户管理</span>
+                            </a>                            
+                        </li>
+                        <li>
+                            <a id="user-add" class="tooltip-tip ajax-load" href="#" title="添加用户" onClick="addUserDialog()"> 
+                                <img src = "image/i_13.png">
+                                <span class="LeftText">添加用户</span>
+                            </a>                            
+                        </li>
+                    </ul>
+
+                <!--  <div class="side-dash">
+                        <h3>
+                            <span>显示范围</span>
+                        </h3>
+                        <ul class="side-dashh-list">
+                            <li>水深上限
+                                <span id="waterup">12
+                                </span>
+                            </li>
+                            <li>水深下限
+                                <span id="waterdown">22
+                                </span>
+                            </li>
+                            <li>划分层数
+                                <span id="waterlevel">6
+                                </span>
+                            </li>
+                        </ul>
+                    </div>  -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END OF SIDE MENU -->
+
+
+ <div class="wrap-fluid">
+            <div class="container-fluid" style="left:2%">
+            <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
+                <ul style="margin-right:;" class="nav navbar-nav">
+                 <div class="">   
+               <div class="RightTop">
+        <ul><ul style="margin-right:0px;" class="nav navbar-nav">
+            <li class="First cover"><a href="#" class="Current change" id="quanjing" onclick = "fullView()">全 景</a></li>
+             </ul><ul style="margin-right:0px;" class="nav navbar-nav">
+            <li class = 'cover'><a href="#"  class="Current change" id="waigaoqiao1"  onclick="chooseWaigaoqiao(1)"><img id = "waigaoqiao_waring1" src = "img/green.png" height="15" width="15">&#160;&#160;外高桥 1-3</a></li>
+             </ul><ul style="margin-right:0px;" class="nav navbar-nav">
+            <li class = 'cover'><a href="#" id="waigaoqiao2"  class="Current change" onclick="chooseWaigaoqiao(2)"><img id = "waigaoqiao_waring2" src = "img/green.png" height="15" width="15">&#160;&#160;外高桥 4-6</a></li>
+             </ul><ul style="margin-right:0px;" class="nav navbar-nav">
+            <li class = 'cover'><a href="#" id="yangshan1"  class="Current change" onclick="chooseYangshan(1)"><img id = "yangshan_waring1" src = "img/green.png" height="15" width="15">&#160;&#160;洋山进港航道</a></li>
+             </ul><ul style="margin-right:0px;" class="nav navbar-nav">
+            <li class = 'cover'><a href="#" id="yangshan2"  class="Current change" onclick="chooseYangshan(2)"><img id = "yangshan_waring2" src = "img/green.png" height="15" width="15">&#160;&#160;洋山港前水域</a></li>
+            </ul><ul style="margin-right:0px;" class="nav navbar-nav">
+            <li class = 'cover'><a href="#" id="luojing"  class="Current change" onclick="chooseLuojing()"><img id = "luojing_waring" src = "img/green.png" height="15" width="15">&#160;&#160;罗 泾</a></li></ul>
+
+           
+                        <ul style="margin-right:0px;" class="nav navbar-nav" id = "huangpujiangU">
+
+                       <li class = 'cover'> <a href="#"  id = "huangpujiangI" data-toggle="dropdown" class="dropdown-toggle Current change"><img id = "huangpujiang_waring" src = "img/green.png" height="15" width="15">
+                            &#160;&#160;黄浦江</a>          
+                              <ul class="dropdown-menu dropdown-setting" >
+                            <li class="Last"><a href="#" onclick = "chooseHuangpujiang(1)">黄浦江 1</a></li>
+                            <li class="Last "><a href="#" onclick = "chooseHuangpujiang(2)">黄浦江 2</a></li>
+                            <li class="Last"><a href="#" onclick = "chooseHuangpujiang(3)">黄浦江 3</a></li>
+                            <li class="Last"><a href="#" onclick = "chooseHuangpujiang(4)">黄浦江 4</a></li>
+                            <li class="Last"><a href="#" onclick = "chooseHuangpujiang(5)">黄浦江 5</a></li>
+                            <li class="Last"><a href="#" onclick = "chooseHuangpujiang(6)">黄浦江 6</a></li>
+                            <li class="Last"><a href="#" onclick = "chooseHuangpujiang(7)">黄浦江 7</a></li>
+                            <li class="Last"><a href="#" onclick = "chooseHuangpujiang(8)">黄浦江 8</a></li>
+                            <li class="Last"><a href="#" onclick = "chooseHuangpujiang(9)">黄浦江 9</a></li>
+                            <li class="Last"><a href="#" onclick = "chooseHuangpujiang(10)">黄浦江 10</a></li>
+                        </ul>
+                   </ul>
+            <ul style="margin-right:0px;" class="nav navbar-nav">
+             <li class="cover">
+                        <a id="show-time" href="#">
+                           请选择查看港口
+                        </a>
+            </li>
+            </ul>
+              <ul style="margin-right:0px;" class="nav navbar-nav navbar-right" id = "welcome">
+
+                    <li> 
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                           欢迎,
+                            <script type="text/javascript">document.write(sessionStorage.name)</script> <b class="caret"></b>
+                        </a>
+                        <ul style="margin-top:14px;" role="menu" class="dropdown-setting dropdown-menu">
+                            <li class="Last">
+                                <a href="#" onclick="changeInfoDialog(sessionStorage)">
+                                    <span class="entypo-user"></span>&#160;&#160;账号修改</a>
+                            </li>
+                           <!--  <li>
+                                <a href="#">
+                                    <span class="entypo-vcard"></span>&#160;&#160;密码修改</a>
+                            </li> -->
+                            <li class="divider"></li>
+                            <li class="Last">
+                                <a href="index.html">
+                                    <span class="entypo-basket"></span>&#160;&#160; 退出</a>
+                            </li>
+                        </ul>
+                    </li>
+                   </ul>
+                        
+    </div>
+    </div>
+                     
+                </ul>
+            </div>
+        </div>
+        
+
+<div id = "mapBody" class="col-lg-12" style="height:94%;">
+    <div id="map" style="width:99%; height:100%;overflow:hidden;position:absolute; left:0; top:0%;z-index:1;"  oncontextmenu="return false;">
+    </div>
+    
+
+    <div id = "modal-select">
+        <div class="dropdown">
+   <button type="button" class="btn dropdown-toggle SB" id="xianshi" 
+      data-toggle="dropdown" >
+      <a href="#" id = "dif-view">
+        标准显示</a>
+      <span class="caret"></span>
+   </button>
+   <ul class="dropdown-menu menu" role="menu" aria-labelledby="dropdownMenu1">
+      <li role="presentation">
+         <a role="menuitem" tabindex="-1" href="#" onclick = "standardView()">标准显示</a>
+      </li>
+      <li role="presentation">
+         <a role="menuitem" tabindex="-1" href="#" onclick = "warnView()">预警显示</a>
+      </li>
+      <li role="presentation">
+         <a role="menuitem" tabindex="-1" href="#" onclick="partView()">
+            部分显示
+         </a>
+      </li>
+      <li role="presentation">
+         <a role="menuitem" tabindex="-1" href="#" onclick="changeDashLine()">
+            虚线显示
+         </a>
+      </li>
+   </ul>
+</div>
+    </div>       
+    <div id = "setbuttommodule" class = "buttomdialog" style="displsy:none">
+        <table class="table buttom-table table-harbor table-harborcol-lg-2">
+        <thead>
+
+        <tr>
+            <th class = "thSB">区域选择</th>
+            <th><img src="img/ico_close.jpg" align="right" style="position: relative; top: -16px; left:7px; padding: 0px 0px 0px 0px;" onclick="cancelModal()" alt="关闭" /></th>
+        </tr> 
+    </thead>
+
+    <tbody id = "buttom-modal">
+    </tbody>
+    <tfoot>
+        <tr>
+            <td><button class="SB" onclick = "addNewModal()">增加</button></td>
+            <td><button class="SB" onclick = "removeModel()">删除</button></td>
+        </tr>
+    </tfoot>
+</table>
+</div>
+    <div id = "setbuttom" class = "buttomdialog" style="displsy:none"> 
+        
+        <table class="table buttom-table table-harbor" >  
+        <thead>
+          <tr>
+            <th class = "thSB">基本参数设置</th>
+             <th><img src="img/ico_close.jpg" align="right" style="position: relative; top: -16px; left:18px; padding: 0 10px 0 0;" onclick="cancelButtom()" alt="关闭" /></th>
+          </tr>
+        </thead>
+        <tbody>
+         <tr>
+            <td>x</td>
+            <td>y</td>
+          </tr>
+          <tr id = "coor1">
+            <td><input class = 'inputSB' type="text" id = "coor1x" placeholder = ""/></td>
+            <td><input class = 'inputSB' type="text" id = "coor1y" placeholder = ""/></td>
+          </tr>
+          <tr id = "coor2">
+            <td><input class = 'inputSB' type="text" id = "coor2x" placeholder = ""/></td>
+            <td><input class = 'inputSB' type="text" id = "coor2y" placeholder = ""/></td>
+          </tr>
+          <tr id = "coor3">
+            <td><input class = 'inputSB' type="text" id = "coor3x" placeholder = ""/></td>
+            <td><input class = 'inputSB' type="text" id = "coor3y" placeholder = ""/></td>
+          </tr>
+           <tr id = "coor4">
+            <td><input class = 'inputSB' type="text" id = "coor4x" placeholder = ""/></td>
+            <td><input class = 'inputSB' type="text" id = "coor4y" placeholder = ""/></td>
+          </tr>
+          <tr id = "coor5">
+            <td><input class = 'inputSB' type="text" id = "coor5x" placeholder = ""/></td>
+            <td><input class = 'inputSB' type="text" id = "coor5y" placeholder = ""/></td>
+          </tr>
+          <tr id = "coor6">
+            <td><input class = 'inputSB' type="text" id = "coor6x" placeholder = ""/></td>
+            <td><input class = 'inputSB' type="text" id = "coor6y" placeholder = ""/></td>
+          </tr>
+          <tr id = "coor7">
+            <td><input class = 'inputSB' type="text" id = "coor7x" placeholder = ""/></td>
+            <td><input class = 'inputSB' type="text" id = "coor7y" placeholder = ""/></td>
+          </tr >
+          <tr id = "coor8">
+            <td><input class = 'inputSB' type="text" id = "coor8x" placeholder = ""/></td>
+            <td><input class = 'inputSB' type="text" id = "coor8y" placeholder = ""/></td>
+          </tr>
+          <tr id = "coor9">
+            <td><input class = 'inputSB' type="text" id = "coor9x" placeholder = ""/></td>
+            <td><input class = 'inputSB' type="text" id = "coor9y" placeholder = ""/></td>
+          </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+            <td><button class="SB" onclick = "addButtomPoint()">加点</button></td>
+            <td><button class="SB" onclick = "deleteButtomPoint()">删除</button></td>    
+          </tr>
+           <tr>
+            <td><button class="SB" onclick = "showButtom()">显示</button></td>
+            <td><button class="SB" onclick = "resetButtomFace()">重置</button></td>
+          </tr>
+            <tr>
+            <td>底标高</td>s
+            <td><input class = 'inputSB' type="text" id = "buttom"/></td>
+          </tr>
+          
+         
+           <tr>
+            <td><button class="SB" onclick = "concernButtom()">确定</button></td>
+            <td><button class="SB" onclick = "cancelButtom()">取消</button></td>
+          </tr>
+        </tfoot>    
+    </table>
+  </div>
+   <div id="drawObjBox" class="boxBigDivStyle" style="left:100px; top:100px; height:230px;">
+            <div class="boxTitleDivStyle" onmousedown="startDrayBox('drawObjBox')" onmousemove="toDrayBox()" onmouseup="endDrayBox()" onmouseout="endDrayBox()">
+                <img src="img/ico_close.jpg" align="right" style="position: relative; top: 5px;padding: 0 10px 0 0;" onclick="EndDrawObj()" alt="关闭" />
+                <span><b>分块显示</b></span>
+            </div>
+            <div style="position: absolute; top: 30px; left: 10px; width: 250px; height: 180px;color: #000; overflow-x: hidden; overflow-y: auto;">
+                <table id="DrawObjInfoTable" border="0" style="font-size: 12px; width:90%;">
+                    <thead>
+                        <tr>
+                            <td colspan="3">
+                            </br>
+                                <span><b class = "partEarthworkText">淤积方量</b></span>&#160;&#160;&#160;&#160;<input class = 'inputSB' type="text" id = "partearthwork" disabled = "true" placeholder = "" /><br /><br />
+                      
+                    
+                                <span><b class = "partEarthworkText">淤积面积</b></span>&#160;&#160;&#160;&#160;<input class = 'inputSB' type="text" id = "partearthwork2" disabled = "true" placeholder = ""/><br /><br />
+                      
+                           
+                                <span><b class = "partEarthworkText">最小水深</b></span>&#160;&#160;&#160;&#160;<input class = 'inputSB' type="text" id = "partearthwork3" disabled = "true" placeholder = ""/><br /><br />
+
+                                <span><b class = "partEarthworkText">最大水深</b></span>&#160;&#160;&#160;&#160;<input class = 'inputSB' type="text" id = "partearthwork4" disabled = "true" placeholder = ""/><br /><br />
+         
+          
+                            </td>
+                        </tr>
+                
+                        <tr>
+            
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+  <div id = "earthwork-form" class = "buttomdialog" style="displsy:none"> 
+        
+        <table class="table earth-table table-harbor">  
+        <thead >
+          <tr>
+            <th id = "tufangtitle" class = "thSB">土方计算</th>
+            <th><img src="img/ico_close.jpg" align="right" style="position: relative; top: -16px; left:18px; padding: 0 10px 0 0;" onclick="cancelEarthwork()" alt="关闭" /></th>
+          </tr>
+        </thead>
+        <tbody>
+         <!-- <tr>
+            <td>默认</td>
+            <td><input type="text" id = "earthwork0" disabled = "true"placeholder = ""/></td>
+          </tr> -->
+          <tr id = "earthcaculate0">
+            <td>超宽</button></td>
+            <td><input type="text" class = 'inputSB' id = "earthwork1" placeholder = ""/></td>
+          </tr>
+          <tr id = "earthcaculate1">
+            <td>超深</button></td>
+            <td><input type="text" class = 'inputSB' id = "earthwork2" placeholder = ""/></td>
+          </tr>
+           <tr id = "earthcaculate2">
+            <td>纵斜坡</button></td>
+            <td><input type="text" class = 'inputSB' id = "earthwork3" placeholder = ""/></td>
+          </tr>
+          <tr id = "earthcaculate3">
+            <td>横斜坡</button></td>
+            <td><input type="text" class = 'inputSB' id = "earthwork4" placeholder = ""/></td>
+          </tr>
+          <tr id = "earthcaculate4">
+            <td><button class="SB" onclick = "caculateNewEarthWork()">计算(万方)</button></td>
+            <td><input type="text" class="inputSB" id = "earthwork5" disabled = "true" placeholder = ""/ ></td>
+          </tr>
+        </tbody>
+        <tfoot>
+        <tr id = "earthconcern">
+            <td><button class="SB" onclick = "concernWorkTable() ">确定</button></td>
+            <td><button class="SB" onclick = "resetEarthwork()">重置</button></td>
+
+        </tr>
+            <tr id = "earthcancel">
+            
+            <td><button class="SB" onclick = "resetEarthwork()">重置</button></td>
+            <td><button class="SB" onclick = "cancelEarthwork()">关闭</button></td>
+
+          </tr>
+        </tfoot>    
+    </table>
+  </div>
+
+    <div id = "dirt-form" class = "buttomdialog" style="displsy:none"> 
+        
+        <table class="table earth-table table-harbor">  
+        <thead >
+          <tr>
+            <th id = "paonititle" class = "thSB">抛泥设置</th>
+            <th><img src="img/ico_close.jpg" align="right" style="position: relative; top: -16px; left:18px; padding: 0 10px 0 0;" onclick="cancelDirtwork()" alt="关闭" /></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id = "dirtset0">
+            <td>坐标1</button></td>
+            <td><input type="text" class = 'inputSB' id = "dirt1" placeholder = ""/></td>
+          </tr>
+          <tr id = "dirtset1">
+            <td>坐标2</button></td>
+            <td><input type="text" class = 'inputSB' id = "dirt2" placeholder = ""/></td>
+          </tr>
+           <tr id = "dirtset2">
+            <td>坐标3</button></td>
+            <td><input type="text" class = 'inputSB' id = "dirt3" placeholder = ""/></td>
+          </tr>
+          <tr id = "dirtset3">
+            <td>坐标4</button></td>
+            <td><input type="text" class = 'inputSB' id = "dirt4" placeholder = ""/></td>
+          </tr>
+        </tbody>
+        <tfoot>
+        <tr id = "dirtconcern">
+            <td><button class="SB" onclick = "concernWorkTable() ">确定</button></td>
+            <td><button class="SB" onclick = "resetEarthwork()">重置</button></td>
+
+        </tr>
+        </tfoot>    
+    </table>
+  </div>
+   <div id = "ranklevel"  style="position:absolute;width:100px top:0%;right:1.5%">
+<div class="panel panel-info">
+   <div class="panel-heading">分级颜色</div>
+   <table class="table">
+        <tr id = "rank20"><td><a href="#" id = "ranktext20">15</a></td></tr>
+    <tr id = "rank21"><td><a href="#" id = "ranktext21">15</a></td></tr>
+      <tr id = "rank0"><td><a href="#" id = "ranktext0">15</a></td></tr>
+      <tr id = "rank1"><td><a href="#" id = "ranktext1">15</a></td></tr>
+      <tr id = "rank2"><td><a href="#" id = "ranktext2">15</a></td></tr>
+      <tr id = "rank3"><td><a href="#" id = "ranktext3">15</a></td></tr>
+      <tr id = "rank4"><td><a href="#" id = "ranktext4">15</a></td></tr>
+      <tr id = "rank5"><td><a href="#" id = "ranktext5">15</a></td></tr>
+      <tr id = "rank6"><td><a href="#" id = "ranktext6">15</a></td></tr>
+      <tr id = "rank7"><td><a href="#" id = "ranktext7">15</a></td></tr>
+      <tr id = "rank8"><td><a href="#" id = "ranktext8">15</a></td></tr>
+      <tr id = "rank9"><td><a href="#" id = "ranktext9">15</a></td></tr>
+      <tr id = "rank10"><td><a href="#" id = "ranktext10">15</a></td></tr>
+      <tr id = "rank11"><td><a href="#" id = "ranktext11">15</a></td></tr>
+      <tr id = "rank12"><td><a href="#" id = "ranktext12">15</a></td></tr>
+      <tr id = "rank13"><td><a href="#" id = "ranktext13">15</a></td></tr>
+      <tr id = "rank14"><td><a href="#" id = "ranktext14">15</a></td></tr>
+      <tr id = "rank15"><td><a href="#" id = "ranktext15">15</a></td></tr>
+      <tr id = "rank16"><td><a href="#" id = "ranktext16">15</a></td></tr>
+       <tr id = "rank17"><td><a href="#" id = "ranktext17">15</a></td></tr>
+       <tr id = "rank18"><td><a href="#" id = "ranktext18">15</a></td></tr>
+       <tr id = "rank19"><td><a href="#" id = "ranktext19">15</a></td></tr>
+   </table>
+</div>
+    </div> 
+<canvas id="webgl3d" width="1000" height="800" style="position:absolute; top:0px;left:150px;border:1px solid black; displsy:none">
+     Please use a brower that support "canvas"
+    </canvas>
+
+    <canvas id="hud" width="1000" height="800" style="position:absolute; z-index:1; top:0px;left:150px;border:1px solid black;display:none;" >
+    </canvas>
+    <button id = "all-show" class="btn btn btn-primary SB" type="button" 
+    onclick="allPart()" style="position:absolute; z-index:12; top:0px;left:150px;">部分</button>
+    <div id='plotForTransection1' width="200" height="100" style="position:absolute;top:0px;left:1150px;">
+    </div>
+    <div id='plotForTransection2' width="200" height="100" style="position:absolute;top:200px;left:1150px;">
+    </div>
+    <div class="bar-container" style="position:absolute;top:800px;left:150px;"> 
+        <div id="bar" style="width:0%;"></div>  
+    </div>
+      <div class="input-group inputSB col-xs-2" style="position:absolute;top:825px;left:400px;" width="200"  id = "time-contain">
+         <span class="input-group-addon">播放时间</span>
+         <input type="text" class="form-control inputSB"  placeholder="5" id = "four-time">
+         <span class="input-group-addon">秒</span>
+    </div>
+    <button id = "fourD-show" class="btn btn btn-primary SB" type="button"   style="position:absolute;top:825px;left:700px;" 
+    onclick="fourDshow()">播放</button>
+     
+  
+<!--     <button id = "login-btn" class="btn btn btn-primary pull-right" type="button"  onclick="login($('#loginForm')[0])"> 登录</button>  --> 
+    <!-- <div class="progress" >
+   <div class="progress-bar" role="progressbar" aria-valuenow="60" 
+      aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+      <span class="sr-only">40% 完成</span>
+   </div>
+</div> -->
+    <script type="text/javascript">
+        init();
+        $("#webgl3d").hide();
+        $("#hud").hide();
+        $("#plotForTransection1").hide();
+        $("#plotForTransection2").hide();
+    </script> 
+</div>
+
+
+
+
+<!-- <div class="col-lg-12" style="width:100%;height:100%"> -->
+<div class="modal fade" id="loadingModal" style="width:100%;height:100%"  aria-hidden="true" data-backdrop="static">
+    <img src="img/loading4.gif" id = "loading-modal">
+</div>
+<!-- </div>
+ --><!-- <div id = "loadingDisable" style = "position:absolute;width:100%;height:100%;displsy:none" >
+</div> -->
+    <script type="text/javascript">
+    // $(function(){$("#loadingModal").modal({backdrop:"static"})});
+</script>
+
+
+</body>
+</html>

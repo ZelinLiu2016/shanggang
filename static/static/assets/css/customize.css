@@ -1,0 +1,350 @@
+﻿#loading-indicator {
+    position: absolute;
+    left:40%;
+    bottom: 20px;
+    z-index: 999;
+}
+
+.button-harbor {
+    position: absolute;
+
+    bottom :-10px;
+    background-color: #324C71;
+    color:#fff;
+}
+
+#drawObjBox {
+    position: absolute;
+    left:100px; 
+    top:100px; 
+    height:210px!important;
+}
+.partEarthworkText {
+    color: #000;
+}
+.inputSB {
+    border: 1px solid #000 ;
+    border-radius: 5px;
+}
+/*.button-harbor::after {
+    position: absolute;
+
+    bottom :0px;
+    background-color: #428BCA;
+    color:#FFF;
+}*/
+
+#loading-waiting {
+    position: absolute;
+    left:40%;
+    bottom: 0px;
+    z-index: 999;
+}
+#loading-modal {
+    position: absolute;
+    left:40%;
+    bottom: 40%;
+    z-index: 999;
+}
+
+.table-harbor {
+    /*border: 1px solid #ddd; */
+    /*border-radius:10px!important;*/
+}
+
+.table-harbor th{
+    color: #FFF;
+    background: #0071bc;
+    height:20px;
+    /*border-radius:5px 0px 0px 0px!important;*/
+
+}
+
+.menuSB {
+    border-radius:5px;
+}
+
+.menuSB a{
+    width:50px!important;
+}
+
+.thSB {
+    border-radius:5px 0px 0px 0px!important;
+}
+.table-harbor thead {
+    /*background: #E0E0E0;*/
+    border:2px;
+    border-color: #0071bc!important;
+    border-radius:10px 10px 0px 0px;
+}
+
+.table-active {
+    background-color: #428BCA;
+}
+
+.table td,th {
+    text-align: center;
+}
+
+.user-table tbody tr:hover {
+    background-color: #428BCA;
+}
+
+.deleteuser-dialog .modal-dialog {
+    width: 750px;
+    background:#fff; box-shadow:0px 2px 2px #ddd; border-radius:5px;
+}
+
+.download-dialog .modal-dialog {
+    width: 730px;
+    background:#fff; box-shadow:0px 2px 2px #ddd; border-radius:5px;
+}
+.dialog-border .modal-dialog{
+    width: 550px;
+     background:#fff; box-shadow:0px 2px 2px #ddd; border-radius:5px;
+}
+.dialog-upload .modal-dialog{
+    width: 1050px;
+     background:#fff; box-shadow:0px 2px 2px #ddd; border-radius:5px;
+}
+
+.backup-dialog .modal-dialog{
+    width: 250px;
+    background:#fff; box-shadow:0px 2px 2px #ddd; border-radius:5px;
+}
+
+.setdepth-dialog .modal-dialog {
+    width: 350px;
+    background:#fff; box-shadow:0px 2px 2px #ddd; border-radius:5px;
+}
+
+.earthwork-dialog .modal-dialog {
+    width: 300px;
+    background:#fff; box-shadow:0px 2px 2px #ddd; border-radius:5px;
+}
+
+.setbuttom-dialog .modal-dialog {
+    width: 450px;
+    background:#fff; box-shadow:0px 2px 2px #ddd; border-radius:5px;
+}
+
+#sizing-addon2 {
+    width: 110px;
+    text-align: left;
+}
+
+#earthWork {
+    background-color:#FFFFFF;
+    color:#000000;
+}
+
+.bar-container{  
+   width:800px;  
+   border:0px solid #6C9C2C;  
+   height:25px;  
+ }
+#bar{  
+   background:#c0c0c0;  
+   float:left; 
+   height:100%;  
+   text-align:center;  
+   line-height:150%; 
+ } 
+
+#ranklevel {
+    width:100px;
+    /*right:30px;*/
+}
+
+#rank0{
+    background:#FFFD92;
+} 
+
+#rank1{
+    background:#CBFD85;
+}
+
+#rank2{
+    background:#8BFF8D;
+}
+
+#rank3{
+    background:#1AFFC6;
+}
+
+#rank4{
+    background:#8DFFE3;
+}
+
+#rank5{
+    background:#19FFFF;
+}
+
+#rank6{
+    background:#1AC6FF;
+}
+
+#rank7{
+    background:#1193FD;
+}
+
+#rank8{
+    background:#1455FD;
+}
+
+#rank9{
+    background:#161DFB;
+}
+
+#rank10{
+    background:#1A1AE0;
+}
+
+#rank11{
+    background:#191BC0;
+}
+
+#rank12{
+    background:#191A9F;
+}
+
+#rank13{
+    background:#1B1A82;
+}
+
+
+#rank14{
+    background: #FF7F00;
+}
+
+#rank15{
+    background:#B27F00;
+}
+
+#rank16{
+    background:#A0522D
+}
+#rank17{
+   background:#1193FD;
+}
+
+#rank18{
+     background:#161DFB;
+}
+
+#rank19{
+    background:#0000B3;
+}
+#rank20{
+    background:#FF0000;
+}
+#rank21{
+    background:#FFFF00;
+}
+
+#ranklevel {
+    z-index: 1;
+}
+
+#ranktext0 {
+    color:#000000;
+}
+
+#ranktext1 {
+    color:#000000;
+}
+
+#ranktext2 {
+    color:#000000;
+}
+
+#ranktext3 {
+    color:#000000;
+}
+
+#ranktext4 {
+    color:#000000;
+}
+
+#ranktext5 {
+    color:#000000;
+}
+
+#ranktext6 {
+    color:#000000;
+}
+
+#ranktext7 {
+    color:#000000;
+}
+
+#ranktext8 {
+    color:#FFFFFF;
+}
+
+#ranktext9 {
+    color:#FFFFFF;
+}
+
+#ranktext10 {
+    color:#FFFFFF;
+}
+
+#ranktext11 {
+    color:#FFFFFF;
+}
+
+#ranktext12 {
+    color:#FFFFFF;
+}
+
+#ranktext13 {
+    color:#FFFFFF;
+}
+#ranktext14 {
+    color:#FFF;
+}
+#ranktext15 {
+    color:#FFF;
+}
+#ranktext16 {
+    color:#FFF;
+}
+#ranktext17 {
+    color:#FFF;
+}
+#ranktext18 {
+    color:#FFF;
+}
+#ranktext19 {
+    color:#FFF;
+}
+#ranktext20 {
+    color:#FFF;
+}
+#ranktext21 {
+    color:#000;
+}
+#modal-select {
+    position: absolute;
+    left:0%;
+    top: 0px;
+    z-index: 100;
+}
+
+#setbuttommodule {
+    position: absolute;
+    left:0%;
+    top: 0px;
+    width:200px;
+    z-index: 100;
+}
+
+#earthwork-form {
+    position: absolute;
+    left:0%;
+    top: 20px;
+    width:250px;
+    z-index: 102;
+    /*border-radius:5px!important;*/
+}

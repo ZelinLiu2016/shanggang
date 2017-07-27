@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>上港集团航道维护保障系统</title>
+<link href="css/base.css" rel="stylesheet" type="text/css">
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+window.onload = function() {
+    doubleBgColor(document.getElementById("table1"),"#f9f9f9","#ffffff")
+}
+
+function doubleBgColor(Table,Bg1,Bg2) {
+    for (var i=0;i<Table.rows.length;i++) Table.rows[i].bgColor=i%2?Bg2:Bg1;
+}
+</script>
+</head>
+
+<body>
+<div class="Left">
+	<div class="LeftLogo"><img src="image/logo.jpg"></div>
+	<ul>
+		<li><a href="#" class="L_1_Current">三维显示</a></li>
+		<li><a href="#" class="L_2">查看历史</a></li>
+		<li><a href="#" class="L_3">淤积预测</a></li>
+		<li><a href="#" class="L_4">显示设置</a></li>
+		<li><a href="#" class="L_5">预警设置</a></li>
+		<li><a href="#" class="L_6">底标设置</a></li>
+		<li><a href="#" class="L_7">土方计算</a></li>
+		<li><a href="#" class="L_8">数据下载</a></li>
+		<li><a href="#" class="L_9">数据上传</a></li>
+		<li><a href="#" class="L_10">数据删除</a></li>
+		<li><a href="#" class="L_11">数据备份</a></li>
+		<li><a href="#" class="L_12">用户管理</a></li>
+		<li><a href="#" class="L_13">添加用户</a></li>
+	</ul>
+</div>
+<div class="Right">
+	<div class="RightTop">
+		<ul>
+			<li class="First"><a href="#" class="Current">全 景</a></li>
+			<li><a href="#">外高桥 1-3</a></li>
+			<li><a href="#">外高桥 4-6</a></li>
+			<li><a href="#">洋山进港航道</a></li>
+			<li><a href="#">洋山港前水域</a></li>
+			<li><a href="#">罗 泾</a></li>
+			<li class="Last"><a href="#">黄浦江</a></li>
+		</ul>
+	</div>
+	<div class="p100">
+		<div class="Frame">
+			<h2>标题样式</h2>
+			<div class="p20">
+				<button class="Submit">按钮样式</button>
+				<button class="Cancel">取消样式</button>
+				<div class="cb"></div>
+				<p>&nbsp;</p>
+				<select>
+					<option>下拉菜单样式</option>
+				</select>
+				<div class="cb"></div>
+				<p>&nbsp;</p>
+				<table width="100%" border="1" cellspacing="0" cellpadding="10" bordercolor="#dddddd" id="table1">
+						<tbody>
+								<tr class="TableTop">
+										<td>1</td>
+										<td>2</td>
+								</tr>
+								<tr>
+										<td>sdf</td>
+										<td>sdf</td>
+								</tr>
+								<tr>
+										<td>asdf</td>
+										<td>sadf</td>
+								</tr>
+								<tr>
+										<td>sdf</td>
+										<td>sdf</td>
+								</tr>
+								<tr>
+										<td>sdf</td>
+										<td>sdf</td>
+								</tr>
+						</tbody>
+				</table>
+				<p>&nbsp;</p>
+				<select>
+					<option>选择港口</option>
+				</select>
+				<div class="cb"></div>
+				<select>
+					<option>距离上一次上传是否疏浚</option>
+				</select>
+				<div class="cb"></div>
+				<input type="file">
+			</div>
+		</div>
+		
+	</div>
+</div>
+</body>
+</html>

@@ -1,2 +1,3 @@
 .settings/
-src/mybatis_config.xml
+*/mybatis_config.xml
+.classpath

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="ProjectMap" type="com.sg.domain.Project">
+		<id column="PROJECT_ID" property="projectId" jdbcType="CHAR" />
+		<result column="PROJECT_NAME" property="projectName" jdbcType="CHAR" />
+		<result column="SQUARE_VOLUME" property="squareVolume" jdbcType="CHAR" />
+		<result column="DUMPINGAREA" property="dumpingArea" jdbcType="CHAR" />
+		<result column="BEGIN_DATE" property="beginDate" jdbcType="CHAR" />
+		<result column="END_DATE" property="endDate" jdbcType="CHAR" />
+		<result column="BOAT_NUM" property="boatNum" jdbcType="INTEGER" />
+		<result column="HARBOR_NAME" property="harborName" jdbcType="CHAR"/>
+		<result column="MUD_RATIO" property="mud_ratio" jdbcType="CHAR"/>
+		<result column="ROUTE_ID" property="route_id" jdbcType="CHAR"/>
+		<result column="MMSILIST" property="mmsilist" jdbcType="CHAR"/>
+		<result column="CONSTRUCTION_COMPANY" property="construction_company" jdbcType="CHAR"/>
+		<result column="DESIGN_COMPANY" property="design_company" jdbcType="CHAR"/>
+		<result column="SUPERVISION_COMPANY" property="supervision_company" jdbcType="CHAR"/>
+	</resultMap>
+	    <insert id="addProject" parameterType="Project" >
+	        insert into project values (#{projectId},#{projectName},#{dumpingArea},#{squareVolume},#{beginDate},#{endDate},#{boatNum},#{harborName},#{mud_ratio},#{route_id},#{mmsilist},#{construction_company},#{design_company},#{supervision_company})    
+	    </insert>
+	    
+	    <delete id="deleteProject" parameterType="Project" >
+	        delete from project where PROJECT_ID = #{projectId}  
+	    </delete>
+	    
+	    <select id="getProject" parameterType="string" resultMap="ProjectMap">
+	        select * from   project  where PROJECT_ID = #{projectId}    
+	    </select>
+	    <select id="listbyharbor" parameterType="String" resultMap="ProjectMap">
+	    	select * from project where HARBOR_NAME=#{harbor}
+	    </select>
+	    <select id="getbegindate" parameterType="int" resultType="String">
+	    	select BEGIN_DATE from project where PROJECT_ID=#{project_id}
+	    </select>
+	    
+	    <select id="getvolume" parameterType="int" resultType="Double">
+	    	select SQUARE_VOLUME from project where PROJECT_ID=#{project_id}
+	    </select>
+
+	    <update id="updateProject" parameterType="Project" >
+	        update project set PROJECT_NAME=#{projectName}, DUMPINGAREA =#{dumpingArea}, SQUARE_VOLUME=#{squareVolume}, BEGIN_DATE=#{beginDate}, END_DATE=#{endDate}, BOAT_NUM=#{boatNum}, HARBOR_NAME=#{harborName},MUD_RATIO=#{mud_ratio},ROUTE_ID=#{route_id},MMSILIST=#{mmsilist},CONSTRUCTION_COMPANY=#{construction_company},DESIGN_COMPANY=#{design_company},SUPERVISION_COMPANY=#{supervision_company}  where PROJECT_ID = #{projectId}    
+	    </update>
+
+	    <select id="listProject" resultMap="ProjectMap">
+	        select * from   project    
+	    </select>	    
+		
+		<select id="getMmsilist" parameterType="int" resultType="String">
+			select MMSILIST from project where PROJECT_ID=#{project_id}
+		</select> 
+	</mapper>

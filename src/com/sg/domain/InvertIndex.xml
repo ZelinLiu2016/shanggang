@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	
+	<mapper namespace="com.sg.domain">
+		<resultMap id="InvertIndexMap" type="com.sg.domain.InvertIndex">
+		<id column="cell" property="cell" jdbcType="CHAR" />
+		<result column="trajectorylist" property="trajectorylist" jdbcType="LONGVARCHAR" />
+	</resultMap>
+	
+	    <insert id="addInvertIndex" parameterType="InvertIndex" >
+	        insert into invertindex   values (#{cell},#{trajectorylist})    
+	    </insert>
+	   
+	   <select id="listcell" parameterType="String" resultType="String">
+	   		select trajectorylist from invertindex where cell = #{cell}   
+	   </select>
+
+	   <update id="updatecell" parameterType="InvertIndex">
+	   		update invertindex set trajectorylist=#{trajectorylist} where cell = #{cell}
+	   </update>
+	
+	</mapper>

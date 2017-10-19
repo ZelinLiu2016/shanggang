@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="ShipinfoMap" type="com.sg.domain.Shipinfo">
+		<id column="mmsi" property="mmsi" jdbcType="CHAR" />
+		<result column="lon" property="lon" jdbcType="CHAR" />
+		<result column="lat" property="lat" jdbcType="CHAR" />
+		<result column="ti" property="ti" jdbcType="CHAR" />
+		<result column="status" property="status" jdbcType="CHAR" />
+		<result column="sp" property="sp" jdbcType="CHAR" />
+		<result column="co" property="co" jdbcType="CHAR" />
+		<result column="rot" property="rot" jdbcType="CHAR" />
+		<result column="draft" property="draft" jdbcType="CHAR" />
+		<result column="dest" property="dest" jdbcType="CHAR"/>
+	</resultMap>
+	
+	    <insert id="addShipInfo" parameterType="Shipinfo" >
+	  	  <bind name="tablename" value="'ship_' + _parameter.mmsi" />
+	        insert into ${tablename}   values (#{mmsi},#{lon},#{lat},#{co},#{sp},#{ti},#{status},#{dest},#{rot},#{draft})    
+	    </insert>
+	    
+	    <select id="getseverallocation" parameterType="Abnormal_info" resultMap="ShipinfoMap">
+	    	<bind name="tablename" value="'ship_' + _parameter.mmsi" />
+	    	select * from ${tablename} where ti &gt; #{time}  AND ti &lt; DATE_ADD( #{time} ,INTERVAL 1 HOUR) order by ti asc
+	    </select>
+	    
+	    <select id="getinfoduring" parameterType="Project" resultMap="ShipinfoMap">
+	    	<bind name="tablename" value="'ship_' + _parameter.mmsilist" />
+	    	select * from ${tablename} where ti &gt; #{beginDate}  AND ti &lt; #{endDate} order by ti asc
+	    </select>
+	    
+	    <select id="getnearbylocation" parameterType="Abnormal_info" resultMap="ShipinfoMap">
+	    	<bind name="tablename" value="'ship_' + _parameter.mmsi" />
+	    	select * from ${tablename} where  ti &gt; DATE_SUB( #{time} ,INTERVAL 1 HOUR) AND ti &lt; DATE_ADD( #{time} ,INTERVAL 1 HOUR)
+	    </select>
+	    
+	    <select id="listallShipinfo" parameterType="String" resultMap="ShipinfoMap">
+	    	<bind name="shiptable" value="'ship_' + _parameter" />
+	    	select * from ${shiptable}
+	    </select>
+	    
+	    <select id="listnewShipinfo" parameterType="String" resultMap="ShipinfoMap">
+	    	<bind name="shiptable" value="'ship_' + _parameter" />
+	    	select * from ${shiptable} order by ti desc limit 1
+	    </select>
+	    
+	    <delete id="deletedata" parameterType="Message">
+	    	<bind name="shiptable" value="'ship_' + _parameter.mmsi" />	    	
+	    	delete from ${shiptable} where ti &lt; #{timestamp}
+	    </delete>
+	    
+	    <update id="updatetimeperiod" parameterType="int">
+	    	update timeperiod set days = #{days}
+	    </update>
+	    
+	    <select id="showtimeperiod" resultType="int">
+	    	select * from timeperiod
+	    </select>
+	</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	
+	<mapper namespace="com.sg.domain">
+		<resultMap id="DredgingAreaMap" type="com.sg.domain.Dredging_area">
+		<id column="area_id" property="dredging_id" jdbcType="INTEGER" />
+		<result column="location" property="location" jdbcType="CHAR" />	
+		<result column="areaname" property="dredging_name" jdbcType="CHAR"/>
+	</resultMap>
+	
+	    <insert id="addDredgingArea" parameterType="Dredging_area" >
+	        insert into dredging_area   values (#{dredging_id},#{location},#{dredging_name})    
+	    </insert>
+	   
+	    <delete id="deleteDredgingArea" parameterType="String" >
+	        delete from dredging_area where area_id = #{area_id}  
+	    </delete>
+	    
+	    <select id="getDredgingArea" parameterType="String" resultMap="DredgingAreaMap" >
+	        select * from dredging_area where area_id = #{area_id}   
+	    </select>
+	    <select id="getallDredgingArea" resultMap="DredgingAreaMap" >
+	        select * from dredging_area 
+	    </select>
+		<select id="getDredgingLocation" parameterType="String" resultType="String">
+			select location from dredging_area where area_id=#{area_id}
+		</select>
+	    <update id="updateDredgingArea" parameterType="Dredging_area" >
+	        update dredging_area set area_id=#{dredging_id}, location=#{location},areaname=#{dredging_name}  where area_id=#{dredging_id}    
+	    </update>
+
+	
+	</mapper>

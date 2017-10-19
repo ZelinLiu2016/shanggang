@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	
+	<mapper namespace="com.sg.domain">
+		<resultMap id="DumpingAreaMap" type="com.sg.domain.DumpingArea">
+		<id column="area_id" property="area_id" jdbcType="CHAR" />
+		<result column="location" property="location" jdbcType="CHAR" />	
+		<result column="areaname" property="areaname" jdbcType="CHAR"/>
+	</resultMap>
+	
+	    <insert id="addDumpingArea" parameterType="DumpingArea" >
+	        insert into dumping_area   values (#{area_id},#{location},#{areaname})    
+	    </insert>
+	   
+	 <delete id="deleteDumpingArea" parameterType="String" >
+	        delete from dumping_area where area_id = #{area_id}  
+	    </delete>
+	    
+	    <select id="getDumpingArea" parameterType="String" resultMap="DumpingAreaMap">
+	        select * from  dumping_area  where area_id = #{area_id}    
+	    </select>
+		<select id="getDumpingLocation" parameterType="String" resultType="String">
+			select location from dumping_area where area_id=#{area_id}
+		</select>
+	    <update id="updateDumpingArea" parameterType="DumpingArea" >
+	        update dumping_area set area_id=#{area_id}, location=#{location},areaname=#{areaname}  where area_id = #{area_id}    
+	    </update>
+
+	    <select id="listDumpingArea" resultMap="DumpingAreaMap">
+	        select * from   dumping_area
+	    </select>	   
+	     
+	     <select id="listDumpingAreaByid" parameterType="String" resultMap="DumpingAreaMap">
+	     	<bind name="str" value="_parameter + '%'" />
+	        select * from  dumping_area where area_id like #{str}
+	    </select>
+	
+	</mapper>

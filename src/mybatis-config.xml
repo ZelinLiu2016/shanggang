@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+	  <package name="com.sg.domain"/>
+	</typeAliases>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+			<property name="driver" value="com.mysql.jdbc.Driver"/>
+			<property name="url" value="jdbc:mysql://localhost:3306/shanggang?characterEncoding=UTF-8"/>
+			<property name="username" value="root"/>
+			<property name="password" value="12345"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="com/sg/domain/Project.xml"/>
+        <mapper resource="com/sg/domain/DumpingArea.xml"/>
+        <mapper resource="com/sg/domain/Ship.xml"/>
+        <mapper resource="com/sg/domain/Fleet.xml"/>
+        <mapper resource="com/sg/domain/Shipinfo.xml"/>
+        <mapper resource="com/sg/domain/Abnormal_info.xml"/>
+        <mapper resource="com/sg/domain/Workload_day.xml"/>
+        <mapper resource="com/sg/domain/Company.xml"/>
+        <mapper resource="com/sg/domain/Route.xml"/>
+        <mapper resource="com/sg/domain/Dredging_area.xml"/>
+        <mapper resource="com/sg/domain/Trajectory.xml"/>
+        <mapper resource="com/sg/domain/InvertIndex.xml"/>
+    </mappers>
+</configuration>

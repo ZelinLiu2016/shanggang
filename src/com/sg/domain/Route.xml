@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="RouteMap" type="com.sg.domain.Route">
+		<id column="route_id" property="route_id" jdbcType="INTEGER" />
+		<result column="harbor" property="harbor" jdbcType="CHAR" />
+		<result column="dumping_area" property="dumping_area" jdbcType="CHAR" />
+		<result column="speedlimit" property="speedlimit" jdbcType="CHAR" />
+		<result column="location" property="location" jdbcType="CHAR" />
+	</resultMap>
+	    <insert id="addRoute" parameterType="Route" >
+	        insert into route values (#{route_id},#{harbor},#{dumping_area},#{speedlimit},#{location})    
+	    </insert>
+	    
+	    <delete id="deleteRoute" parameterType="String" >
+	        delete from route where route_id = #{route_id}  
+	    </delete>
+		
+	    <update id="updateRoute" parameterType="Route" >
+	        update route set route_id=#{route_id},harbor=#{harbor},dumping_area=#{dumping_area},speedlimit=#{speedlimit},location=#{location} where route_id = #{route_id}    
+	    </update>
+	    
+	    <select id="getRoute" resultMap="RouteMap">
+	    	select * from route
+	    </select>
+	    <select id="getRouteByid" parameterType="String" resultType="String">
+	    	select location from route where route_id=#{route_id}
+	    </select>
+	    <select id="getDumpingAreabyid" parameterType="String" resultType="String">
+	    	select dumping_area from route where route_id=#{route_id}
+	    </select>
+	    <select id="getdredgingareabyid" parameterType="String" resultType="String">
+	    	select harbor from route where route_id=#{route_id}
+	    </select>
+	    <select id="getSpeedlimit" parameterType="String" resultType="Integer">
+	    	select speedlimit from route where route_id=#{route_id}
+	    </select>
+	</mapper>

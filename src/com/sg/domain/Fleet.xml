@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="FleetMap" type="com.sg.domain.Fleet">
+		<id column="fleet_id" property="fleet_id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="CHAR" />
+		<result column="address" property="address" jdbcType="CHAR" />
+		<result column="contact" property="contact" jdbcType="CHAR" />
+		<result column="cellphone" property="cellphone" jdbcType="CHAR" />
+		
+	</resultMap>
+	    <insert id="addFleet" parameterType="Fleet" >
+	        insert into fleet  values (#{fleet_id},#{name},#{address},#{contact},#{cellphone})    
+	    </insert>
+	    
+	    <delete id="deleteFleet" parameterType="int" >
+	        delete from fleet where fleet_id = #{fleet_id}  
+	    </delete>
+	    
+	    <select id="getFleet" parameterType="int" resultMap="FleetMap">
+	        select * from fleet where fleet_id = #{fleet_id}      
+	    </select>
+
+	    <update id="updateFleet" parameterType="Fleet" >
+	        update fleet set fleet_id=#{fleet_id},name=#{name},address=#{address},contact=#{contact},cellphone=#{cellphone} where fleet_id = #{fleet_id}      
+	    </update>
+
+	    <select id="listFleet" resultMap="FleetMap">
+	        select * from  fleet
+	    </select>	    
+		
+	    
+	</mapper>

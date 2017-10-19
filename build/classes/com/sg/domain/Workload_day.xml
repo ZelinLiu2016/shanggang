@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="Workload_dayMap" type="com.sg.domain.Workload_day">
+		<id column="mmsi" property="mmsi" jdbcType="INTEGER" />
+		<result column="sum" property="workload" jdbcType="INTEGER" />
+		<result column="recorddate" property="recorddate" jdbcType="CHAR" />
+	</resultMap>
+	<resultMap id="WorkloadMap" type="com.sg.domain.Workload_day">
+		<id column="mmsi" property="mmsi" jdbcType="INTEGER" />
+		<result column="workload" property="workload" jdbcType="INTEGER" />
+		<result column="recorddate" property="recorddate" jdbcType="CHAR" />
+	</resultMap>
+	    <insert id="addWorkload" parameterType="Workload_day" >
+	        insert into workload_day  values (#{mmsi}, #{workload},#{recorddate})    
+	    </insert>
+	    
+	  <select id="getworkload" parameterType="Workload_day" resultType="int">
+	  	select sum(workload) from workload_day where mmsi=#{mmsi} AND recorddate&gt;=#{recorddate}
+	  </select>
+	  
+	  <select id="getsumworkload" parameterType="Workload_day" resultType="int">
+	  	select sum(workload) from workload_day where recorddate &gt; #{recorddate} group by mmsi having mmsi=#{mmsi}; 
+	  </select>
+	  
+	   <select id="getallsumworkload"  resultMap="Workload_dayMap">
+	  	select mmsi,sum(workload) as sum from workload_day group by mmsi 
+	  </select>
+	  
+	  <select id="getnewworkload"  resultMap="WorkloadMap">
+	  	select mmsi,workload,recorddate from workload_day where recorddate=(select max(recorddate) from workload_day)
+	  </select>
+	  
+	    <select id="listMmsiRecorddate"  parameterType="Integer" resultType="String">
+	      select recorddate from workload_day where mmsi=#{mmsi}
+	    </select>
+	    
+	    <select id="getprojectworkload" parameterType="Project" resultType="int">
+	    	select sum(workload) from workload_day   where mmsi in (select mmsi from ship where proejct_id = #{projectId}) AND recorddate>=#{beginDate}
+	    </select>
+	    
+	    <update id="workloadincrease" parameterType="Workload_day" >
+	        update workload_day set workload = workload+1  where mmsi=#{mmsi} AND recorddate=#{recorddate}
+	    </update>    	    
+	    
+	</mapper>

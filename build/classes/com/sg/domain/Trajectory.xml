@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	
+	<mapper namespace="com.sg.domain">
+		<resultMap id="TrajectoryMap" type="com.sg.domain.Trajectory">
+		<id column="trajectory_id" property="trajectory_id" jdbcType="INTEGER" />
+		<result column="mmsi" property="mmsi" jdbcType="INTEGER" />
+		<result column="start" property="start" jdbcType="CHAR" />	
+		<result column="end" property="end" jdbcType="CHAR"/>
+		<result column="celllist" property="celllist" jdbcType="LONGVARCHAR"/>
+	</resultMap>
+	
+	    <insert id="addTrajectory" parameterType="Trajectory" >
+	        insert into trajectory   values (null,#{mmsi},#{start},#{end},{celllist},null)    
+	    </insert>
+	   
+	   <select id="listTodayTrajectory" resultMap="TrajectoryMap">
+	   		select  trajectory_id,mmsi,start,end,celllist from trajectory where DATEDIFF(createTime,NOW())=0   
+	   </select>
+
+		<select id="getcelllistbyid" parameterType="Integer" resultType="String">
+			select celllist from trajectory where trajectory_id=#{trajectory_id}
+		</select>
+	</mapper>

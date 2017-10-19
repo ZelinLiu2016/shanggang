@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="AbnormalMap" type="com.sg.domain.Abnormal_info">
+		<id column="mmsi" property="mmsi" jdbcType="CHAR" />
+		<result column="abnormal_type" property="abnormal_type" jdbcType="CHAR" />
+		<result column="lon" property="lon" jdbcType="CHAR" />
+		<result column="lat" property="lat" jdbcType="CHAR" />
+		<result column="time" property="time" jdbcType="CHAR" />
+		<result column="handlerecord" property="handle" jdbcType="CHAR"/>
+		<result column="speed" property="speed" jdbcType="CHAR" />
+	</resultMap>
+		<resultMap id="AbnormalFrequency" type="com.sg.domain.AbnormalFrequency">
+		<id column="mmsi" property="mmsi" jdbcType="INTEGER"/>
+		<id column="frequency" property="frequency" jdbcType="INTEGER"/>
+		</resultMap>
+	    <insert id="addAbnormal" parameterType="Abnormal_info" >
+	        insert into abnormal_logging   values (#{mmsi},#{abnormal_type},#{lon},#{lat},#{time},#{speed},#{handle},#{windspeed})    
+	    </insert>
+	    <update id="addHandle" parameterType="Abnormal_info">
+	    	update abnormal_logging set handlerecord=#{handle} where mmsi=#{mmsi} AND time=#{time}  AND abnormal_type=#{abnormal_type}
+	    </update>
+	    <select id="listallabnormal" resultMap="AbnormalMap">
+	    	select * from abnormal_logging
+	    </select>
+	    
+	    <select id="getspeedfrequency" resultMap="AbnormalFrequency">
+	    	select mmsi,count(time) as frequency from abnormal_logging  where abnormal_type='Exceed the speed limit Abnormal' group by mmsi order by frequency asc
+	    </select>
+	    
+	    <select id="getareafrequency" resultMap="AbnormalFrequency">
+	    	select mmsi,count(time) as frequency from abnormal_logging  where abnormal_type='Dumping_area Abnormal' group by mmsi order by frequency asc
+	    </select>
+	    
+	    <select id="getroutefrequency" resultMap="AbnormalFrequency">
+	    	select mmsi,count(time) as frequency from abnormal_logging  where abnormal_type='Route Abnormal' group by mmsi order by frequency asc
+	    </select>
+	</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="ShipMap" type="com.sg.domain.Ship">
+		<id column="MMSI" property="mmsi" jdbcType="INTEGER" />
+		<result column="SHIP_NAME" property="shipname" jdbcType="CHAR" />
+		<result column="IMO" property="imo" jdbcType="INTEGER" />
+		<result column="LENGTH" property="length" jdbcType="CHAR" />
+		<result column="WIDTH" property="width" jdbcType="CHAR" />
+		<result column="SHIPTYPE" property="shiptype" jdbcType="CHAR" />
+		<result column="CAPACITY" property="capacity" jdbcType="CHAR" />
+		<result column="FLEET_ID" property="fleet_id" jdbcType="INTEGER" />
+		<result column="CONTACT" property="contact" jdbcType="CHAR" />
+		<result column="PHONE" property="cellphone" jdbcType="CHAR"/>
+		<result column="route_id" property="route_id" jdbcType="INTEGER"/>
+	</resultMap>
+	    <insert id="addShip" parameterType="Ship" >
+	        insert into ship   values (#{mmsi},#{shipname},#{imo},#{length},#{width},#{shiptype},#{capacity},#{fleet_id},#{contact},#{cellphone},#{route_id})    
+	    </insert>
+	    <update id="setShipRoute_id" parameterType="Ship">
+	    	update ship set route_id =#{route_id} where mmsi=#{mmsi}
+	    </update>
+	    <select id="getShipRoute_id" parameterType="Integer" resultType="String">
+	    	select route_id from ship where mmsi=#{mmsi}
+	    </select>
+	    <delete id="deleteShip" parameterType="int" >
+	        delete from ship where MMSI = #{mmsi}  
+	    </delete>
+	    
+	    <select id="listShipMmsi" resultType="Integer">
+	      select MMSI from ship
+	    </select>
+	    
+		<select id="getMMSIofCompany" parameterType="String" resultType="Integer">
+			select MMSI from ship where FLEET_ID=#{fleet_id}
+		</select>
+		
+		<select id="getCapacity" parameterType="int" resultType="DOUBLE">
+		  select CAPACITY from ship where 	MMSI=#{mmsi}	
+		</select>
+		
+		
+	    <update id="updateShip" parameterType="Ship" >
+	        update ship set MMSI=#{mmsi},SHIP_NAME=#{shipname},IMO=#{imo},LENGTH=#{length},WIDTH=#{width},SHIPTYPE=#{shiptype},CAPACITY=#{capacity},FLEET_ID=#{fleet_id},CONTACT=#{contact},PHONE=#{cellphone},route_id=#{route_id} where MMSI = #{mmsi}    
+	    </update>
+
+	
+	    <select id="listShipRecordTime" parameterType="String" resultType="String">
+	    	<bind name="shiptable" value="'ship_' + _parameter" />
+	        select ti from  ${shiptable}
+	    </select>	    
+	    
+	     <select id="listShip" resultMap="ShipMap">
+	        select * from   ship 
+	    </select>
+	    
+		 <select id="listShipbyfleetid" resultType="Integer">
+	        select MMSI from   ship where FLEET_ID=#{fleet_id}
+	    </select>	
+	   
+	    
+	    <update id="createNewtable" parameterType="String">
+	    	<bind name="str" value="'ship_' + _parameter" />
+	    	CREATE TABLE ${str} (
+	    		`mmsi` int(11) NOT NULL,
+	    		`lon` varchar(200),
+	    		`lat` varchar(200),
+	    		`co` double,
+	    		`sp` double,
+	    		`ti` DATETIME,
+	    		`status` varchar(500),
+	    		`dest` varchar(500),
+	    		`rot` varchar(500),
+	    		`draft` varchar(500),
+	    		PRIMARY KEY(`ti`))
+	    </update>
+	    
+	    
+	</mapper>

@@ -12,7 +12,7 @@ function InitLoadManage()
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();
-	$("#detail_information").hide();
+	$("#detail_information").show();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
 	$.ajax({
@@ -42,6 +42,17 @@ function RefreshLoadManage()
         }  
     });
 }
+
+function hasvalue(arr, obj){
+	var i = arr.length;  
+    while (i--) {  
+        if (arr[i] === obj) {  
+            return true;  
+        }  
+    }  
+    return false;  
+}
+
 function InitManageTable() {
 	$('#datatable').hide();
 	$('#table').bootstrapTable('destroy');
@@ -52,7 +63,29 @@ function InitManageTable() {
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
-
+	
+	onClickRow: function (row, $element) {
+		var tbody = document.getElementById("company-tbody");
+		while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
+		{
+			tbody.removeChild(tbody.firstChild);
+		}
+		entry = "";
+		var companyid = row.fleetid;
+		for(d in detailed)
+		{
+			if(hasvalue(detailed[d].sggs.split(';'), companyid)||hasvalue(detailed[d].sjgs.split(';'), companyid)||hasvalue(detailed[d].jlgs.split(';'), companyid))
+			{
+				entry += '<tr><td>'+detailed[d].projectname+'</td><td>'+detailed[d].startdate+'</td><td>'+detailed[d].enddate+'</td><td></td></tr>';
+			}
+		}
+		for(var i = tbody.rows.length;i<4;++i)
+		{
+			entry+=('<tr><td></td><td></td><td></td><td></td></tr>');
+		}
+		$("#company-tbody").append(entry);
+    },
+	
     columns: [
 	{checkbox: true},
 	{

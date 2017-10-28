@@ -204,11 +204,12 @@ function InitParamTable() {
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allParam,
-    height:280,
+    //height:80,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
+	pageList: [10, 25, 50, 100],
 	
 	onClickRow: function (row, $element) {
 		var tbody = document.getElementById("company-tbody");
@@ -421,7 +422,8 @@ function fillParamData(data)
 			"enddate":data[i].endDate,"shipnum":data[i].boatNum,"harborname":data[i].harborName,
 			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id});
 		detailed[data[i].projectId] = {"sggs":data[i].construction_company,"sjgs":data[i].design_company,
-		"jlgs":data[i].supervision_company,"mmsi":data[i].mmsilist};
+		"jlgs":data[i].supervision_company,"mmsi":data[i].mmsilist,"projectname":data[i].projectName,
+		"startdate":data[i].beginDate, "enddate":data[i].endDate};
 		}
 }
 
@@ -453,10 +455,11 @@ function fillCompanyData(data)
 
 function fillMmsiData(data)
 {
-	allMmsi = {};
+	//allMmsi = {};
 	for(var i = 0;i<data.length;++i)
 	{
-		allMmsi[data[i].mmsi] = {"shipname":data[i].shipname,"contact":data[i].contact,"cellphone":data[i].cellphone,"fleetid": data[i].fleet_id};
+		allMmsi[data[i].mmsi] = {"shipname":data[i].shipname,"contact":data[i].contact,"cellphone":data[i].cellphone,"fleetid": data[i].fleet_id,
+		"IMO":data[i].imo, "length":data[i].length, "width":data[i].width, "capacity":data[i].capacity, "boss":"船老大","bossphone":"12345678"};
 	}
 }
 

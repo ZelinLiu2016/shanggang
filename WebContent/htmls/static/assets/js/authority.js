@@ -291,6 +291,7 @@ function fullView() {
 	$("#set-view-level").hide();
 	$("#part-warn-level").hide();
     $('#datatable').hide();
+	$('#detailtable').hide();
 	$('#toolbar').hide();
 }
 

@@ -12,7 +12,7 @@ function InitLoadImport()
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();
-	$("#detail_information").hide();
+	$("#detail_information").show();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
 	$.ajax({
@@ -52,13 +52,25 @@ function InitImportTable() {
     $('#table').bootstrapTable({
     data: allBoat,
     //height:380,
-	toolbar:'#toolbar',
 	pagination: true,
-	search: true,
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
-
+	
+	onClickRow: function (row, $element) {
+		var tbody = document.getElementById("company-tbody");
+		var mmsi = row.mmsi;
+		while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
+		{
+			tbody.removeChild(tbody.firstChild);
+		}
+		entry = "";
+		entry += '<tr><td>船老大</td><td>'+allMmsi[mmsi].boss+'</td><td>联系方式</td><td>'+allMmsi[mmsi].bossphone+'</td>';
+		entry += '<tr><td>船长</td><td>'+allMmsi[mmsi].length+'</td><td>船宽</td><td>'+allMmsi[mmsi].width+'</td>';
+		entry += '<tr><td>满载量</td><td>'+allMmsi[mmsi].capacity+'</td><td></td><td></td></tr>';
+		$("#company-tbody").append(entry);
+    },
+	
     columns: [
 	{checkbox: true},
 	{
@@ -74,28 +86,12 @@ function InitImportTable() {
         title: '船名'
     },
 	{
-        field: 'imo',
-        title: 'IMO 编号'
-    },
-	{
-        field: 'length',
-        title: '船长'
-    },
-	{
-        field: 'width',
-        title: '船宽'
-    },
-	{
         field: 'shiptype',
         title: '船舶类型'
     },
 	{
-        field: 'capacity',
-        title: '满载量'
-    },
-	{
         field: 'contact',
-        title: '联系人'
+        title: '所有人'
     },
 	{
         field: 'cellphone',

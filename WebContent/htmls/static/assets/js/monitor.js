@@ -240,7 +240,7 @@ function HSMonInit()
     $('#table').bootstrapTable({
     data: allMonitor,
 	pagination: true,
-    height: 100,
+    height: 300,
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,

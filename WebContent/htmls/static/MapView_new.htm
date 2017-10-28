@@ -122,9 +122,15 @@
                         </a>
 						</li>
 						<li >
-                        <a id = "boat-management" class="tooltip-tip ajax-load" href="#" title="施工单位信息" onclick = "InitLoadManage()">
+                        <a id = "boat-management" class="tooltip-tip ajax-load" href="#" title="参建单位信息" onclick = "InitLoadManage()">
                             <img src = "image/i_7.png">
-                            <span class="LeftText">施工单位信息</span>
+                            <span class="LeftText">参建单位信息</span>
+                        </a>
+						</li>
+						<li >
+                        <a id = "shujun" class="tooltip-tip ajax-load" href="#" title="疏浚区域信息" onclick = "">
+                            <img src = "image/i_2.png">
+                            <span class="LeftText">疏浚区域信息</span>
                         </a>
 						</li>
 						<li >
@@ -378,9 +384,16 @@
             </button>
 </div>
 </div>
-
-	<div id="datatable">
+	<div id="datatable" style="height:400px">
+	<div style="height:350px">
 	<table id="table"></table>
+	</div>
+	</div>
+	
+	<div id="detailtable" style="height:400px">
+	<div style="height:350px">
+	<table id="dtable"></table>
+	</div>
 	</div>
 
 <div class="container" id="project_progress" style="display:none;">
@@ -686,7 +699,8 @@
             <div id="route_update_body">
 			</div>
 			</div>
-            <div class="modal-footer">  
+            <div class="modal-footer">
+				<span style="color:silver;float:left;">注：122:35:35 = 122°35'35"</span>
 				<button type="button" class="btn btn-default" id="route_add_point_button" onclick="route_add_button()">加点</button>
 				<button type="button" class="btn btn-default" id="route_delete_point_button" onclick="route_delete_button()">删点</button>
                 <button type="button" class="btn btn-primary" id="route_edit_button" onclick="route_edit()">确定</button>

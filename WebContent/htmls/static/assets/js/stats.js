@@ -1,9 +1,9 @@
-﻿allBoatWork = [{"mmsi":"412375620","day":1,"week":10,"month":10},
-           {"mmsi":"412380310","day":2,"week":13,"month":13},
-           {"mmsi":"413770463","day":4,"week":6,"month":6},
-           {"mmsi":"413370410","day":6,"week":17,"month":17},
-           {"mmsi":"413765442","day":3,"week":15,"month":15},
-           {"mmsi":"413373880","day":5,"week":16,"month":16},
+﻿allBoatWork = [{"mmsi":"412375620","day":1,"week":10,"month":10,"companyname":"中港建务三公司","companyid":"1","shipname":"远洋号"},
+           {"mmsi":"412380310","day":2,"week":13,"month":13,"companyname":"中港建务三公司","companyid":"1","shipname":"远洋号"},
+           {"mmsi":"413770463","day":4,"week":6,"month":6,"companyname":"中港建务三公司","companyid":"1","shipname":"远洋号"},
+           {"mmsi":"413370410","day":6,"week":17,"month":17,"companyname":"中交水运","companyid":"3","shipname":"远洋号"},
+           {"mmsi":"413765442","day":3,"week":15,"month":15,"companyname":"中交水运","companyid":"3","shipname":"远洋号"},
+           {"mmsi":"413373880","day":5,"week":16,"month":16,"companyname":"中交水运","companyid":"3","shipname":"远洋号"},
           ];
 allFleet = [{"fleetid":"中港建务三公司","day":10,"week":60,"month":200}];
 allPort = [{"port":"YANGSHAN","day":10,"week":60,"month":200}];
@@ -26,7 +26,7 @@ function InitBoatStatsTable()
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allBoatWork,
-    height:380,
+    //height:380,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,
@@ -72,11 +72,28 @@ function InitFleetStatsTable()
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allFleet,
-    height:280,
+    //height:280,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
+	
+	onClickRow: function (row, $element) {
+		$('#detailtable').hide();
+		var tmp = [];
+		companyid = row.fleetid;
+		console.log(companyid);
+		for(var i = 0;i<allBoatWork.length;++i)
+		{
+			console.log(allBoatWork[i]);
+			if(allBoatWork[i].companyname==companyid)
+			{
+				tmp.push(allBoatWork[i]);
+			}
+		}
+		$('#dtable').bootstrapTable('load', tmp); 
+		$('#detailtable').show();
+    },
 
     columns: [
 	{checkbox: true},
@@ -97,7 +114,41 @@ function InitFleetStatsTable()
         title: '月工程量'
     }
 	]});
-    $('#datatable').show();
+	$('#datatable').show();
+	
+	$('#detailtable').hide();
+	$('#dtable').bootstrapTable('destroy');
+    $('#dtable').bootstrapTable({
+    data: allBoatWork,
+	pagination: true,
+    pageSize: 5,
+	clickToSelect: true,
+	singleSelect:true,
+
+    columns: [
+	{checkbox: true},
+	{
+        field: 'mmsi',
+        title: 'MMSI'
+    }, 
+	{
+        field: 'shipname',
+        title: '船名'
+    }, 
+	{
+        field: 'day',
+        title: '日工程量（次）'
+    }, 
+	{
+        field: 'week',
+        title: '周工程量（次）'
+    }, 
+	{
+        field: 'month',
+        title: '月工程量（次）'
+    }
+	]});
+    $('#detailtable').show();
 }
 function PortStatsInit()
 {
@@ -117,7 +168,7 @@ function InitPortStatsTable()
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allPort,
-    height:280,
+    //height:280,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,

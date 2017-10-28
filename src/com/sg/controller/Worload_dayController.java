@@ -123,4 +123,31 @@ public class Worload_dayController {
 		res.put("percent", total/volume);
 		return new ResponseEntity<HashMap<String,Double>>(res,HttpStatus.OK);
 	}
+	@RequestMapping(value="/getcompanyprocess",method= RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<HashMap<String,Double>> getcompanyprocess(@RequestBody String pro) throws IOException{
+		//返回某公司某日期之后的工作量
+		HashMap<String,Double> res = new HashMap<String,Double>(); 
+		SqlSession session = getSession();
+		JSONObject json = JSONObject.fromObject(pro);
+		System.out.println("查询公司编号为"+json.getString("company_id")+"的工作量");
+		String begindate = json.getString("begindate");
+		List<Integer> mmsilist = session.selectList("getMMSIofCompany",json.getString("company_id"));
+		double total =0.0;
+		for(int mmsi:mmsilist){
+			Workload_day workload = new Workload_day();
+			workload.setMmsi(mmsi);
+			workload.setRecorddate(begindate);
+			if(session.selectOne("getsumworkload",workload)!=null){
+				int temp = session.selectOne("getsumworkload",workload);
+				double capacity = session.selectOne("getCapacity",workload.getMmsi());
+				res.put(String.valueOf(mmsi),(double) capacity*temp);
+				total = total+capacity*temp;
+			}
+			else
+				res.put(String.valueOf(mmsi),0.0);
+		}
+		res.put("total", total);
+		return new ResponseEntity<HashMap<String,Double>>(res,HttpStatus.OK);
+	}
 }

@@ -53,6 +53,7 @@ public class ShipController {
 		ship.setContact(json.getString("contact"));
 		ship.setCellphone(json.getString("cellphone"));
 		ship.setRoute_id(json.getInt("route_id"));
+		ship.setOwner(json.getString("owner"));
 		SqlSession session = this.getSession();
 		session.insert("addShip",ship);
 		session.update("createNewtable",json.getString("mmsi"));
@@ -94,6 +95,7 @@ public class ShipController {
 		ship.setContact(json.getString("contact"));
 		ship.setCellphone(json.getString("cellphone"));
 		ship.setRoute_id(json.getInt("route_id"));
+		ship.setOwner(json.getString("owner"));
 		SqlSession session = this.getSession();
 		session.update("updateShip",ship);
 		session.commit();
@@ -154,5 +156,15 @@ public class ShipController {
 			mmsi.addAll(session.selectList("getMMSIofCompany",str));
 		}
 		return new ResponseEntity<List<Integer>>(mmsi, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/mohu",method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<List<Integer>> mohu(@RequestBody String pro) throws IOException{
+		SqlSession session = this.getSession();
+		JSONObject json = JSONObject.fromObject(pro);
+		String str = json.getString("str");
+		List<Integer> mmsi = session.selectList("mohuship",str);
+		return new ResponseEntity<List<Integer>>(mmsi,HttpStatus.OK);
 	}
 }

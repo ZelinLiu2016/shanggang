@@ -17,10 +17,15 @@ function InitLoadParam()
 	$("#btn_edit").show();
 	$("#btn_delete").show();
 	$("#btn_show").hide();
-	$("#detail_information").show();
+	$("#toolbar_search").hide();
+	$("#btn_search").hide();
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();
+	$("#datatable").show();
+	$("#detailtable").hide();
+	$("#detail_information").show();
+	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
 	//document.getElementById("btn_show").removeAttribute("disabled");

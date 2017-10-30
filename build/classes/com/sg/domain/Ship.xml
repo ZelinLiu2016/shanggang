@@ -16,9 +16,10 @@
 		<result column="CONTACT" property="contact" jdbcType="CHAR" />
 		<result column="PHONE" property="cellphone" jdbcType="CHAR"/>
 		<result column="route_id" property="route_id" jdbcType="INTEGER"/>
+		<result column="owner" property="owner" jdbcType="CHAR"/>
 	</resultMap>
 	    <insert id="addShip" parameterType="Ship" >
-	        insert into ship   values (#{mmsi},#{shipname},#{imo},#{length},#{width},#{shiptype},#{capacity},#{fleet_id},#{contact},#{cellphone},#{route_id})    
+	        insert into ship   values (#{mmsi},#{shipname},#{imo},#{length},#{width},#{shiptype},#{capacity},#{fleet_id},#{contact},#{cellphone},#{route_id},#{owner})    
 	    </insert>
 	    <update id="setShipRoute_id" parameterType="Ship">
 	    	update ship set route_id =#{route_id} where mmsi=#{mmsi}
@@ -44,7 +45,7 @@
 		
 		
 	    <update id="updateShip" parameterType="Ship" >
-	        update ship set MMSI=#{mmsi},SHIP_NAME=#{shipname},IMO=#{imo},LENGTH=#{length},WIDTH=#{width},SHIPTYPE=#{shiptype},CAPACITY=#{capacity},FLEET_ID=#{fleet_id},CONTACT=#{contact},PHONE=#{cellphone},route_id=#{route_id} where MMSI = #{mmsi}    
+	        update ship set MMSI=#{mmsi},SHIP_NAME=#{shipname},IMO=#{imo},LENGTH=#{length},WIDTH=#{width},SHIPTYPE=#{shiptype},CAPACITY=#{capacity},FLEET_ID=#{fleet_id},CONTACT=#{contact},PHONE=#{cellphone},route_id=#{route_id},owner=#{owner} where MMSI = #{mmsi}    
 	    </update>
 
 	
@@ -60,6 +61,10 @@
 		 <select id="listShipbyfleetid" resultType="Integer">
 	        select MMSI from   ship where FLEET_ID=#{fleet_id}
 	    </select>	
+	   
+	   <select id="mohuship" parameterType="String" resultType="Integer">
+	   	select mmsi from ship where cast(mmsi as char) like concat(concat('%',#{str}),'%')
+	   </select>
 	   
 	    
 	    <update id="createNewtable" parameterType="String">

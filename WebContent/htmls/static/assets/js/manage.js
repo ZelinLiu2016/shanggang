@@ -9,10 +9,14 @@ function InitLoadManage()
 	$("#btn_edit").show();
 	$("#btn_delete").show();
 	$("#btn_show").hide();
+	$("#toolbar_search").hide();
+	$("#btn_search").hide();
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();
-	$("#detail_information").show();
+	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").show();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
 	$.ajax({
@@ -26,6 +30,20 @@ function InitLoadManage()
             alert("fail");
         }  
     });
+	var thead = document.getElementById("info_head");
+	while(thead.hasChildNodes()) //当div下还存在子节点时 循环继续  
+	{
+		thead.removeChild(thead.firstChild);
+	}
+	entry = '<tr><th width="40%">工程名称</th><th width="30%">开始日期</th><th width="30%">结束日期</th></tr>';
+	$("#info_head").append(entry);
+	var tbody = document.getElementById("info_body");
+	while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
+	{
+		tbody.removeChild(tbody.firstChild);
+	}
+	entry = '<tr><td></td><td></td><td></td></tr>'
+	$("#info_body").append(entry);
 }
 
 function RefreshLoadManage()
@@ -65,7 +83,7 @@ function InitManageTable() {
 	singleSelect:true,
 	
 	onClickRow: function (row, $element) {
-		var tbody = document.getElementById("company-tbody");
+		var tbody = document.getElementById("info_body");
 		while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
 		{
 			tbody.removeChild(tbody.firstChild);
@@ -76,14 +94,14 @@ function InitManageTable() {
 		{
 			if(hasvalue(detailed[d].sggs.split(';'), companyid)||hasvalue(detailed[d].sjgs.split(';'), companyid)||hasvalue(detailed[d].jlgs.split(';'), companyid))
 			{
-				entry += '<tr><td>'+detailed[d].projectname+'</td><td>'+detailed[d].startdate+'</td><td>'+detailed[d].enddate+'</td><td></td></tr>';
+				entry += '<tr><td>'+detailed[d].projectname+'</td><td>'+detailed[d].startdate+'</td><td>'+detailed[d].enddate+'</td></tr>';
 			}
 		}
 		for(var i = tbody.rows.length;i<4;++i)
 		{
-			entry+=('<tr><td></td><td></td><td></td><td></td></tr>');
+			entry+=('<tr><td></td><td></td><td></td></tr>');
 		}
-		$("#company-tbody").append(entry);
+		$("#info_body").append(entry);
     },
 	
     columns: [

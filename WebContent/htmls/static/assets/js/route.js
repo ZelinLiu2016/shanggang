@@ -13,9 +13,14 @@ function SetRouteTable() {
 	$("#btn_edit").show();
 	$("#btn_delete").show();
 	$("#btn_show").show();
+	$("#toolbar_search").hide();
+	$("#btn_search").hide();
+	
 	$("#mapBody").show();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
     $.ajax({
@@ -71,7 +76,7 @@ function InitRouteTable()
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allRoute,
-    height:380,
+    //height:380,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,
@@ -408,6 +413,7 @@ function route_delete_button()
 
 function AddNewLine()
 {
+	deleteButtomFace();
 	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawLine);
 	var objType = DynamicSymbolType.drawLine;
     var objName = "";

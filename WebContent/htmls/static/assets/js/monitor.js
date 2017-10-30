@@ -1,4 +1,5 @@
-allMonitor = [];
+var allMonitor = [];
+var allDetect = [];
 postData = {};
 historyData = [];
 
@@ -29,12 +30,7 @@ function RTMonInit()
 	historyData = [];
 	ClearPlayShipInfo();
 	$("#toolbar").hide();
-	$("#btn_backup").hide();
-	$("#btn_add").hide();
-	$("#btn_edit").hide();
-	$("#btn_delete").hide();
 	//document.getElementById("btn_delete").setAttribute("disabled", true)
-	$("#btn_show").hide();
 	
 	$("#monitor_show").off('click');
 	$("#monitor_show").click(function(){
@@ -56,6 +52,8 @@ function RTMonInit()
 	$("#mapBody").show();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	$("#monitor_search_modal").show();
 	$("#project_progress").hide();
 	$("#history_time").hide();
@@ -206,6 +204,7 @@ function HSMonInit()
 	$("#btn_edit").hide();
 	$("#btn_delete").hide();
 	$("#btn_show").hide();
+	$("#monitor_show").off('click');
 	$("#monitor_show").click(function(){
 		var arrselections = $("#table").bootstrapTable('getSelections');
 		$('html, body').animate({
@@ -221,6 +220,8 @@ function HSMonInit()
 	$("#mapBody").show();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	$("#monitor_search_modal").show();
 	$("#project_progress").hide();
 	$("#history_time").show();
@@ -294,4 +295,169 @@ function HSMonitorSearch()
             alert("查询失败！");
         }  
     });
+}
+
+function DTMonInit()
+{
+	//API_SetMapViewCenter(121.668, 31.338, 160000);
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/ship/list",
+        success: function (data) {
+        	fillMmsiData(data);
+			var select_mmsi = document.getElementById("monitor_search");
+			while(select_mmsi.hasChildNodes()) 
+			{
+				select_mmsi.removeChild(select_mmsi.firstChild);
+			}
+			var entry = "";
+			for (var m in allMmsi) {
+				entry += '<option value="'+m+'">'+ m+'---'+allMmsi[m].shipname +'</option>';
+			}
+			$("#monitor_search").append(entry);
+			$("#monitor_search").val("");
+            },
+		error: function () {       
+            alert("fail");
+        }  
+    });
+	allDetect = [];
+	ClearPlayShipInfo();
+	$("#toolbar").hide();
+	$("#btn_backup").hide();
+	$("#btn_add").hide();
+	$("#btn_edit").hide();
+	$("#btn_delete").hide();
+	$("#btn_show").hide();
+	$("#monitor_show").off('click');
+	$("#monitor_show").click(function(){
+		var arrselections = $("#table").bootstrapTable('getSelections');
+		postData["mmsi"] = arrselections[0].mmsi;
+		postData["starttime"] = arrselections[0].start_time;
+		postData["endtime"] = arrselections[0].end_time;
+		$.ajax({
+			method: "POST",
+			url: "/shanggang/shipinfo/listinfoduring",
+			data: JSON.stringify(postData),
+			contentType:"application/json",
+			success: function (data) {
+				console.log(data);
+				fillMonitorData(data);
+				$('html, body').animate({
+					scrollTop: $("#mapBody").offset().top
+				}, 100);
+				if (historyData.length>0)
+				{
+					PlayShipHistoryTracks('ship', historyData);
+					return false;
+				}
+			},
+			error: function () {       
+				alert("查询失败！");
+			}  
+		});
+	})
+	
+	$("#mapBody").show();
+	$("#data_clean").hide();
+	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
+	$("#monitor_search_modal").show();
+	$("#project_progress").hide();
+	$("#history_time").show();
+	$("#monitor_search").val("");
+	$("#monitor_start").val("");
+	$("#monitor_end").val("");
+	$("#monitor_button").show();
+	$("#monitor_show").show();
+	$("#monitor_search").show();
+	$("#error_mark").hide();
+	$("#error_handle").hide();
+	$("#monitor_button").off('click');
+	$("#monitor_button").click(function(){DTMonitorSearch();})
+
+	$('#datatable').hide();
+	$('#table').bootstrapTable('destroy');
+    $('#table').bootstrapTable({
+    data: allDetect,
+	pagination: true,
+    //height: 300,
+    pageSize: 5,
+	clickToSelect: true,
+	singleSelect:true,
+
+    columns: [
+	{checkbox: true},
+	{
+        field: 'mmsi',
+        title: 'MMSI'
+    },
+	{
+        field: 'start_time',
+        title: '起始时间'
+    }, 
+	{
+        field: 'end_time',
+        title: '终止时间'
+    },
+	{
+        field: 'start_lon',
+        title: '起点经度'
+    }, 
+	{
+        field: 'start_lat',
+        title: '起点纬度'
+    },
+	{
+        field: 'end_lon',
+        title: '终点经度'
+    }, 
+	{
+        field: 'end_lat',
+        title: '终点纬度'
+    }, 
+	{
+        field: 'num',
+        title: '轨迹点个数'
+    }
+	]});
+    $('#datatable').show();
+}
+
+function DTMonitorSearch()
+{
+	postData["mmsi"] = $('#monitor_search').val();
+	postData["starttime"] = $('#monitor_start').val();
+	postData["endtime"] = $('#monitor_end').val();
+	$.ajax({
+        method: "POST",
+        url: "/shanggang/shipinfo/flowofday",
+		data: JSON.stringify(postData),
+		contentType:"application/json",
+        success: function (data) {
+			console.log(data);
+			fillDetectData(data);
+			RefreshDetectTable();
+            },
+		error: function () {       
+            alert("查询失败！");
+        }  
+    });
+}
+
+function fillDetectData(data)
+{
+	allDetect = [];
+	for(var i = 0;i<data.length;++i){
+		allDetect.push({"mmsi":$('#monitor_search').val(),"start_lon":"-","start_lat":"-",
+		"end_lon":"-","end_lat":"-","num":"-","start_time":data[i].split(';')[0],"end_time":data[i].split(';')[1]});
+	}
+}
+
+function RefreshDetectTable()
+{
+	$('#datatable').hide();
+	$('#table').bootstrapTable('load', allDetect); 
+	$('#datatable').show();
 }

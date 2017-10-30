@@ -1,8 +1,8 @@
-﻿allPaoni = [];
+var allShujun = [];
 var postData = {};
-var coorDict = {};
+var sj_coorDict = {};
 var coorNum = 4;
-function SetPaoniTable() {
+function SetShujunTable() {
 	$("#toolbar").show();
 	$("#btn_backup").hide();
 	$("#btn_add").show();
@@ -21,12 +21,27 @@ function SetPaoniTable() {
 	$("#project_progress").hide();
 	
     $.ajax({
+		type: "GET",
+		url: "/shanggang/dredging_area/listall",
+		success: function (data) {    
+				console.log(data);
+				fillAllShujun(data);
+				InitShujunTable();
+			  },       
+		error: function () {       
+			   alert("fail");       
+		  }       
+	});
+}
+
+function RefreshLoadShujun()
+{
+    $.ajax({
             type: "GET",
-            url: "/shanggang/dumping_area/list",
+            url: "/shanggang/dredging_area/listall",
             success: function (data) {    
-            	    console.log(data);
-            	    fillAllPaoni(data);
-            	    InitPaoniTable();
+            	    fillAllShujun(data);
+            	    RefreshShujunTable();
                   },       
             error: function () {       
                    alert("fail");       
@@ -34,26 +49,12 @@ function SetPaoniTable() {
         });
 }
 
-function RefreshLoadPaoni()
-{
-    $.ajax({
-            type: "GET",
-            url: "/shanggang/dumping_area/list",
-            success: function (data) {    
-            	    fillAllPaoni(data);
-            	    RefreshPaoniTable();
-                  },       
-            error: function () {       
-                   alert("fail");       
-              }       
-        });
-}
-function InitPaoniTable()
+function InitShujunTable()
 {
 	$('#datatable').hide();
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
-    data: allPaoni,
+    data: allShujun,
     //height:380,
 	pagination: true,
     pageSize: 5,
@@ -63,40 +64,40 @@ function InitPaoniTable()
     columns: [
 	{checkbox: true},
 	{
-        field: 'areaid',
-        title: '抛泥区域编号'
+        field: 'dredgingid',
+        title: '疏浚区域编号'
     }, 
 	{
-        field: 'port',
-        title: '抛泥区域名称'
+        field: 'dredgingname',
+        title: '疏浚港区'
     }
 	]});
 	$('#datatable').show();
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
-		var body = document.getElementById("paoni_update_body");
+		var body = document.getElementById("shujun_update_body");
 		while(body.hasChildNodes()) //当div下还存在子节点时 循环继续  
 		{  
 			body.removeChild(body.firstChild); 
 		}
-		$("#paoniquyu").val("");
-		$("#paonigangqu").val("");
+		$("#shujunquyu").val("");
+		$("#shujungangqu").val("");
 		coorNum = 1;
 		var entry = "";
-		entry += '<div id="pn'+coorNum+'" class="row" style="margin:0;height:13%;">';
+		entry += '<div id="sj'+coorNum+'" class="row" style="margin:0;height:13%;">';
 		entry += '<div class="col-sm-2 nopadding">坐标点'+coorNum+'经度</div>';
-		entry += '<div class="col-sm-4 nopadding"><input type="text" name="paonidianx" id="paonidianx'+coorNum+'"style="width:145px;height:25px" /></div>';
+		entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundianx" id="shujundianx'+coorNum+'"style="width:145px;height:25px" /></div>';
 		entry += '<div class="col-sm-2 nopadding">坐标点'+coorNum+'纬度</div>';
-		entry += '<div class="col-sm-4 nopadding"><input type="text" name="paonidiany" id="paonidiany'+coorNum+'"style="width:145px;height:25px" /></div></div>';
-		$("#paoni_update_body").append(entry);
-		document.getElementById("paoni_update_label").className = "modal-title glyphicon glyphicon-plus";
-        $("#paoni_update_label").text("新增");
-		$('#paoni_update').modal('show');
-		$("#paoni_add_point_button").show();
-		$("#paoni_delete_point_button").show();
-		$('#paoni_add_button').show();
-		$('#paoni_edit_button').hide();
-		$('#paoni_delete_button').hide();
+		entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundiany" id="shujundiany'+coorNum+'"style="width:145px;height:25px" /></div></div>';
+		$("#shujun_update_body").append(entry);
+		document.getElementById("shujun_update_label").className = "modal-title glyphicon glyphicon-plus";
+        $("#shujun_update_label").text("新增");
+		$('#shujun_update').modal('show');
+		$("#shujun_add_point_button").show();
+		$("#shujun_delete_point_button").show();
+		$('#shujun_add_button').show();
+		$('#shujun_edit_button').hide();
+		$('#shujun_delete_button').hide();
         });
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
@@ -107,38 +108,38 @@ function InitPaoniTable()
             if (arrselections.length <= 0) {
                 return;
             }
-			area_id = arrselections[0].areaid;
-			port = arrselections[0].port;
-			$("#paoniquyu").val(area_id);
-			$("#paonigangqu").val(port);
-			var body = document.getElementById("paoni_update_body");
+			dredging_id = arrselections[0].dredgingid;
+			dredging_name = arrselections[0].dredgingname;
+			$("#shujunquyu").val(dredging_id);
+			$("#shujungangqu").val(dredging_name);
+			var body = document.getElementById("shujun_update_body");
 			while(body.hasChildNodes()) //当div下还存在子节点时 循环继续  
 			{  
 				body.removeChild(body.firstChild); 
 			}
-			var buttomPoint = coorDict[area_id];
+			var buttomPoint = sj_coorDict[dredging_id];
 			coorNum = buttomPoint.length;	
 			var entry = "";
 			for (var i = 1; i < coorNum + 1; i++) {
-				entry += '<div id="pn'+i+'" class="row" style="margin:0;height:13%;">';
+				entry += '<div id="sj'+i+'" class="row" style="margin:0;height:13%;">';
 				entry += '<div class="col-sm-2 nopadding">坐标点'+i+'经度</div>';
-				entry += '<div class="col-sm-4 nopadding"><input type="text" name="paonidianx" id="paonidianx'+i+'"style="width:145px;height:25px" /></div>';
+				entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundianx" id="shujundianx'+i+'"style="width:145px;height:25px" /></div>';
 				entry += '<div class="col-sm-2 nopadding">坐标点'+i+'纬度</div>';
-				entry += '<div class="col-sm-4 nopadding"><input type="text" name="paonidiany" id="paonidiany'+i+'"style="width:145px;height:25px" /></div></div>';
+				entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundiany" id="shujundiany'+i+'"style="width:145px;height:25px" /></div></div>';
 			}
-			$("#paoni_update_body").append(entry);
+			$("#shujun_update_body").append(entry);
 			for (var i = 1;i<coorNum + 1;++i){ 
-				$('#paonidianx' + i).val(buttomPoint[i - 1].x)
-				$('#paonidiany' + i).val(buttomPoint[i - 1].y)
+				$('#shujundianx' + i).val(buttomPoint[i - 1].x)
+				$('#shujundiany' + i).val(buttomPoint[i - 1].y)
 			}
-			document.getElementById("paoni_update_label").className = "modal-title glyphicon glyphicon-pencil";
-            $("#paoni_update_label").text("编辑");
-			$('#paoni_update').modal('show');
-			$("#paoni_add_point_button").show();
-			$("#paoni_delete_point_button").show();
-			$('#paoni_add_button').hide();
-			$('#paoni_edit_button').show();
-			$('#paoni_delete_button').hide();
+			document.getElementById("shujun_update_label").className = "modal-title glyphicon glyphicon-pencil";
+            $("#shujun_update_label").text("编辑");
+			$('#shujun_update').modal('show');
+			$("#shujun_add_point_button").show();
+			$("#shujun_delete_point_button").show();
+			$('#shujun_add_button').hide();
+			$('#shujun_edit_button').show();
+			$('#shujun_delete_button').hide();
         });
 	$("#btn_delete").off('click');
 	$("#btn_delete").click(function () {
@@ -150,10 +151,10 @@ function InitPaoniTable()
             if (arrselections.length <= 0) {
                 return;
             }
-			area_id = arrselections[0].areaid;
-			port = arrselections[0].port;
+			dredging_id = arrselections[0].dredgingid;
+			dredging_name = arrselections[0].dredgingname;
 			if(confirm("确定要删除吗？")){
-				paoni_delete(area_id);
+				shujun_delete(dredging_id);
 			}
 			
 			/*$("#paoniquyu").val(area_id);
@@ -196,12 +197,12 @@ function InitPaoniTable()
 		if (arrselections.length <= 0) {
 			return;
 		}
-		area_id = arrselections[0].areaid;
-		deleteButtomFace()
+		dredging_id = arrselections[0].dredgingid;
+		deleteButtomFace();
 		labelInfo = [];
 		AddButtomLayer();
 		buttomFaces = 1000;
-        var buttomPoint = coorDict[area_id];
+        var buttomPoint = sj_coorDict[dredging_id];
         var coorNum = buttomPoint.length;
         API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
         for (var i = 0; i < coorNum; i++) {
@@ -217,19 +218,17 @@ function InitPaoniTable()
         });
 }
 
-function RefreshPaoniTable() {
+function RefreshShujunTable() {
 	$('#datatable').hide();
-	$('#table').bootstrapTable('load', allPaoni); 
+	$('#table').bootstrapTable('load', allShujun); 
 	$('#datatable').show();
 }
 
-function fillAllPaoni(data) {
-	allPaoni = [];
+function fillAllShujun(data) {
+	allShujun = [];
 	for(var i = 0;i<data.length;++i)
 	{
-		if (data[i].area_id == "4_1" ||data[i].area_id == "5_1")
-			continue;
-		allPaoni.push({"areaid":data[i].area_id,"port":data[i].areaname});
+		allShujun.push({"dredgingid":data[i].dredging_id,"dredgingname":data[i].dredging_name});
 		var locationstr = data[i].location;
 		var point = locationstr.split("-");
 		coor = [];
@@ -238,29 +237,29 @@ function fillAllPaoni(data) {
 		    var p = point[j].split(",");
 		    coor.push({x:p[1],y:p[0]});
 		}
-		coorDict[data[i].area_id] = coor;
+		sj_coorDict[data[i].dredging_id] = coor;
 	}
 }
 
-function paoni_add()
+function shujun_add()
 {
-	area_id = $("#paoniquyu").val();
-	port = $("#paonigangqu").val();
+	dredging_id = $("#shujunquyu").val();
+	dredging_name = $("#shujungangqu").val();
     var locationstr = "";
     for (var i = 1; i < coorNum + 1; i++) {
-        locationstr += $("#paonidiany" + i).val()+","+$("#paonidianx" + i).val()+"-"; 
+        locationstr += $("#shujundiany" + i).val()+","+$("#shujundianx" + i).val()+"-"; 
     }
     locationstr = locationstr.substr(0,locationstr.length-1);
-	postData = {"area_id":area_id,"location":locationstr,"areaname":port};
+	postData = {"area_id":dredging_id,"location":locationstr,"name":dredging_name};
 	$.ajax({
          type: "POST",
-         url: "/shanggang/dumping_area/add",
+         url: "/shanggang/dredging_area/add",
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
         	 alert("success");
-			 $('#paoni_update').modal('hide');
-         	 RefreshLoadPaoni();
+			 $('#shujun_update').modal('hide');
+         	 RefreshLoadShujun();
                },       
          error: function () {       
                 alert("fail");       
@@ -268,25 +267,25 @@ function paoni_add()
      });
 }
 
-function paoni_edit()
+function shujun_edit()
 {
-	area_id = $("#paoniquyu").val();
-	port = $("#paonigangqu").val();
+	dredging_id = $("#shujunquyu").val();
+	dredging_name = $("#shujungangqu").val();
     var locationstr = "";
     for (var i = 1; i < coorNum + 1; i++) {
-        locationstr += $("#paonidiany" + i).val()+","+$("#paonidianx" + i).val()+"-"; 
+        locationstr += $("#shujundiany" + i).val()+","+$("#shujundianx" + i).val()+"-"; 
     }
     locationstr = locationstr.substr(0,locationstr.length-1);
-	postData = {"area_id":area_id,"location":locationstr,"areaname":port}; 
+	postData = {"area_id":dredging_id,"location":locationstr,"name":dredging_name};
 	$.ajax({
          type: "POST",
-         url: "/shanggang/dumping_area/update",
+         url: "/shanggang/dredging_area/update",
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
         	 alert("success");
-			 $('#paoni_update').modal('hide');
-         	 RefreshLoadPaoni();
+			 $('#shujun_update').modal('hide');
+         	 RefreshLoadShujun();
                },       
          error: function () {       
                 alert("fail");       
@@ -294,20 +293,20 @@ function paoni_edit()
      });
 }
 
-function paoni_delete(id)
+function shujun_delete(id)
 {
 	//area_id = $("#paoniquyu").val();
 	area_id = id;
 	postData = {"area_id":area_id}; 
 	$.ajax({
          type: "POST",
-         url: "/shanggang/dumping_area/delete",
+         url: "/shanggang/dredging_area/delete",
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
         	 alert("success");
-			 $('#paoni_update').modal('hide');
-         	 RefreshLoadPaoni();
+			 $('#shujun_update').modal('hide');
+         	 RefreshLoadShujun();
                },       
          error: function () {       
                 alert("fail");       
@@ -315,24 +314,24 @@ function paoni_delete(id)
      });
 }
 
-function paoni_add_button()
+function shujun_add_button()
 {
 	coorNum++;
 	var entry = "";
-	entry += '<div id="pn'+coorNum+'" class="row" style="margin:0;height:13%;">';
+	entry += '<div id="sj'+coorNum+'" class="row" style="margin:0;height:13%;">';
 	entry += '<div class="col-sm-2 nopadding">坐标点'+coorNum+'经度</div>';
-	entry += '<div class="col-sm-4 nopadding"><input type="text" name="paonidianx" id="paonidianx'+coorNum+'"style="width:145px;height:25px" /></div>';
+	entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundianx" id="shujundianx'+coorNum+'"style="width:145px;height:25px" /></div>';
 	entry += '<div class="col-sm-2 nopadding">坐标点'+coorNum+'纬度</div>';
-	entry += '<div class="col-sm-4 nopadding"><input type="text" name="paonidiany" id="paonidiany'+coorNum+'"style="width:145px;height:25px" /></div></div>';
-	$("#paoni_update_body").append(entry);
+	entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundiany" id="shujundiany'+coorNum+'"style="width:145px;height:25px" /></div></div>';
+	$("#shujun_update_body").append(entry);
 }
 
-function paoni_delete_button()
+function shujun_delete_button()
 {
 	if (coorNum>1)
 	{
-		var parent=document.getElementById("paoni_update_body");
-		var childx=document.getElementById("pn" + coorNum);
+		var parent=document.getElementById("shujun_update_body");
+		var childx=document.getElementById("sj" + coorNum);
 		parent.removeChild(childx);
 		coorNum--;
 	}	

@@ -16,6 +16,8 @@ function BoatStatsInit()
 	$("#data_clean").hide();
 	$("#monitor_search_modal").hide();
 	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	$("#project_progress").hide();
 	InitBoatStatsTable();
 }
@@ -62,6 +64,8 @@ function FleetStatsInit()
 	$("#data_clean").hide();
 	$("#monitor_search_modal").hide();
 	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	$("#project_progress").hide();
 	InitFleetStatsTable();
 }
@@ -158,6 +162,8 @@ function PortStatsInit()
 	$("#data_clean").hide();
 	$("#monitor_search_modal").hide();
 	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	$("#project_progress").hide();
 	InitPortStatsTable();
 }
@@ -183,56 +189,14 @@ function InitPortStatsTable()
 		if(arrselections.length==1)
 		{
 			$("#project_progress").show();
-			var real = 9;
-			var plan = 11;
-			var realper = (real)/2;
-			var planper = (plan)/2;
-			var tbody = document.getElementById("gante-tbody");
-			while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
-			{
-				tbody.removeChild(tbody.firstChild);
-			}
-			var entry = "<tr>";
-			for(var i = 0;i<planper;++i)
-			{
-				entry+='<td style="background-color:red"></td>';
-			}
-			entry+='<td style="background-color:red;font-size:20px;color:black;">'+55+'%</td>';
-			for(var i = planper+1;i<plan;++i)
-			{
-				entry+='<td style="background-color:red"></td>';
-			}
-			for(var i = plan;i<20;++i)
-			{
-				entry+='<td style="background-color:yellow"></td>';
-			}
-			entry+="</tr><tr>";
-			
-			for(var i = 0;i<realper;++i)
-			{
-				entry+='<td style="background-color:green"></td>';
-			}
-			entry+='<td style="background-color:green;font-size:20px;color:black;">'+45+'%</td>';
-			for(var i = realper+1;i<real;++i)
-			{
-				entry+='<td style="background-color:green"></td>';
-			}
-			for(var i = real;i<plan;++i)
-			{
-				entry+='<td style="background-color:red"></td>';
-			}
-			for(var i = plan;i<20;++i)
-			{
-				entry+='<td style="background-color:yellow"></td>';
-			}
-			entry+="</tr>";
-			$("#gante-tbody").append(entry);
-			/*var real_span = document.getElementById("real_progress");
+			real = 46;
+			plan = 50;
+			var real_span = document.getElementById("real_progress");
 			var plan_span = document.getElementById("plan_progress");
 			real_span.style.width=real+"%";
 			plan_span.style.width=plan+"%";
 			real_span.innerHTML=real+"%";
-			plan_span.innerHTML=plan+"%";*/
+			plan_span.innerHTML=plan+"%";
 		}
     },
 	onUncheck: function (row, $element) {

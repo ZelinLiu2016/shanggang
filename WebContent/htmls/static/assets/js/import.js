@@ -9,25 +9,43 @@ function InitLoadImport()
 	$("#btn_edit").show();
 	$("#btn_delete").show();
 	$("#btn_show").hide();
+	$("#toolbar_search").show();
+	$("#btn_search").show();
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();
-	$("#detail_information").show();
+	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").show();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
 	$.ajax({
         method: "GET",
         url: "/shanggang/ship/list",
         success: function (data) {
-        	console.log(data);
 			fillBoatData(data);
-        	console.log(allBoat);
+			fillMmsiData(data);
 			InitImportTable();
             },
 		error: function () {       
             alert("fail");
         }  
     });
+	
+	var thead = document.getElementById("info_head");
+	while(thead.hasChildNodes()) //当div下还存在子节点时 循环继续  
+	{
+		thead.removeChild(thead.firstChild);
+	}
+	entry = '<tr><th width="20%">船老大</th><th width="20%">联系方式</th><th width="20%">船长</th><th width="20%">船宽</th><th width="20%">满载量</th></tr>';
+	$("#info_head").append(entry);
+	var tbody = document.getElementById("info_body");
+	while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
+	{
+		tbody.removeChild(tbody.firstChild);
+	}
+	entry = '<tr><td></td><td></td><td></td><td></td><td></td></tr>'
+	$("#info_body").append(entry);
 }
 
 function RefreshLoadImport()
@@ -58,17 +76,18 @@ function InitImportTable() {
 	singleSelect:true,
 	
 	onClickRow: function (row, $element) {
-		var tbody = document.getElementById("company-tbody");
+		var tbody = document.getElementById("info_body");
 		var mmsi = row.mmsi;
 		while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
 		{
 			tbody.removeChild(tbody.firstChild);
 		}
-		entry = "";
-		entry += '<tr><td>船老大</td><td>'+allMmsi[mmsi].boss+'</td><td>联系方式</td><td>'+allMmsi[mmsi].bossphone+'</td>';
-		entry += '<tr><td>船长</td><td>'+allMmsi[mmsi].length+'</td><td>船宽</td><td>'+allMmsi[mmsi].width+'</td>';
-		entry += '<tr><td>满载量</td><td>'+allMmsi[mmsi].capacity+'</td><td></td><td></td></tr>';
-		$("#company-tbody").append(entry);
+		entry = '<tr><td>'+allMmsi[mmsi].boss;
+		entry += '</td><td>'+allMmsi[mmsi].bossphone;
+		entry += '</td><td>'+allMmsi[mmsi].length;
+		entry += '</td><td>'+allMmsi[mmsi].width;
+		entry += '</td><td>'+allMmsi[mmsi].capacity+'</td></tr>';
+		$("#info_body").append(entry);
     },
 	
     columns: [
@@ -99,6 +118,25 @@ function InitImportTable() {
     }
 	]});
     $('#datatable').show();
+	$("#btn_search").off('click');
+	$("#btn_search").click(function () {
+			var search = $("#toolbar_search").val();
+			postData = {"str": search};
+			$.ajax({
+				type: "POST",
+				url: "/shanggang/ship/mohu",
+				data: JSON.stringify(postData),
+				contentType:"application/json",
+				success: function (data) {
+					console.log(data);
+					fillBoatData(data);
+					RefreshImportTable();
+				},       
+				error: function () {       
+					alert("fail");       
+				}       
+			});
+        });
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
 			document.getElementById("import_update_label").className = "modal-title glyphicon glyphicon-plus";

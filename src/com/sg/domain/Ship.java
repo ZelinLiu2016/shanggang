@@ -13,7 +13,15 @@ public class Ship {
 	private String cellphone;
 	private int route_id;
 	private String owner;
+	private String owner_phone;
 	
+	
+	public String getOwner_phone() {
+		return owner_phone;
+	}
+	public void setOwner_phone(String owner_phone) {
+		this.owner_phone = owner_phone;
+	}
 	public String getOwner() {
 		return owner;
 	}
@@ -93,9 +101,9 @@ public class Ship {
 	public String toString() {
 		return "Ship [mmsi=" + mmsi + ", shipname=" + shipname + ", imo=" + imo + ", length=" + length + ", width="
 				+ width + ", shiptype=" + shiptype + ", capacity=" + capacity + ", fleet_id=" + fleet_id + ", contact="
-				+ contact + ", cellphone=" + cellphone + ", route_id=" + route_id + ", owner=" + owner + "]";
+				+ contact + ", cellphone=" + cellphone + ", route_id=" + route_id + ", owner=" + owner
+				+ ", owner_phone=" + owner_phone + "]";
 	}
-	
 	
 	
 }

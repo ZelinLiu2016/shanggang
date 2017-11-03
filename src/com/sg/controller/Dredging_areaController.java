@@ -51,6 +51,7 @@ public class Dredging_areaController {
 		dredging.setDredging_id(json.getInt("area_id"));
 		dredging.setLocation(json.getString("location"));
 		dredging.setDredging_name(json.getString("name"));
+		dredging.setHarbor(json.getString("harbor"));
 		SqlSession session = this.getSession();
         session.insert("addDredgingArea",dredging);
         session.commit();
@@ -81,6 +82,7 @@ public class Dredging_areaController {
 		dredging.setDredging_id(json.getInt("area_id"));
 		dredging.setLocation(json.getString("location"));
 		dredging.setDredging_name(json.getString("name"));
+		dredging.setHarbor(json.getString("harbor"));
 		SqlSession session = this.getSession();
 		 session.update("updateDredgingArea",dredging);
 		 session.commit();

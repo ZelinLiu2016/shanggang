@@ -30,5 +30,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         <mapper resource="com/sg/domain/Dredging_area.xml"/>
         <mapper resource="com/sg/domain/Trajectory.xml"/>
         <mapper resource="com/sg/domain/InvertIndex.xml"/>
+        <mapper resource="com/sg/domain/Workrecord.xml"/>
     </mappers>
 </configuration>

@@ -3,6 +3,11 @@ postData = {};
 
 function ProjectErrorInit()
 {
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L3").attr("class", "LeftTextSelect");
+	$("#L2L3L5").attr("class", "LeftTextSelect");
+	
 	$("#toolbar").hide();
 	
 	$("#mapBody").hide();
@@ -16,6 +21,8 @@ function ProjectErrorInit()
 	$("#monitor_show").hide();
 	$("#error_mark").show();
 	$("#error_handle").show();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	
 	InitProjectErrorTable();
 }

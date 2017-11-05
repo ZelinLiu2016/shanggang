@@ -3,6 +3,10 @@ postData = {};
 
 function DataManageInit()
 {
+	CleanAll();
+	$("#L3").attr("class", "LeftTextSelect");
+	$("#L3L1").attr("class", "LeftTextSelect");
+	
 	$("#toolbar").show();
 	$("#btn_backup").show();
 	$("#btn_add").hide();
@@ -13,6 +17,10 @@ function DataManageInit()
 	$("#mapBody").hide();
 	$("#data_clean").show();
 	$("#monitor_search_modal").hide();
+	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
+	$("#project_progress").hide();
 	$('#datamanage_clean_input').val(15);
 	$.ajax({
         method: "GET",

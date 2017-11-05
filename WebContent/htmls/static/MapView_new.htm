@@ -70,6 +70,7 @@
     <script src="assets/js/dynamic.js"></script>
 	<script src="assets/js/initial.js"></script>
 	<script src="assets/js/shujun.js"></script>
+	<script src="assets/js/menucolor.js"></script>
 	<!--script src="assets/js/test.js"></script-->
 
 	<script type="text/javascript">
@@ -104,61 +105,61 @@
 			<div class="side-bar">
 			
 			<ul class="topnav menu-left-nest" >
-                <li>
-                    <a href="#">
+                <li class="menu1">
+                    <a href="#" onclick="l1()">
                     <img src = "image/i_4.png">
-					<span class="LeftText">静态数据管理</span>
+					<span id="L1" class="LeftText">静态数据管理</span>
 					</a>
                     <ul>
                         <li >
-                        <a id = "set-project-param" class="tooltip-tip ajax-load" href="#" title="工程基本信息" onclick = "InitLoadParam()">
+                        <a id = "set-project-param" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="工程基本信息" onclick = "InitLoadParam()">
                             <img src = "image/i_1.png">
-                            <span class="LeftText">工程基本信息</span>
+                            <span id="L1L1" class="LeftText">工程基本信息</span>
                         </a>
 						</li>
                         <li >
-                        <a id = "boat-import" class="tooltip-tip ajax-load" href="#" title="施工船舶信息" onclick = "InitLoadImport()">
+                        <a id = "boat-import" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="施工船舶信息" onclick = "InitLoadImport()">
                             <img src = "image/i_3.png">
-                            <span class="LeftText">施工船舶信息</span>
+                            <span id="L1L2" class="LeftText">施工船舶信息</span>
                         </a>
 						</li>
 						<li >
-                        <a id = "boat-management" class="tooltip-tip ajax-load" href="#" title="参建单位信息" onclick = "InitLoadManage()">
+                        <a id = "boat-management" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="参建单位信息" onclick = "InitLoadManage()">
                             <img src = "image/i_7.png">
-                            <span class="LeftText">参建单位信息</span>
+                            <span id="L1L3" class="LeftText">参建单位信息</span>
                         </a>
 						</li>
 						<li >
-                        <a id = "shujun" class="tooltip-tip ajax-load" href="#" title="疏浚区域信息" onclick = "SetShujunTable()">
+                        <a id = "shujun" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="疏浚区域信息" onclick = "SetShujunTable()">
                             <img src = "image/i_2.png">
-                            <span class="LeftText">疏浚区域信息</span>
+                            <span id="L1L4" class="LeftText">疏浚区域信息</span>
                         </a>
 						</li>
 						<li >
-                        <a id = "paoni" class="tooltip-tip ajax-load" href="#" title="抛泥区域信息" onclick = "SetPaoniTable()">
+                        <a id = "paoni" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥区域信息" onclick = "SetPaoniTable()">
                             <img src = "image/i_2.png">
-                            <span class="LeftText">抛泥区域信息</span>
+                            <span id="L1L5" class="LeftText">抛泥区域信息</span>
                         </a>
 						</li>
                         <li >
-                        <a id = "hangdao" class="tooltip-tip ajax-load" href="#" title="抛泥航线信息" onclick = "SetRouteTable()">
+                        <a id = "hangdao" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥航线信息" onclick = "SetRouteTable()">
                             <img src = "image/i_2.png">
-                            <span class="LeftText">抛泥航线信息</span>
+                            <span id="L1L6" class="LeftText">抛泥航线信息</span>
                         </a>
                         </li>
                     </ul>
                 </li>
                 
                 <li>
-                    <a href="#">
+                    <a href="#" onclick="l2()">
                     <img src = "image/i_6.png">
-					<span class="LeftText">动态数据管理</span>
+					<span id="L2" class="LeftText">动态数据管理</span>
 					</a>
                     <ul>
 						<li>
-						<a href="#" title="">
+						<a href="#" title="" style="border-radius:0px;padding-left:40px;" onclick="l2l1()">
                             <img src = "image/i_3.png">
-                            <span class="LeftText">工程进度统计</span>
+                            <span id="L2L1" class="LeftText">工程进度统计</span>
                         </a>
 						<ul>
 							<!--li >
@@ -168,102 +169,93 @@
 							</a>
 							</li-->
 							<li >
-							<a id = "fleet-stats" class="tooltip-tip ajax-load" href="#" title="船队数据统计" onclick = "FleetStatsInit()">
-								<img src = "image/i_1.png">
-								<span class="LeftText">单位数据统计</span>
+							<a id = "fleet-stats" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="船队数据统计" onclick = "FleetStatsInit()">
+								<span id="L2L1L1" class="LeftText">单位数据统计</span>
 							</a>
 							</li>
 							<li >
-							<a id = "port-stats" class="tooltip-tip ajax-load" href="#" title="港区数据统计" onclick = "PortStatsInit()">
-								<img src = "image/i_1.png">
-								<span class="LeftText">港区数据统计</span>
+							<a id = "port-stats" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="港区数据统计" onclick = "PortStatsInit()">
+								<span id="L2L1L2" class="LeftText">港区数据统计</span>
 							</a>
 							</li>
 						</ul>
 					    </li>
 						<li >
-                        <a href="#" title="">
+                        <a href="#" style="border-radius:0px;padding-left:40px;" title="" onclick="l2l2()">
                             <img src = "image/i_12.png">
-                            <span class="LeftText">船舶监控</span>
+                            <span id="L2L2" class="LeftText">船舶监控</span>
                         </a>
                         <ul>
                             <li >
-                            <a id = "rt-monitor" class="tooltip-tip ajax-load" href="#" title="实时监控" onclick = "RTMonInit()">
-                                <img src = "image/i_3.png">
-                                <span class="LeftText">实时监控</span>
+                            <a id = "rt-monitor" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="实时监控" onclick = "RTMonInit()">
+                                <span id="L2L2L1" class="LeftText">实时监控</span>
                             </a>
                             </li>
                             <li >
-                            <a id = "hs-monitor" class="tooltip-tip ajax-load" href="#" title="轨迹回放" onclick = "HSMonInit()">
-                                <img src = "image/i_2.png">
-                                <span class="LeftText">轨迹回放</span>
+                            <a id = "hs-monitor" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="轨迹回放" onclick = "HSMonInit()">
+                                <span id="L2L2L2" class="LeftText">轨迹回放</span>
                             </a>
                             </li>
 							<li >
-                            <a id = "detect" class="tooltip-tip ajax-load" href="#" title="轨迹检测" onclick = "DTMonInit()">
-                                <img src = "image/i_2.png">
-                                <span class="LeftText">轨迹检测</span>
+                            <a id = "detect" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="轨迹检测" onclick = "DTMonInit()">
+                                <span id="L2L2L3" class="LeftText">轨迹检测</span>
                             </a>
                             </li>
                         </ul>
 						</li>
 						<li>
-						<a href="#" title="">
+						<a href="#" style="border-radius:0px;padding-left:40px;" title="" onclick="l2l3()">
                             <img src = "image/i_10.png">
-                            <span class="LeftText">异常检测</span>
+                            <span id="L2L3" class="LeftText">异常检测</span>
+							<span class="label label-warning pull-right" style="height:20px;width:35px;">1002</span>
                         </a>
 						<ul>		
 							<li >
-								<a id = "dirt-error" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError()">
-								<img src = "image/i_1.png">
-								<span class="LeftText">抛泥异常</span>
+								<a id = "dirt-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError()">
+								<span id="L2L3L1" class="LeftText">抛泥异常</span>
 								</a>
 							</li>
 							<li >
-								<a id = "run-error" class="tooltip-tip ajax-load" href="#" title="航行异常" onclick = "RunError()">
-								<img src = "image/i_1.png">
-								<span class="LeftText">航行异常</span>
+								<a id = "run-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="航行异常" onclick = "RunError()">
+								<span id="L2L3L2" class="LeftText">航行异常</span>
 								</a>
 							</li>
 							<li >
-								<a id = "speed-error" class="tooltip-tip ajax-load" href="#" title="速度异常" onclick = "SpeedError()">
-								<img src = "image/i_1.png">
-								<span class="LeftText">速度异常</span>
+								<a id = "speed-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="速度异常" onclick = "SpeedError()">
+								<span id="L2L3L3" class="LeftText">速度异常</span>
 								</a>
 							</li>
 							<li >
-								<a id = "weather-error" class="tooltip-tip ajax-load" href="#" title="天气异常" onclick = "WeatherError()">
-								<img src = "image/i_1.png">
-								<span class="LeftText">天气异常</span>
+								<a id = "weather-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="天气异常" onclick = "WeatherError()">
+								<span id="L2L3L4" class="LeftText">天气异常</span>
 								</a>
 							</li>
 							<li >
-								<a id = "process-error" class="tooltip-tip ajax-load" href="#" title="进度异常" onclick = "ProjectErrorInit()">
-								<img src = "image/i_1.png">
-								<span class="LeftText">进度异常</span>
+								<a id = "process-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="进度异常" onclick = "ProjectErrorInit()">
+								<span id="L2L3L5" class="LeftText">进度异常</span>
 								</a>
 							</li>
 						</ul>
 					    </li>
 						<li>
-						<a id = "blacklist" class="tooltip-tip ajax-load" href="#" title="黑名单" onclick = "InitBlackList()">
+						<a id = "blacklist" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="黑名单" onclick = "InitBlackList()">
                             <img src = "image/i_10.png">
-                            <span class="LeftText">黑名单</span>
+                            <span id="L2L4" class="LeftText">黑名单</span>
                         </a>
 						</li>
                         
                     </ul>
                 </li>
 				<li >
-                    <a href="#">
+                    <a href="#" onclick="l3()">
                     <img src = "image/i_9.png">
-                    <span class="LeftText">系统数据管理</span>
+                    <span id="L3" class="LeftText">系统数据管理</span>
                     </a>
                     <ul>
                         <li>
-    					<a id = "data-manage" class="tooltip-tip ajax-load" href="#" title="数据管理" onclick = "DataManageInit()">
+    					<a id = "data-manage" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="数据管理" onclick = "DataManageInit()">
     						<img src = "image/i_7.png">
-    						<span class="LeftText">数据备份清洗</span>
+    						<span id="L3L1" class="LeftText">数据备份清洗</span>
     					</a>
                         </li>
                     </ul>

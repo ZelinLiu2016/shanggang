@@ -3,6 +3,10 @@ var postData = {};
 var coorDict = {};
 var coorNum = 4;
 function SetPaoniTable() {
+	CleanAll();
+	$("#L1").attr("class", "LeftTextSelect");
+	$("#L1L5").attr("class", "LeftTextSelect");
+	
 	$("#toolbar").show();
 	$("#btn_backup").hide();
 	$("#btn_add").show();

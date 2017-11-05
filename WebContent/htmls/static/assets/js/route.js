@@ -7,6 +7,10 @@ var allDumping = {};
 var routeDict = {};
 var coorNum = 4;
 function SetRouteTable() {
+	CleanAll();
+	$("#L1").attr("class", "LeftTextSelect");
+	$("#L1L6").attr("class", "LeftTextSelect");
+	
 	$("#toolbar").show();
 	$("#btn_backup").hide();
 	$("#btn_add").show();

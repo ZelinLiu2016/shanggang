@@ -3,6 +3,10 @@ var postData = {};
 var sj_coorDict = {};
 var coorNum = 4;
 function SetShujunTable() {
+	CleanAll();
+	$("#L1").attr("class", "LeftTextSelect");
+	$("#L1L4").attr("class", "LeftTextSelect");
+	
 	$("#toolbar").show();
 	$("#btn_backup").hide();
 	$("#btn_add").show();

@@ -9,9 +9,8 @@ allFleet = [{"fleetid":"中港建务三公司","day":10,"week":60,"month":200}];
 allPort = [{"port":"YANGSHAN","day":10,"week":60,"month":200}];
 
 function BoatStatsInit()
-{
+{	
 	$("#toolbar").hide();
-	
 	$("#mapBody").hide();
 	$("#data_clean").hide();
 	$("#monitor_search_modal").hide();
@@ -58,6 +57,11 @@ function InitBoatStatsTable()
 
 function FleetStatsInit()
 {
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L1").attr("class", "LeftTextSelect");
+	$("#L2L1L1").attr("class", "LeftTextSelect");
+	
 	$("#toolbar").hide();
 	
 	$("#mapBody").hide();
@@ -156,6 +160,11 @@ function InitFleetStatsTable()
 }
 function PortStatsInit()
 {
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L1").attr("class", "LeftTextSelect");
+	$("#L2L1L2").attr("class", "LeftTextSelect");
+	
 	$("#toolbar").hide();
 	
 	$("#mapBody").hide();

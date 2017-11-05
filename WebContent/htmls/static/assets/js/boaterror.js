@@ -78,6 +78,11 @@ function InitBoatErrorTable() {
 
 function DirtError()
 {
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L3").attr("class", "LeftTextSelect");
+	$("#L2L3L1").attr("class", "LeftTextSelect");
+	
 	API_DelAllShips();
 	abtype = "Dumping_area Abnormal";
 	$("#toolbar").hide();
@@ -86,6 +91,8 @@ function DirtError()
 	$("#btn_edit").hide();
 	$("#btn_delete").hide();
 	$("#btn_show").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	
 	$("#monitor_button").off('click');
 	$("#monitor_show").off('click');
@@ -225,6 +232,11 @@ function InitDirtTable()
 
 function RunError()
 {
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L3").attr("class", "LeftTextSelect");
+	$("#L2L3L2").attr("class", "LeftTextSelect");
+	
 	API_DelAllShips();
 	abtype = "Route Abnormal";
 	$("#toolbar").hide();
@@ -278,6 +290,8 @@ function RunError()
 	$("#monitor_show").show();
 	$("#error_mark").show();
 	$("#error_handle").show();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	$.ajax({
         method: "GET",
         url: "/shanggang/abnormalinfo/listallabnormal",
@@ -363,6 +377,11 @@ function InitRunTable()
 
 function SpeedError()
 {
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L3").attr("class", "LeftTextSelect");
+	$("#L2L3L3").attr("class", "LeftTextSelect");
+	
 	abtype = "Exceed the speed limit Abnormal";
 	$("#toolbar").show();
 	$("#btn_backup").hide();
@@ -384,6 +403,8 @@ function SpeedError()
 	$("#monitor_show").hide();
 	$("#error_mark").show();
 	$("#error_handle").show();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	
 	$.ajax({
         method: "GET",
@@ -474,6 +495,11 @@ function InitSpeedTable()
 
 function WeatherError()
 {
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L3").attr("class", "LeftTextSelect");
+	$("#L2L3L4").attr("class", "LeftTextSelect");
+	
 	abtype = "Weather abnormal";
 	$("#toolbar").show();
 	$("#btn_backup").hide();
@@ -495,6 +521,8 @@ function WeatherError()
 	$("#monitor_show").hide();
 	$("#error_mark").show();
 	$("#error_handle").show();
+	$("#detailtable").hide();
+	$("#info_div").hide();
 	
 	$.ajax({
         method: "GET",

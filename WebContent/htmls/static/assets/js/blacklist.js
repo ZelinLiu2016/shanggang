@@ -3,10 +3,18 @@ postData = {};
 
 function InitBlackList()
 {
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L4").attr("class", "LeftTextSelect");
+	
 	$('#data_clean').hide();
 	$('#mapBody').hide();
 	$("#monitor_search_modal").hide();
 	$('#toolbar').hide();
+	$("#detail_information").hide();
+	$("#detailtable").hide();
+	$("#info_div").hide();
+	$("#project_progress").hide();
 	fillBlackListData();
 	InitBlackListTable();
 }

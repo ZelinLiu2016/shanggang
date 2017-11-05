@@ -3,6 +3,10 @@ postData = {};
 
 function InitLoadImport()
 {
+	CleanAll();
+	$("#L1").attr("class", "LeftTextSelect");
+	$("#L1L2").attr("class", "LeftTextSelect");
+	
     $("#toolbar").show();
 	$("#btn_backup").hide();
 	$("#btn_add").show();

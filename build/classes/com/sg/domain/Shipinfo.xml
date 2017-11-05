@@ -27,6 +27,11 @@
 	    	select * from ${tablename} where ti &gt; #{time}  AND ti &lt; DATE_ADD( #{time} ,INTERVAL 1 HOUR) order by ti asc
 	    </select>
 	    
+	    <select id="getinfoofdate" parameterType="Project" resultMap="ShipinfoMap">
+	    	<bind name="tablename" value="'ship_' + _parameter.mmsilist" />
+	    	select * from ${tablename} where ti like CONCAT(#{beginDate},'%') 
+	    </select>
+	    
 	    <select id="getinfoduring" parameterType="Project" resultMap="ShipinfoMap">
 	    	<bind name="tablename" value="'ship_' + _parameter.mmsilist" />
 	    	select * from ${tablename} where ti &gt; #{beginDate}  AND ti &lt; #{endDate} order by ti asc

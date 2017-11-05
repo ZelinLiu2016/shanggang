@@ -5,6 +5,11 @@ historyData = [];
 
 function RTMonInit()
 {
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L2").attr("class", "LeftTextSelect");
+	$("#L2L2L1").attr("class", "LeftTextSelect");
+	
 	$.ajax({
         method: "GET",
         url: "/shanggang/ship/list",
@@ -174,6 +179,11 @@ function MonitorSearch()
 function HSMonInit()
 {
 	//API_SetMapViewCenter(121.668, 31.338, 160000);
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L2").attr("class", "LeftTextSelect");
+	$("#L2L2L2").attr("class", "LeftTextSelect");
+	
 	$.ajax({
         method: "GET",
         url: "/shanggang/ship/list",
@@ -300,6 +310,11 @@ function HSMonitorSearch()
 function DTMonInit()
 {
 	//API_SetMapViewCenter(121.668, 31.338, 160000);
+	CleanAll();
+	$("#L2").attr("class", "LeftTextSelect");
+	$("#L2L2").attr("class", "LeftTextSelect");
+	$("#L2L2L3").attr("class", "LeftTextSelect");
+	
 	$.ajax({
         method: "GET",
         url: "/shanggang/ship/list",

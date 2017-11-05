@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="WorkrecordMap" type="com.sg.domain.Workrecord">
+		<id column="mmsi" property="mmsi" jdbcType="CHAR" />
+		<result column="date" property="date" jdbcType="CHAR" />
+		<result column="indred" property="indred" jdbcType="CHAR" />
+		<result column="exitdred" property="exitdred" jdbcType="CHAR" />
+		<result column="indump" property="indump" jdbcType="CHAR" />
+		<result column="exitdump" property="exitdump" jdbcType="CHAR"/>
+		<result column="state" property="state" jdbcType="INTEGER" />
+	</resultMap>
+		
+	    <insert id="addworkrecord" parameterType="Workrecord" >
+	        insert into workrecord  values (#{mmsi},#{date},#{indred},#{exitdred},#{indump},#{exitdump},#{state})    
+	    </insert>
+	    <select id="listonedayrecord" parameterType="Workrecord" resultMap="WorkrecordMap">
+	    	select * from workrecord where mmsi=#{mmsi} AND date=#{date}
+	    </select>
+	    <select id="getlastrecord" parameterType="String" resultMap="WorkrecordMap">
+	    	select * from workrecord where mmsi=#{mmsi} order by indred desc limit 1
+	    </select>
+	    <delete id="deletework" parameterType="Workrecord">
+	    	delete from workrecord where mmsi=#{mmsi} AND indred=#{indred}
+	    </delete>
+	</mapper>

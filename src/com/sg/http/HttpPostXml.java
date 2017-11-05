@@ -73,7 +73,7 @@ public class HttpPostXml {
 	public static void main(String[] args) throws DocumentException, IOException {
 //		Map<String, String> mapParam = new HashMap<String, String>();
 ////		mapParam.put("MMSI", "412370603");
-		String xmlInfo = "<?xml version='1.0' encoding='gb2312'?><sendparament><MMSI>413403090</MMSI><starttime>2016-07-13 01:00:00</starttime><endtime>2016-07-13 23:59:00</endtime></sendparament>";
+		String xmlInfo = "<?xml version='1.0' encoding='gb2312'?><sendparament><MMSI>413380190</MMSI><starttime>2017-11-03 10:35:00</starttime><endtime>2017-11-03 23:59:00</endtime></sendparament>";
 		String pathUrl = "http://112.126.75.47/xmlr/getzjshiptrajectory.do";
 //		String xmlInfo = "<?xml version='1.0' encoding='gb2312' ?>"+"<sendparament>"+"<MMSI>413044840</MMSI>"+"<starttime>2017-06-25 00:00:00</starttime>"+"<endtime>2017-06-26 00:00:00</endtime>"+"</sendparament>";
 //		String pathUrl = "http://112.126.75.47/xmlr/getzjshiptrajectory.do";

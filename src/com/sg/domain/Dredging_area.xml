@@ -9,10 +9,11 @@
 		<id column="area_id" property="dredging_id" jdbcType="INTEGER" />
 		<result column="location" property="location" jdbcType="CHAR" />	
 		<result column="areaname" property="dredging_name" jdbcType="CHAR"/>
+		<result column="harbor" property="harbor" jdbcType="CHAR"/>
 	</resultMap>
 	
 	    <insert id="addDredgingArea" parameterType="Dredging_area" >
-	        insert into dredging_area   values (#{dredging_id},#{location},#{dredging_name})    
+	        insert into dredging_area   values (#{dredging_id},#{location},#{dredging_name},#{harbor})    
 	    </insert>
 	   
 	    <delete id="deleteDredgingArea" parameterType="String" >
@@ -29,7 +30,7 @@
 			select location from dredging_area where area_id=#{area_id}
 		</select>
 	    <update id="updateDredgingArea" parameterType="Dredging_area" >
-	        update dredging_area set area_id=#{dredging_id}, location=#{location},areaname=#{dredging_name}  where area_id=#{dredging_id}    
+	        update dredging_area set area_id=#{dredging_id}, location=#{location},areaname=#{dredging_name},harbor=#{harbor}  where area_id=#{dredging_id}    
 	    </update>
 
 	

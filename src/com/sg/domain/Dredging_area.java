@@ -12,7 +12,14 @@ public class Dredging_area {
 	public int dredging_id;
 	public String location;
 	public String dredging_name;
+	public String harbor;
 	
+	public String getHarbor() {
+		return harbor;
+	}
+	public void setHarbor(String harbor) {
+		this.harbor = harbor;
+	}
 	public int getDredging_id() {
 		return dredging_id;
 	}
@@ -34,7 +41,8 @@ public class Dredging_area {
 	@Override
 	public String toString() {
 		return "Dredging_area [dredging_id=" + dredging_id + ", location=" + location + ", dredging_name="
-				+ dredging_name + "]";
+				+ dredging_name + ", harbor=" + harbor + "]";
 	}
+	
 	
 }

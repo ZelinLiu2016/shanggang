@@ -54,6 +54,7 @@ public class ShipController {
 		ship.setCellphone(json.getString("cellphone"));
 		ship.setRoute_id(json.getInt("route_id"));
 		ship.setOwner(json.getString("owner"));
+		ship.setOwner_phone(json.getString("owner_phone"));
 		SqlSession session = this.getSession();
 		session.insert("addShip",ship);
 		session.update("createNewtable",json.getString("mmsi"));
@@ -96,6 +97,7 @@ public class ShipController {
 		ship.setCellphone(json.getString("cellphone"));
 		ship.setRoute_id(json.getInt("route_id"));
 		ship.setOwner(json.getString("owner"));
+		ship.setOwner_phone(json.getString("owner_phone"));
 		SqlSession session = this.getSession();
 		session.update("updateShip",ship);
 		session.commit();

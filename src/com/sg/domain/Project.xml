@@ -53,4 +53,7 @@
 		<select id="getMmsilist" parameterType="int" resultType="String">
 			select MMSILIST from project where PROJECT_ID=#{project_id}
 		</select> 
+		<select id="getallmmsilist" resultType="String">
+			select mmsilist from project 
+		</select>
 	</mapper>

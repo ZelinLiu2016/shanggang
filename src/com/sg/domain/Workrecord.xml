@@ -23,6 +23,9 @@
 	    <select id="getlastrecord" parameterType="String" resultMap="WorkrecordMap">
 	    	select * from workrecord where mmsi=#{mmsi} order by indred desc limit 1
 	    </select>
+	    <select id="getlastrecord01" parameterType="String" resultMap="WorkrecordMap">
+	    	select * from workrecord where mmsi=#{mmsi} order by exitdump desc limit 1
+	    </select>
 	    <select id="getabnormal" parameterType="String" resultMap="WorkrecordMap">
 	    	select * from workrecord where state=1 AND mmsi=#{mmsi}
 	    </select>

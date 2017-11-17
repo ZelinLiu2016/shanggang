@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.baidu.mapapi.model.LatLng;
+import com.sg.abnormalDetection.Point;
 import com.sg.abnormalDetection.Quadrilateral;
 import com.sg.domain.Project;
 import com.sg.domain.Shipinfo;
@@ -62,7 +63,7 @@ public class WorkloadTimerTask extends TimerTask {
 			DateFormat d1 = DateFormat.getDateInstance();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //			String date = d1.format(now);
-			String date = "2017-11-02";
+			String date = d1.format(now);
 			Project info = new Project();
 			info.setMmsilist(mmsi);
 			info.setBeginDate(date);
@@ -191,20 +192,316 @@ public class WorkloadTimerTask extends TimerTask {
 		session.close();
 	}
 	
+	public static void  huangpu() throws IOException, NumberFormatException, ParseException{
+		SqlSession session = RequestTimerTask.getSession();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		String date = d1.format(now);
+		String begin = "2017-11-13 00:00:00";
+		String end = "2017-11-15 23:59:59";
+		String mmsi="413358270";
+		Project info = new Project();
+		info.setMmsilist(mmsi);
+		info.setBeginDate(begin);
+		info.setEndDate(end);
+//		String harbor_str = "30:38:11.08236,122:02:24.80746-30:37:54.27581,122:02:08.48830-30:37:03.41386,122:03:03.97582-30:35:56.67173,122:04:35.83018-30:35:50.00181,122:05:04.62764-30:36:09.94897,122:05:21.43164-30:37:01.33744,122:04:01.26801";
+//		String dumping_str = "31:16:32,121:45:39-31:16:44,121:45:51-31:16:24,121:46:20-31:16:11,121:46:08";
+		
+		String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(mmsi));
+		String harbor_id = session.selectOne("getdredgingareabyid",route_id);
+		String harbor_str = session.selectOne("getDredgingLocation",harbor_id);
+		String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
+		String dumping_str = session.selectOne("getDumpingLocation",dumping_id);
+//		Quadrilateral harbor = new Quadrilateral(harbor_str);
+		Quadrilateral dumping = new Quadrilateral(dumping_str);
+		
+		
+		if(session.selectList("getinfoduring",info)==null)
+			return;
+		
+		List<Shipinfo> location_list = session.selectList("getinfoduring",info);
+//		System.out.println(location_list);
+//		System.out.println(location_list.get(0).ti);
+		int len = location_list.size();
+		System.out.println("the length of the sequence:"+len);
+		int[] state = new int[len];
+		int i=0;
+		for(Shipinfo it:location_list){
+			LatLng point = new LatLng(Double.valueOf(it.lat),Double.valueOf(it.lon));
+			if(dumping.isContainsPoint(point))
+				state[i]=2; //in dumping area
+			else if(rectangdis(dumping_str, point)<300)
+				state[i]=4;
+			else
+				state[i]=3;// neither in  dumping area nor near
+//			if(state[i]!=3)
+				System.out.print(state[i]+",");
+			i=i+1;
+		}
+		System.out.println("the length of state:"+state.length);
+		
+		boolean wait2 = true;
+		
+		Workrecord workrec = new Workrecord();
+		workrec.setMmsi(mmsi);
+		
+		workrec.setIndred("1977-00-00 00:00:00");
+		workrec.setExitdred("1977-00-00 00:00:00");
+		workrec.setIndump("");
+		workrec.setExitdump("");
+		workrec.setState(0);
+		for(int j=0;j<state.length;j++){
+			if(state[j]==2&&wait2){
+				workrec.setIndump(location_list.get(j).ti);
+				wait2 = false;
+				System.out.println("进入抛泥区域！！"+location_list.get(j).ti);
+			}
+			else if(state[j]==3&&!wait2){
+				System.out.println("出抛泥区域！！"+location_list.get(j).ti);
+				workrec.setExitdump(location_list.get(j).ti);
+				wait2 = true;
+				String date = location_list.get(j).ti.substring(0, 10);
+				workrec.setDate(date);
+				workrec.setState(0);
+				Workrecord lastrec = session.selectOne("getlastrecord01",mmsi);
+				if(lastrec==null||(sdf.parse(workrec.exitdump).getTime()-sdf.parse(lastrec.exitdump).getTime())/1000/60>180){
+					session.insert("addworkrecord",workrec);
+					System.out.println(workrec);
+					List<String> recorddate = session.selectList("listMmsiRecorddate",Integer.valueOf(mmsi));
+					Workload_day workload = new Workload_day();
+					workload.setMmsi(Integer.valueOf(mmsi));
+					workload.setRecorddate(date);
+					if(!recorddate.contains(date)){
+						workload.setWorkload(1);
+						session.insert("addWorkload",workload);
+					}
+					else
+						session.update("workloadincrease",workload);
+				}				
+				workrec.setIndump("");
+				workrec.setExitdump("");
+				workrec.setState(0);
+				session.commit();
+				}	
+			else if(state[j]==4){
+				boolean abnormal = true;
+				int k=1;
+				while(j+k<state.length&&k<=2500){
+					if(state[j+k]==2){
+						abnormal = false;
+						break;
+					}				
+					k++;
+				}
+				while(j-k>=0&&k<=2500){
+					if(state[j-k]==2){
+						abnormal = false;
+						break;
+					}
+					k++;
+				}
+				if(abnormal==true){
+					System.out.println("未进入抛泥区域抛泥！！！");
+					String date = location_list.get(j).ti.substring(0, 10);
+					workrec.setDate(date);
+					workrec.setIndump(location_list.get(j).ti);
+					workrec.setExitdump(location_list.get(j).ti);
+					workrec.setState(2);//dumping area abnormal-- don,t dump in indicating area
+					Workrecord lastrec = session.selectOne("getlastrecord01",mmsi);
+					System.out.println("上一个?记录："+lastrec);
+					System.out.println("这条记录："+workrec);
+					if(lastrec==null||(sdf.parse(workrec.exitdump).getTime()-sdf.parse(lastrec.exitdump).getTime())/1000/60>480){		
+						//more than 8h between two records
+						session.insert("addworkrecord",workrec);
+						System.out.println(workrec);
+						List<String> recorddate = session.selectList("listMmsiRecorddate",Integer.valueOf(mmsi));
+						Workload_day workload = new Workload_day();
+						workload.setMmsi(Integer.valueOf(mmsi));
+						workload.setRecorddate(date);
+						if(!recorddate.contains(date)){
+							workload.setWorkload(1);
+							session.insert("addWorkload",workload);
+						}
+						else
+							session.update("workloadincrease",workload);						
+					}
+					workrec.setIndump("");
+					workrec.setExitdump("");
+					workrec.setState(0);					
+				}
+			}
+			session.commit();
+			}
+	
+	session.commit();
+	session.close();
+	}
+	
+	public static void others() throws IOException, ParseException{
+		SqlSession session = RequestTimerTask.getSession();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		String date = d1.format(now);
+		String date = "2017-11-13";
+		String mmsi="413358270";
+		Project info = new Project();
+		info.setMmsilist("413465060");
+		info.setBeginDate(date);
+		String harbor_str = "30:38:11.08236,122:02:24.80746-30:37:54.27581,122:02:08.48830-30:37:03.41386,122:03:03.97582-30:35:56.67173,122:04:35.83018-30:35:50.00181,122:05:04.62764-30:36:09.94897,122:05:21.43164-30:37:01.33744,122:04:01.26801";
+		String dumping_str = "30:35:5.786,122:01:19.819-30:34:54.079,122:02:12.051-30:35:08.789,122:02:15.822-30:35:20.787,122:01:23.818";
+		
+//		String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(mmsi));
+//		String harbor_id = session.selectOne("getdredgingareabyid",route_id);
+//		String harbor_str = session.selectOne("getDredgingLocation",harbor_id);
+//		String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
+//		String dumping_str = session.selectOne("getDumpingLocation",dumping_id);
+		Quadrilateral harbor = new Quadrilateral(harbor_str);
+		Quadrilateral dumping = new Quadrilateral(dumping_str);
+		
+		
+		if(session.selectList("getinfoduring",info)==null)
+			return;
+		
+		List<Shipinfo> location_list = session.selectList("getinfoofdate",info);
+//		System.out.println(location_list);
+//		System.out.println(location_list.get(0).ti);
+		int len = location_list.size();
+		System.out.println("the length of the sequence:"+len);
+		int[] state = new int[len];
+		int i=0;
+		for(Shipinfo it:location_list){
+			LatLng point = new LatLng(Double.valueOf(it.lat),Double.valueOf(it.lon));
+			if(harbor.isContainsPoint(point))
+				state[i]=1;  //in harbor
+			else if(dumping.isContainsPoint(point))
+				state[i]=2; //in dumping area
+			else
+				state[i]=3;// neither in harbor nor in dumping area
+//			if(state[i]!=3)
+				System.out.print(state[i]+",");
+			i=i+1;
+			
+		}
+		System.out.println("the length of state:"+state.length);
+		boolean wait1 = true;
+		boolean wait2 = false;
+		
+		Workrecord workrec = new Workrecord();
+		workrec.setMmsi(mmsi);
+		workrec.setDate(date);
+		workrec.setIndred("");
+		workrec.setExitdred("");
+		workrec.setIndump("");
+		workrec.setExitdump("");
+		Workrecord lastrec = session.selectOne("getlastrecord",mmsi);		
+//		System.out.println("上一条记录："+lastrec.exitdump);
+		if(lastrec!=null&&(lastrec.exitdump.equals("1976-11-30 00:00:00.0"))){
+			//the situation that a record is done among two days
+			System.out.println("又跨天任务！！！");
+			session.delete("deletework",lastrec);
+			lastrec.setDate(date);
+			workrec = lastrec;
+			if(workrec.exitdred.equals("1976-11-30 00:00:00.0")||workrec.indump.equals("1976-11-30 00:00:00.0")){
+				wait1 = false;
+				wait2 =true;
+			}
+			else if(workrec.exitdump.equals("1976-11-30 00:00:00.0")){
+				wait1 = false;
+				wait2 = false;
+			}
+		}
+		for(int j=0;j<state.length;j++){
+			if(state[j]==1&&wait1){
+				workrec.setIndred(location_list.get(j).ti);
+				wait1 = false;
+				wait2 = true;
+				System.out.println("进入工作区域！！"+location_list.get(j).ti);
+			}
+			else if(state[j]==2&&wait2){
+				System.out.println("进入抛泥区域！！"+location_list.get(j).ti);
+				workrec.setIndump(location_list.get(j).ti);
+				wait1 = false;
+				wait2 = false;
+				for(int k=j-1;k>0;k--){//back to find time of exit dred
+					if(state[k]==3&&state[k-1]==1){
+						workrec.setExitdred(location_list.get(k).ti);//time of exit dred
+						System.out.println("出工作区域！！"+location_list.get(k).ti);
+						break;
+					}
+				}
+			}
+			else if(state[j]==3&&!wait1&&!wait2){
+				System.out.println("出抛泥区域！！！"+location_list.get(j).ti);
+				workrec.setExitdump(location_list.get(j).ti); 
+				wait1 = true;
+				wait2 = false;
+				double timelen = (sdf.parse(workrec.getExitdred()).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60;
+				System.out.println("挖泥时间："+timelen);
+				if(timelen>240)//unit is min
+					workrec.setState(1);
+				session.insert("addworkrecord",workrec);
+				System.out.println(workrec);
+				List<String> recorddate = session.selectList("listMmsiRecorddate",Integer.valueOf(mmsi));
+				Workload_day workload = new Workload_day();
+				workload.setMmsi(Integer.valueOf(mmsi));
+				workload.setRecorddate(date);
+				if(!recorddate.contains(date)){
+					workload.setWorkload(1);
+					session.insert("addWorkload",workload);
+				}
+				else
+					session.update("workloadincrease",workload);
+				workrec.setIndred("");
+				workrec.setExitdred("");
+				workrec.setIndump("");
+				workrec.setExitdump("");
+				workrec.setState(0);
+			}
+		}
+		if(workrec.indred!=""){
+			//a record is unfinishied in this day
+			System.out.println("有未完成的任务！Q！！");
+			if(workrec.exitdred=="")
+				workrec.exitdred = "1976-11-30 00:00:00";
+			if(workrec.indump=="")
+				workrec.indump = "1976-11-30 00:00:00";
+			if(workrec.exitdump=="")
+				workrec.exitdump = "1976-11-30 00:00:00";
+			session.insert("addworkrecord",workrec);
+		}
+	
+	session.commit();
+	session.close();
+	}
+	
+	public static double rectangdis(String area, LatLng point){
+		String[] recpoint = area.split("-");
+		double mindis = Integer.MAX_VALUE;
+		if(Point.GetLineDistance(point, recpoint[0], recpoint[1])<mindis)
+			mindis = Point.GetLineDistance(point, recpoint[0], recpoint[1]);
+		if(Point.GetLineDistance(point, recpoint[1], recpoint[2])<mindis)
+			mindis = Point.GetLineDistance(point, recpoint[1], recpoint[2]);
+		if(Point.GetLineDistance(point, recpoint[2], recpoint[3])<mindis)
+			mindis = Point.GetLineDistance(point, recpoint[2], recpoint[3]);
+		if(Point.GetLineDistance(point, recpoint[0], recpoint[3])<mindis)
+			mindis = Point.GetLineDistance(point, recpoint[0], recpoint[3]);
+		return mindis;
+	}
+	
 	public static void main(String[] args) throws IOException, ParseException {
 
 //		workrecord();
-		SqlSession session = RequestTimerTask.getSession();
-		List<String> mmsi_str = session.selectList("getallmmsilist");
-		List<String> all_mmsi = new ArrayList<String>();
-		for(String str:mmsi_str){
-			String[] mm = str.split(";");
-			for(int i=0;i<mm.length;i++){
-				if(!all_mmsi.contains(mm[i]))
-					all_mmsi.add(mm[i]);
-			}
-		}
-		for(String mmsi:all_mmsi)
-			System.out.println(mmsi);
+//		SqlSession session = RequestTimerTask.getSession();
+//		List<String> mmsi_str = session.selectList("getallmmsilist");
+//		List<String> all_mmsi = new ArrayList<String>();
+//		for(String str:mmsi_str){
+//			String[] mm = str.split(";");
+//			for(int i=0;i<mm.length;i++){
+//				if(!all_mmsi.contains(mm[i]))
+//					all_mmsi.add(mm[i]);
+//			}
+//		}
+//		for(String mmsi:all_mmsi)
+//			System.out.println(mmsi);
+		huangpu();
 	}
+		
 }

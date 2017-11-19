@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sg.domain.Abnormal_info;
 import com.sg.domain.Company;
 import com.sg.domain.Workrecord;
 
@@ -44,7 +45,6 @@ public class WorkrecordController {
 	@RequestMapping(value="/daterecord",method=RequestMethod.POST)
 	 @ResponseBody
 	public ResponseEntity<List<Workrecord>> add(@RequestBody String pro) throws IOException{
-		System.out.println(pro);
 		JSONObject json = JSONObject.fromObject(pro);
 		System.out.println("获得mmsi为"+json.getString("mmsi")+"的船只日期"+json.getString("date")+"的工作记录");
 		SqlSession session = this.getSession();
@@ -54,5 +54,15 @@ public class WorkrecordController {
 		List<Workrecord> record = session.selectList("listonedayrecord",request);
 		session.close();
 	    return new ResponseEntity<List<Workrecord>>(record, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/abnormal",method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<List<Workrecord>> abnormal(@RequestBody String pro) throws IOException{
+		JSONObject json = JSONObject.fromObject(pro);
+		System.out.println("获得船只"+json.getString("mmsi")+"的异常工作记录");
+		SqlSession session = this.getSession();
+		List<Workrecord> res = session.selectList("getabnormal",json.getString("mmsi"));
+		return new ResponseEntity<List<Workrecord>>(res,HttpStatus.OK);
 	}
 }

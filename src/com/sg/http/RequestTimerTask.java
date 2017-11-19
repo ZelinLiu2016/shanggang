@@ -333,7 +333,7 @@ public class RequestTimerTask extends TimerTask {
 		TimerTask task01 = new RequestTimerTask();  //get ship position information through interface
 		TimerTask task02 = new DeleteTimerTask();  //clean overdue data
 		TimerTask task03 = new Backup(); //backup database
-		
+		TimerTask task06 = new WorkloadTimerTask();//everuday workrecord
 		TimerTask task04 = new WeatherRequestTimerTask();  //catch weather abnormal
 		TimerTask task05 = new CreateInvertIndexTimerTask();// create invert index
 		long period01 = 1000*60;//do request every minute
@@ -345,14 +345,15 @@ public class RequestTimerTask extends TimerTask {
 		Date firsttime = calendar.getTime();
 		Date firstdate = calendar.getTime();
 		firstdate.setHours(23);
-		firstdate.setMinutes(0);
-		firstdate.setSeconds(0);
+		firstdate.setMinutes(59);
+		firstdate.setSeconds(55);
 //		System.out.println(firstdate);
 		Timer timer = new Timer();
 		timer.schedule(task01, firsttime,period01);
 //		timer.schedule(task04, firsttime,period04);
 		timer.schedule(task02, firstdate,period02);
 		timer.schedule(task03, firstdate,period03);
+		timer.schedule(task06, firsttime,period03);
 //		timer.schedule(task05, firsttime,period05);
 		
 	}

@@ -205,6 +205,7 @@ function InitPaoniTable()
 		labelInfo = [];
 		AddButtomLayer();
 		buttomFaces = 1000;
+		console.log(coorDict[area_id]);
         var buttomPoint = coorDict[area_id];
         var coorNum = buttomPoint.length;
         API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);

@@ -471,5 +471,4 @@ function AddNewLine()
 
 		API_SetCurDrawDynamicUseType(DynamicSymbolType.none);
 
-
 };

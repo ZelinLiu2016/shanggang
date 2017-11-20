@@ -141,8 +141,16 @@ public class RequestTimerTask extends TimerTask {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		List<String> mmsi_str = session.selectList("getallmmsilist");
 		List<Integer> mmsi = new ArrayList<Integer>();
-		mmsi = session.selectList("listShipMmsi");
+		for(String str:mmsi_str){
+			String[] mm = str.split(";");
+			for(int i=0;i<mm.length;i++){
+				if(!mmsi.contains(Integer.valueOf(mm[i])))
+					mmsi.add(Integer.valueOf(mm[i]));
+			}
+		}
+		
 		HashMap<String,Project> map = new HashMap<String,Project>();
 		List<Project> projectlist = session.selectList("listProject");
 		for(Project pro:projectlist){
@@ -153,6 +161,7 @@ public class RequestTimerTask extends TimerTask {
 			}
 		}
 		for(int num:mmsi){
+			System.out.println("获取"+num+"的最新坐标");
 			Project project = map.get(String.valueOf(num));
 			System.out.println(num);
 			String route_id = session.selectOne("getShipRoute_id",num);
@@ -186,7 +195,7 @@ public class RequestTimerTask extends TimerTask {
 			}
 			
 		}		
-		session.commit();
+//		session.commit();
 		session.close();
 	}
 	
@@ -353,7 +362,7 @@ public class RequestTimerTask extends TimerTask {
 //		timer.schedule(task04, firsttime,period04);
 		timer.schedule(task02, firstdate,period02);
 		timer.schedule(task03, firstdate,period03);
-		timer.schedule(task06, firsttime,period03);
+		timer.schedule(task06, firstdate,period03);
 //		timer.schedule(task05, firsttime,period05);
 		
 	}

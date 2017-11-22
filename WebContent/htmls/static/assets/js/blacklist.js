@@ -25,7 +25,7 @@ function InitBlackListTable()
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allBlackList,
-    height:380,
+    //height:380,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,

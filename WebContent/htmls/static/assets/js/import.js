@@ -23,10 +23,12 @@ function InitLoadImport()
 	$("#info_div").show();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
+	$("#toolbar_search").val("");
 	$.ajax({
         method: "GET",
         url: "/shanggang/ship/list",
         success: function (data) {
+			console.log(data);
 			fillBoatData(data);
 			fillMmsiData(data);
 			InitImportTable();
@@ -132,8 +134,15 @@ function InitImportTable() {
 				data: JSON.stringify(postData),
 				contentType:"application/json",
 				success: function (data) {
-					console.log(data);
-					fillBoatData(data);
+					allBoat = [];			
+					for(var i = 0;i<data.length;++i)
+					{
+						allBoat.push({"capacity":allMmsi[data[i]].capacity,
+						"fleetid":allMmsi[data[i]].fleetid,"imo":allMmsi[data[i]].IMO,"length":allMmsi[data[i]].length,
+						"width":allMmsi[data[i]].width,"mmsi":data[i],"shipname":allMmsi[data[i]].shipname,
+						"shiptype":allMmsi[data[i]].shiptype,"contact":allMmsi[data[i]].contact,"cellphone":allMmsi[data[i]].cellphone});
+					}
+					console.log(allBoat);
 					RefreshImportTable();
 				},       
 				error: function () {       
@@ -170,6 +179,8 @@ function InitImportTable() {
 			$('#import_add_button').show();
 			$('#import_edit_button').hide();
 			$('#import_delete_button').hide();
+			$("#import_owner").val("");
+			$("#import_ownerphone").val("");
         });
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
@@ -203,6 +214,8 @@ function InitImportTable() {
 			$("#import_capacity").val(arrselections[0].capacity);
 			$("#import_contact").val(arrselections[0].contact);
 			$("#import_cellphone").val(arrselections[0].cellphone);
+			$("#import_owner").val(arrselections[0].owner);
+			$("#import_ownerphone").val(arrselections[0].ownerphone);
 			$('#import_update').modal('show');
 			$('#import_add_button').hide();
 			$('#import_edit_button').show();
@@ -250,7 +263,8 @@ function fillBoatData(data)
 		allBoat.push({"capacity":data[i].capacity,
 			"fleetid":data[i].fleet_id,"imo":data[i].imo,"length":data[i].length,
 			"width":data[i].width,"mmsi":data[i].mmsi,"shipname":data[i].shipname,
-			"shiptype":data[i].shiptype,"contact":data[i].contact,"cellphone":data[i].cellphone});
+			"shiptype":data[i].shiptype,"contact":data[i].contact,"cellphone":data[i].cellphone,
+			"owner":data[i].owner, "ownerphone":data[i].owner_phone});
 		}
 }
 
@@ -265,6 +279,8 @@ function import_add()
 	postData["capacity"] = $("#import_capacity").val();
 	postData["contact"] = $("#import_contact").val();
 	postData["cellphone"] = $("#import_cellphone").val();
+	postData["owner"] = $("#import_owner").val();
+	postData["owner_phone"] = $("#import_ownerphone").val();
 	postData["route_id"] = "1";
 	$.ajax({
          type: "POST",
@@ -294,6 +310,8 @@ function import_edit()
 	postData["fleet_id"] = $("#import_fleetid").val();
 	postData["contact"] = $("#import_contact").val();
 	postData["cellphone"] = $("#import_cellphone").val();
+	postData["owner"] = $("#import_owner").val();
+	postData["owner_phone"] = $("#import_ownerphone").val();
 	postData["route_id"] = "1";
 	$.ajax({
          type: "POST",

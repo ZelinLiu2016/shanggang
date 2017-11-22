@@ -159,20 +159,23 @@ function fillDirtError(data)
 		{
 			if(data[i].abnormal_type=="Dumping_area Abnormal")
 			{
-				var dr = "-";
-				var du = "-";
-				if(data[i].mmsi in mmsi_project)
+				if(data[i].mmsi in allMmsi)
 				{
-					dr = mmsi_project[data[i].mmsi].dredging;
-					du = mmsi_project[data[i].mmsi].dumping;
+					var dr = "-";
+					var du = "-";
+					if(data[i].mmsi in mmsi_project)
+					{
+						dr = mmsi_project[data[i].mmsi].dredging;
+						du = mmsi_project[data[i].mmsi].dumping;
+					}
+						
+					allError.push(
+					{"mmsi":data[i].mmsi,"type":data[i].abnormal_type,
+					"lon":data[i].lon,"lat":data[i].lat,
+					"time":data[i].time,"handle":data[i].handle,"name":allMmsi[data[i].mmsi].shipname,"company":allMmsi[data[i].mmsi].fleetid,
+					"dredging":dr,"dumping":du}
+					);
 				}
-					
-				allError.push(
-				{"mmsi":data[i].mmsi,"type":data[i].abnormal_type,
-				"lon":data[i].lon,"lat":data[i].lat,
-				"time":data[i].time,"handle":data[i].handle,"name":allMmsi[data[i].mmsi].shipname,"company":allMmsi[data[i].mmsi].fleetid,
-				"dredging":dr,"dumping":du}
-				);
 			}
 		}
 }
@@ -312,20 +315,23 @@ function fillRunError(data)
 		{
 			if(data[i].abnormal_type=="Route Abnormal")
 			{
-				var dr = "-";
-				var du = "-";
-				if(data[i].mmsi in mmsi_project)
-				{
-					dr = mmsi_project[data[i].mmsi].dredging;
-					du = mmsi_project[data[i].mmsi].dumping;
+				if(data[i].mmsi in allMmsi){
+					var dr = "-";
+					var du = "-";
+					if(data[i].mmsi in mmsi_project)
+					{
+						dr = mmsi_project[data[i].mmsi].dredging;
+						du = mmsi_project[data[i].mmsi].dumping;
+					}
+						
+					allError.push(
+					{"mmsi":data[i].mmsi,"type":data[i].abnormal_type,
+					"lon":data[i].lon,"lat":data[i].lat,
+					"time":data[i].time,"handle":data[i].handle,"name":allMmsi[data[i].mmsi].shipname,"company":allMmsi[data[i].mmsi].fleetid,
+					"dredging":dr,"dumping":du}
+					);
 				}
-					
-				allError.push(
-				{"mmsi":data[i].mmsi,"type":data[i].abnormal_type,
-				"lon":data[i].lon,"lat":data[i].lat,
-				"time":data[i].time,"handle":data[i].handle,"name":allMmsi[data[i].mmsi].shipname,"company":allMmsi[data[i].mmsi].fleetid,
-				"dredging":dr,"dumping":du}
-				);
+				
 			}
 		}
 }
@@ -426,6 +432,7 @@ function fillSpeedError(data)
 		{
 			if(data[i].abnormal_type=="Exceed the speed limit Abnormal")
 			{
+				if(data[i].mmsi in allMmsi){
 				var dr = "-";
 				var du = "-";
 				if(data[i].mmsi in mmsi_project)
@@ -439,7 +446,7 @@ function fillSpeedError(data)
 				"lon":data[i].lon,"lat":data[i].lat,
 				"time":data[i].time,"handle":data[i].handle,"name":allMmsi[data[i].mmsi].shipname,"company":allMmsi[data[i].mmsi].fleetid,
 				"dredging":dr,"dumping":du,"speed":data[i].speed}
-				);
+				);}
 			}
 		}
 }
@@ -545,6 +552,7 @@ function fillWeatherError(data)
 		{
 			if(data[i].abnormal_type=="Weather abnormal")
 			{
+				if(data[i].mmsi in allMmsi){
 				var dr = "-";
 				var du = "-";
 				if(data[i].mmsi in mmsi_project)
@@ -558,7 +566,7 @@ function fillWeatherError(data)
 				"lon":data[i].lon,"lat":data[i].lat,
 				"time":data[i].time,"handle":data[i].handle,"name":allMmsi[data[i].mmsi].shipname,"company":allMmsi[data[i].mmsi].fleetid,
 				"dredging":dr,"dumping":du,"windspeed":data[i].windspeed}
-				);
+				);}
 			}
 		}
 }

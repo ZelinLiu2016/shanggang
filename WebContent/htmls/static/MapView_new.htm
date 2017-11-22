@@ -174,8 +174,8 @@
 							</a>
 							</li>
 							<li >
-							<a id = "port-stats" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="港区数据统计" onclick = "PortStatsInit()">
-								<span id="L2L1L2" class="LeftText">港区数据统计</span>
+							<a id = "port-stats" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="工程数据统计" onclick = "PortStatsInit()">
+								<span id="L2L1L2" class="LeftText">工程数据统计</span>
 							</a>
 							</li>
 						</ul>
@@ -207,7 +207,7 @@
 						<a href="#" style="border-radius:0px;padding-left:40px;" title="" onclick="l2l3()">
                             <img src = "image/i_10.png">
                             <span id="L2L3" class="LeftText">异常检测</span>
-							<span class="label label-warning pull-right" style="height:20px;width:35px;">1002</span>
+							<!--span class="label label-warning pull-right" style="height:20px;width:35px;">1002</span-->
                         </a>
 						<ul>		
 							<li >
@@ -344,7 +344,74 @@
         </div>
     </div>
 	
-	<div id = "mapBody" class="col-lg-12" style="height:94%;">
+
+		<div style="margin-top:10px">
+			<div style="margin-bottom:10px;display:none;" id="monitor_search_modal">
+				<div style="margin-bottom:10px">
+					<select style="height:30px;width:350px;color:black;" id="monitor_search"></select>
+					<div class="btn-group">
+						<button id="monitor_button" type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>查询
+						</button>
+						<button id="monitor_show" type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-film" aria-hidden="true"></span>观看
+						</button>
+						<button id="error_mark" type="button" class="btn btn-default" onclick="error_mark()">
+							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>评价
+						</button>
+						<button id="error_handle" type="button" class="btn btn-default" onclick="error_handle()">
+							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>处理
+						</button>
+					</div>
+				</div>
+				<div id="history_time">
+					<span height="30px" color="black">开始时间</span>
+					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_start" id="monitor_start" ></input>
+					<span height="30px" color="black">结束时间</span>
+					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_end" id="monitor_end"></input>
+				</div>
+			</div>
+			
+			<div id="toolbar" style="margin-bottom:10px;display:none;">
+				<div>
+					<input type="text" style="height:30px;width:350px;color:black;" id="toolbar_search"></input>
+					<div class="btn-group">
+						<button id="btn_search" type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>查询
+						</button>
+						<button id="btn_add" type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+						</button>
+						<button id="btn_edit" type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+						</button>
+						<button id="btn_delete" type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+						</button>
+						<button id="btn_backup" type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>还原
+						</button>
+						<button id="btn_show" type="button" class="btn btn-default">
+							<span class="glyphicon glyphicon-film" aria-hidden="true"></span>显示
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="datatable" style="height:410px">
+			<div style="height:350px">
+			<table id="table"></table>
+			</div>
+		</div>
+		
+		<div id="detailtable" style="height:400px">
+			<div style="height:350px">
+			<table id="dtable"></table>
+			</div>
+		</div>
+
+		<div id = "mapBody" class="col-lg-12" style="height:94%;">
 			<div id="map" style="width:99%; height:100%;overflow:hidden;position:absolute; left:0; top:0%;z-index:1;"  oncontextmenu="return false;">     
 			</div>
 			<div id="ShowSimpleInfoByMouseMoveDiv" class="ShowMouseMoveInfoStyle">
@@ -491,73 +558,6 @@
 				$("#plotForTransection2").hide();
 			</script> 
 		</div>
-		<div style="margin-top:10px">
-			<div style="margin-bottom:10px;display:none;" id="monitor_search_modal">
-				<div style="margin-bottom:10px">
-					<select style="height:30px;width:350px;color:black;" id="monitor_search"></select>
-					<div class="btn-group">
-						<button id="monitor_button" type="button" class="btn btn-default">
-						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>查询
-						</button>
-						<button id="monitor_show" type="button" class="btn btn-default">
-							<span class="glyphicon glyphicon-film" aria-hidden="true"></span>观看
-						</button>
-						<button id="error_mark" type="button" class="btn btn-default" onclick="error_mark()">
-							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>评价
-						</button>
-						<button id="error_handle" type="button" class="btn btn-default" onclick="error_handle()">
-							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>处理
-						</button>
-					</div>
-				</div>
-				<div id="history_time">
-					<span height="30px" color="black">开始时间</span>
-					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_start" id="monitor_start" ></input>
-					<span height="30px" color="black">结束时间</span>
-					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_end" id="monitor_end"></input>
-				</div>
-			</div>
-			
-			<div id="toolbar" style="margin-bottom:10px;display:none;">
-				<div>
-					<input type="text" style="height:30px;width:350px;color:black;" id="toolbar_search"></input>
-					<div class="btn-group">
-						<button id="btn_search" type="button" class="btn btn-default">
-							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>查询
-						</button>
-						<button id="btn_add" type="button" class="btn btn-default">
-							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-						</button>
-						<button id="btn_edit" type="button" class="btn btn-default">
-							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-						</button>
-						<button id="btn_delete" type="button" class="btn btn-default">
-							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-						</button>
-						<button id="btn_backup" type="button" class="btn btn-default">
-							<span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>还原
-						</button>
-						<button id="btn_show" type="button" class="btn btn-default">
-							<span class="glyphicon glyphicon-film" aria-hidden="true"></span>显示
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<div id="datatable" style="height:410px">
-			<div style="height:350px">
-			<table id="table"></table>
-			</div>
-		</div>
-		
-		<div id="detailtable" style="height:400px">
-			<div style="height:350px">
-			<table id="dtable"></table>
-			</div>
-		</div>
-
-		
 
 		<div class="container" id="project_progress" style="display:none;">
 			<div class="row" style="height:40px;margin:10px">
@@ -618,7 +618,7 @@
 
 		<div class="container-fluid" style="background:white;display:none;" id="info_div">
 			<div class="row-fluid" style="padding:10px;">
-				<table id="info_table" style="color:black;" border="1" width="600px" height="50px" >
+				<table id="info_table" style="color:black;" border="1" width="800px" height="50px" >
 					<thead id="info_head"></thead>
 					<tbody id="info_body"></tbody>
 				</table>
@@ -656,11 +656,24 @@
 						<input type="text" name="shujunquyu" id="shujunquyu" style="width:145px;height:25px" />
 					</div>
 					<div class="col-sm-2 nopadding">
-						疏浚港区
+						所属港区
 					</div>
 					<div class="col-sm-4 nopadding">
-						<input type="text" name="shujunquyu" id="shujungangqu" style="width:145px;height:25px"/>
+						<select name="shujunquyu" id="shujungangqu" style="width:145px;height:25px">
+							<option value="洋山">洋山</option>
+							<option value="外高桥">外高桥</option>
+							<option value="黄浦江">黄浦江</option>
+						</select>
 					</div>
+				</div>
+				<div class="row" style="margin:0;height:13%;">
+					<div class="col-sm-2 nopadding">
+						疏浚区域名称
+					</div>
+					<div class="col-sm-4 nopadding">
+						<input type="text" name="shujunquyu" id="shujunmingcheng" style="width:145px;height:25px" />
+					</div>
+					
 				</div>
 				<hr />
 				<div id="shujun_update_body">
@@ -812,7 +825,7 @@
 						</button>
 					</div>
 					<div class="col-sm-2 nopadding">
-						港区
+						疏浚区域
 					</div>
 					<div class="col-sm-4 nopadding">
 						<input type="text" name="param_harborname" id="param_harborname" style="width:100px;height:25px"/>
@@ -996,6 +1009,20 @@
 					</div>
 					<div class="col-sm-4 nopadding">
 						<input type="text" name="import_cellphone" id="import_cellphone" style="width:145px;height:25px"/>
+					</div>
+				</div>
+				<div class="row" style="margin:0;height:18%;">
+					<div class="col-sm-2 nopadding">
+						船老大
+					</div>
+					<div class="col-sm-4 nopadding">
+						<input type="text" name="import_owner" id="import_owner" style="width:145px;height:25px" />
+					</div>
+					<div class="col-sm-2 nopadding">
+					    联系方式
+					</div>
+					<div class="col-sm-4 nopadding">
+						<input type="text" name="import_ownerphone" id="import_ownerphone" style="width:145px;height:25px"/>
 					</div>
 				</div>
 			</div>

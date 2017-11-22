@@ -6,7 +6,7 @@
            {"mmsi":"413373880","day":5,"week":16,"month":16,"companyname":"中交水运","companyid":"3","shipname":"远洋号"},
           ];
 allFleet = [{"fleetid":"中港建务三公司","day":10,"week":60,"month":200}];
-allPort = [{"port":"YANGSHAN","day":10,"week":60,"month":200}];
+allPort = [{"port":"2017洋山港前航道疏浚","day":10,"week":60,"month":200}];
 
 function BoatStatsInit()
 {	
@@ -93,7 +93,6 @@ function InitFleetStatsTable()
 		console.log(companyid);
 		for(var i = 0;i<allBoatWork.length;++i)
 		{
-			console.log(allBoatWork[i]);
 			if(allBoatWork[i].companyname==companyid)
 			{
 				tmp.push(allBoatWork[i]);
@@ -215,7 +214,7 @@ function InitPortStatsTable()
 	{checkbox: true},
 	{
         field: 'port',
-        title: '港区'
+        title: '工程名称'
     }, 
 	{
         field: 'day',

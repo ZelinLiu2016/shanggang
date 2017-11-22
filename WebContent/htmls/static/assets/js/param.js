@@ -467,7 +467,8 @@ function fillMmsiData(data)
 	for(var i = 0;i<data.length;++i)
 	{
 		allMmsi[data[i].mmsi] = {"shipname":data[i].shipname,"contact":data[i].contact,"cellphone":data[i].cellphone,"fleetid": data[i].fleet_id,
-		"IMO":data[i].imo, "length":data[i].length, "width":data[i].width, "capacity":data[i].capacity, "boss":"船老大","bossphone":"12345678"};
+		"IMO":data[i].imo, "length":data[i].length, "width":data[i].width, "capacity":data[i].capacity, "shiptype":data[i].shiptype,
+		"boss":data[i].owner,"bossphone":data[i].owner_phone};
 	}
 }
 

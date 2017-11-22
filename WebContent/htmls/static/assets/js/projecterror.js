@@ -32,7 +32,7 @@ function InitProjectErrorTable() {
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allProjectError,
-    height:280,
+    //height:280,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,

@@ -70,10 +70,14 @@ function InitShujunTable()
 	{
         field: 'dredgingid',
         title: '疏浚区域编号'
-    }, 
+    },
 	{
         field: 'dredgingname',
-        title: '疏浚港区'
+        title: '疏浚区域名称'
+    },
+	{
+        field: 'harbor',
+        title: '所属港区'
     }
 	]});
 	$('#datatable').show();
@@ -86,6 +90,7 @@ function InitShujunTable()
 		}
 		$("#shujunquyu").val("");
 		$("#shujungangqu").val("");
+		$("#shujunmingcheng").val("");
 		coorNum = 1;
 		var entry = "";
 		entry += '<div id="sj'+coorNum+'" class="row" style="margin:0;height:13%;">';
@@ -114,8 +119,10 @@ function InitShujunTable()
             }
 			dredging_id = arrselections[0].dredgingid;
 			dredging_name = arrselections[0].dredgingname;
+			dredging_harbor = arrselections[0].harbor;
 			$("#shujunquyu").val(dredging_id);
-			$("#shujungangqu").val(dredging_name);
+			$("#shujungangqu").val(dredging_harbor);
+			$("#shujunmingcheng").val(dredging_name);
 			var body = document.getElementById("shujun_update_body");
 			while(body.hasChildNodes()) //当div下还存在子节点时 循环继续  
 			{  
@@ -156,7 +163,6 @@ function InitShujunTable()
                 return;
             }
 			dredging_id = arrselections[0].dredgingid;
-			dredging_name = arrselections[0].dredgingname;
 			if(confirm("确定要删除吗？")){
 				shujun_delete(dredging_id);
 			}
@@ -232,7 +238,7 @@ function fillAllShujun(data) {
 	allShujun = [];
 	for(var i = 0;i<data.length;++i)
 	{
-		allShujun.push({"dredgingid":data[i].dredging_id,"dredgingname":data[i].dredging_name});
+		allShujun.push({"dredgingid":data[i].dredging_id,"dredgingname":data[i].dredging_name,"harbor":data[i].harbor});
 		var locationstr = data[i].location;
 		var point = locationstr.split("-");
 		coor = [];
@@ -248,13 +254,14 @@ function fillAllShujun(data) {
 function shujun_add()
 {
 	dredging_id = $("#shujunquyu").val();
-	dredging_name = $("#shujungangqu").val();
+	dredging_name = $("#shujunmingcheng").val();
+	dredging_harbor = $("#shujungangqu").val();
     var locationstr = "";
     for (var i = 1; i < coorNum + 1; i++) {
         locationstr += $("#shujundiany" + i).val()+","+$("#shujundianx" + i).val()+"-"; 
     }
     locationstr = locationstr.substr(0,locationstr.length-1);
-	postData = {"area_id":dredging_id,"location":locationstr,"name":dredging_name};
+	postData = {"area_id":dredging_id,"location":locationstr,"name":dredging_name,"harbor":dredging_harbor};
 	$.ajax({
          type: "POST",
          url: "/shanggang/dredging_area/add",
@@ -274,13 +281,14 @@ function shujun_add()
 function shujun_edit()
 {
 	dredging_id = $("#shujunquyu").val();
-	dredging_name = $("#shujungangqu").val();
+	dredging_name = $("#shujunmingcheng").val();
+	dredging_harbor = $("#shujungangqu").val();
     var locationstr = "";
     for (var i = 1; i < coorNum + 1; i++) {
         locationstr += $("#shujundiany" + i).val()+","+$("#shujundianx" + i).val()+"-"; 
     }
     locationstr = locationstr.substr(0,locationstr.length-1);
-	postData = {"area_id":dredging_id,"location":locationstr,"name":dredging_name};
+	postData = {"area_id":dredging_id,"location":locationstr,"name":dredging_name,"harbor":dredging_harbor};
 	$.ajax({
          type: "POST",
          url: "/shanggang/dredging_area/update",

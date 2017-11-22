@@ -348,8 +348,10 @@ function DTMonInit()
 	$("#monitor_show").click(function(){
 		var arrselections = $("#table").bootstrapTable('getSelections');
 		postData["mmsi"] = arrselections[0].mmsi;
-		postData["starttime"] = arrselections[0].start_time;
-		postData["endtime"] = arrselections[0].end_time;
+		//postData["starttime"] = arrselections[0].start_time;
+		//postData["endtime"] = arrselections[0].end_time;
+		postData["starttime"] = arrselections[0].indred;
+		postData["endtime"] = arrselections[0].exitdump;
 		$.ajax({
 			method: "POST",
 			url: "/shanggang/shipinfo/listinfoduring",
@@ -409,32 +411,20 @@ function DTMonInit()
         title: 'MMSI'
     },
 	{
-        field: 'start_time',
-        title: '起始时间'
+        field: 'indred',
+        title: '进入施工区域'
     }, 
 	{
-        field: 'end_time',
-        title: '终止时间'
+        field: 'exitdred',
+        title: '离开施工区域'
     },
 	{
-        field: 'start_lon',
-        title: '起点经度'
+        field: 'indump',
+        title: '进入抛泥区域'
     }, 
 	{
-        field: 'start_lat',
-        title: '起点纬度'
-    },
-	{
-        field: 'end_lon',
-        title: '终点经度'
-    }, 
-	{
-        field: 'end_lat',
-        title: '终点纬度'
-    }, 
-	{
-        field: 'num',
-        title: '轨迹点个数'
+        field: 'exitdump',
+        title: '离开抛泥区域'
     }
 	]});
     $('#datatable').show();
@@ -443,7 +433,7 @@ function DTMonInit()
 function DTMonitorSearch()
 {
 	postData["mmsi"] = $('#monitor_search').val();
-	postData["starttime"] = $('#monitor_start').val();
+	/*postData["starttime"] = $('#monitor_start').val();
 	postData["endtime"] = $('#monitor_end').val();
 	$.ajax({
         method: "POST",
@@ -458,7 +448,33 @@ function DTMonitorSearch()
 		error: function () {       
             alert("查询失败！");
         }  
+    });*/
+	postData["date"] = $('#monitor_start').val().split("T")[0];
+	console.log(postData);
+	$.ajax({
+        method: "POST",
+        url: "/shanggang/workrecord/daterecord",
+		data: JSON.stringify(postData),
+		contentType:"application/json",
+        success: function (data) {
+			console.log(data);
+			//fillDetectData(data);
+			fillDateData(data);
+			RefreshDetectTable();
+            },
+		error: function () {       
+            alert("查询失败！");
+        }  
     });
+}
+
+function fillDateData(data)
+{
+	allDetect = [];
+	for(var i = 0;i<data.length;++i){
+		allDetect.push({"mmsi":data[i].mmsi,"exitdred":data[i].exitdred,"exitdump":data[i].exitdump,
+		"indred":data[i].indred,"indump":data[i].indump});
+	}
 }
 
 function fillDetectData(data)

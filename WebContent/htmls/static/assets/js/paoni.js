@@ -201,6 +201,8 @@ function InitPaoniTable()
 			return;
 		}
 		area_id = arrselections[0].areaid;
+		
+		//cpf(coorDict[area_id]);
 		deleteButtomFace()
 		labelInfo = [];
 		AddButtomLayer();
@@ -216,6 +218,8 @@ function InitPaoniTable()
             labelInfo.push(ob);
         }
         AddButtomFaces(labelInfo);
+		
+		
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
 		}, 100);
@@ -375,4 +379,96 @@ function choosechangjiang(){
 	$("#port-stats").show();	
 		
     $("#xianshi").click()
+}
+
+function AddCorner(OnePointCoor,index)
+{
+	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawPoint);
+	
+	var objType = DynamicSymbolType.drawPoint;
+    var objName = index+"";
+	//坐标的数组
+    
+	var arrObjPo = [{x: OnePointCoor.x , y: OnePointCoor.y}];
+	
+    var drawObjPoNum = arrObjPo.length;
+
+
+
+    var layerStylePos = 0;
+    var layerPos = -1;
+
+	
+    //添加点
+        layerPos = API_GetLayerPosById(g_iPointLayerId); //获取点图层的pos
+        layerStylePos = g_iPointStylePos;
+    
+
+    var bAddResult = false;
+    if (layerPos > -1) {
+        g_iAddObjId++;
+        var objInfo = [];
+        var arrExpAttrValue = []; //扩展字段，假如没有可以传入null
+
+        objInfo.layerPos = layerPos;
+        objInfo.objId = g_iAddObjId;
+        objInfo.name = objName;
+        objInfo.showText = objName;
+        objInfo.layerStylePos = layerStylePos;
+        arrExpAttrValue.push("来一个扩展字段");
+
+        lineobjPos = API_AddNewObject(objInfo, arrObjPo, arrExpAttrValue);
+        if (lineobjPos > -1) {
+            bAddResult = true;
+        }
+    }
+
+
+        API_ReDrawLayer();
+
+		API_SetCurDrawDynamicUseType(DynamicSymbolType.none);
+};
+
+function cpf(arrObjPo)
+{
+	deleteButtomFace();
+		API_SetCurDrawDynamicUseType(DynamicSymbolType.drawFace);
+		var objType = DynamicSymbolType.drawFace;
+		var objName = "";
+		//坐标的数组
+		API_SetMapViewCenter(convertToLatitu(arrObjPo[0].x)/10000000, convertToLatitu(arrObjPo[0].y)/10000000, 80000);
+		var drawObjPoNum = arrObjPo.length;
+		for (var i = 0; i < drawObjPoNum; i++) {
+			AddCorner(arrObjPo[i],i+1);
+        }
+		if (objType == "3" && drawObjPoNum < parseInt(3)) {
+			alert("绘制的点数量不够组成一个面物标，请再添加绘制点。");
+			return;
+		}
+		var layerStylePos = 0;
+		var layerPos = -1;
+    //添加面
+        layerPos = API_GetLayerPosById(g_iFaceLayerId); //获取图层的pos
+        layerStylePos = g_iFaceStylePos;
+		var bAddResult = false;
+		if (layerPos > -1) {
+			g_iAddObjId++;
+			var objInfo = [];
+			var arrExpAttrValue = []; //扩展字段，假如没有可以传入null
+
+			objInfo.layerPos = layerPos;
+			objInfo.objId = g_iAddObjId;
+			objInfo.name = objName;
+			objInfo.showText = objName;
+			objInfo.layerStylePos = layerStylePos;
+			arrExpAttrValue.push("来一个扩展字段");
+			
+
+			lineobjPos = API_AddNewObject(objInfo, arrObjPo, arrExpAttrValue);
+			if (lineobjPos > -1) {
+				bAddResult = true;
+			}
+		}
+        API_ReDrawLayer();
+		API_SetCurDrawDynamicUseType(DynamicSymbolType.none);
 }

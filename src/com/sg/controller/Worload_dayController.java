@@ -5,6 +5,11 @@ package com.sg.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,12 +58,49 @@ public class Worload_dayController {
 	
 	@RequestMapping(value="/getallnewworkload",method=RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<List<Integer>> getallnewworkload() throws IOException{
+	public ResponseEntity<List<String>> getallnewworkload() throws IOException{
 		//查询所有船当天目前的工作量
 		SqlSession session = getSession();
-		List<Integer> allworkload = session.selectList("getnewworkload");
-		System.out.println(allworkload);
-		return new ResponseEntity<List<Integer>>(allworkload,HttpStatus.OK);
+		List<String> mmsi_str = session.selectList("getallmmsilist");
+		List<String> all_mmsi = new ArrayList<String>();
+		for(String str:mmsi_str){
+			String[] mm = str.split(";");
+			for(int i=0;i<mm.length;i++){
+				if(!all_mmsi.contains(mm[i]))
+					all_mmsi.add(mm[i]);
+			}
+		}
+		SimpleDateFormat sj = new SimpleDateFormat("yyyy-MM-dd");
+		Date now = new Date();
+		DateFormat d1 = DateFormat.getDateInstance();		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(now);
+		cal.add(Calendar.DATE, -1);
+		String today = sj.format(cal.getTime()).toString();
+//		System.out.println("昨天日期："+today);
+		cal.setTime(now);
+		String month = sj.format(cal.getTime()).toString().substring(0, 8).concat("01");
+		int w = cal.get(Calendar.DAY_OF_WEEK) - 2;
+		cal.add(Calendar.DATE, -w);
+		String week = sj.format(cal.getTime()).toString();
+//		System.out.println("本月初日期"+month);
+//		System.out.println("本周初日期："+week);
+		List<String> res = new ArrayList<String>();
+		for(String mmsi:all_mmsi){
+			String temp = "mmsi:"+ mmsi +",";
+			Workload_day wd = new Workload_day();
+			wd.setMmsi(Integer.valueOf(mmsi));
+			wd.setRecorddate(today);
+			temp+=("day:"+session.selectOne("getcountafter",wd)+",");
+//			System.out.println(temp);
+			wd.setRecorddate(week);
+			temp+=("week:"+session.selectOne("getcountafter",wd)+",");
+			wd.setRecorddate(month);
+			temp+=("month:"+session.selectOne("getcountafter",wd));
+//			System.out.println(temp);
+			res.add(temp);
+		}
+		return new ResponseEntity<List<String>>(res,HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/getworkloadbymmsi",method=RequestMethod.POST)

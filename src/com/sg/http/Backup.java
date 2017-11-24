@@ -59,7 +59,7 @@ public class Backup extends TimerTask {
 
             SimpleDateFormat format01  = new SimpleDateFormat("yyyy-MM-dd"); 
             String name = format01.format(new Date().getTime());
-            String fPath = "d:/backupfile/"+name +".sql";
+            String fPath = "f:/backupfile/"+name +".sql";
             FileOutputStream fout = new FileOutputStream(fPath);
             OutputStreamWriter writer = new OutputStreamWriter(fout, "utf-8");
             writer.write(outStr);

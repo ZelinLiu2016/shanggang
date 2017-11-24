@@ -10,6 +10,10 @@ package com.sg.test;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.io.Resources;
@@ -22,34 +26,21 @@ import com.sg.domain.Project;
 public class Testproject {
 
 	public static void main(String[] args) throws IOException {
-		String resource = "mybatis-config.xml";
-		InputStream inputStream = Resources.getResourceAsStream(resource);
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-        SqlSession session=sqlSessionFactory.openSession();
-        
-        
-       
-        listAll(session);
-
-        Project p = new Project();
-        p.setProjectId("56");
-        session.delete("deleteProject",p);
-        System.out.println("删除工程id="+p.getProjectId());
-        
-//      Project c = new Project("56","平安","浦西",74367,"2017-03-11","2017-12-15","19");
-//      session.insert("addProject",c);
-//      System.out.println("插入工程"+c.toString());
-      
-//      Project c = new Project("56","中国平安","浦西",884367,"2017-03-11","2017-12-15","19");
-//      session.update("updateProject",c);
-//      System.out.println("更新工程id="+c.getProjectId());
-      listAll(session);
-//      Project p = session.selectOne("getProject","10");
-//      System.out.println(p.toString());
-        
-        session.commit();
-		session.close();
-
+		SimpleDateFormat sj = new SimpleDateFormat("yyyy-MM-dd");
+		Date now = new Date();
+		DateFormat d1 = DateFormat.getDateInstance();		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(now);
+		cal.add(Calendar.DATE, -1);
+		String today = sj.format(cal.getTime()).toString();
+		System.out.println("昨天日期："+today);
+		cal.setTime(now);
+		String month = sj.format(cal.getTime()).toString().substring(0, 8).concat("01");
+		int w = cal.get(Calendar.DAY_OF_WEEK) - 2;
+		cal.add(Calendar.DATE, -w);
+		String week = sj.format(cal.getTime()).toString();
+		System.out.println("本月初日期"+month);
+		System.out.println("本周初日期："+week);
 		
 	}
 	private static void listAll(SqlSession session) {

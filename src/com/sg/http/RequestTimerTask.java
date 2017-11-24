@@ -360,7 +360,7 @@ public class RequestTimerTask extends TimerTask {
 		Timer timer = new Timer();
 		timer.schedule(task01, firsttime,period01);
 //		timer.schedule(task04, firsttime,period04);
-		timer.schedule(task02, firstdate,period02);
+//		timer.schedule(task02, firstdate,period02);
 		timer.schedule(task03, firstdate,period03);
 		timer.schedule(task06, firstdate,period03);
 //		timer.schedule(task05, firsttime,period05);

@@ -85,10 +85,10 @@ function pchooseWaigaoqiao(n){
 			// console.log(warnlevel[0]);
 			chooseHarbor=1;
 			API_SetMapViewCenter(121.59665274129951, 31.377866868906267, 20000);
-			deleteFaces();
-			getWarningLevel();
-			getDepthLevel();
-			getRecentDate();
+			//deleteFaces();
+			//getWarningLevel();
+			//getDepthLevel();
+			//getRecentDate();
 			break;
 		case 2:
 			dredging_area="外高桥4-6";
@@ -102,10 +102,10 @@ function pchooseWaigaoqiao(n){
 			chooseHarbor=2;
 			API_SetMapViewCenter(121.668, 31.338, 20000);
 			// $("#harbor-title").text(harborTitle[1]);
-			deleteFaces();
-			getWarningLevel();
-			getDepthLevel();
-			getRecentDate();
+			//deleteFaces();
+			//getWarningLevel();
+			//getDepthLevel();
+			//getRecentDate();
 			break;
 		default:
 
@@ -123,7 +123,7 @@ function pchooseWaigaoqiao(n){
 	$("monitor").show();
 	// $("#fourD-show").show();
 	// $("#fourD-view").show();
-	if(sessionStorage.privilege[15]=="Y"||sessionStorage.privilege=="admin"){
+	/*if(sessionStorage.privilege[15]=="Y"||sessionStorage.privilege=="admin"){
 		$("#future-data").show();
 	}
 	if(sessionStorage.privilege[19]=="Y"||sessionStorage.privilege=="admin"){
@@ -132,7 +132,7 @@ function pchooseWaigaoqiao(n){
 	if(sessionStorage.privilege[16]=="Y"||sessionStorage.privilege=="admin"){
 		$("#set-warn-level").show();
 		// $("#part-warn-level").show();
-	}
+	}*/
 	var buttomNow = allButtom[chooseHarbor - 1];
     
     var blength = buttomNow.length;
@@ -195,9 +195,9 @@ function pchooseYangshan(n){
 			// console.log('1');
 			chooseHarbor=3;
 			API_SetMapViewCenter(122.24250827924453, 30.556957174180525, 40000);
-			getWarningLevel();
-			getDepthLevel();
-			getRecentDate();
+			//getWarningLevel();
+			//getDepthLevel();
+			//getRecentDate();
 			break;
 		case 2:
 			dredging_area="洋山港前水域";
@@ -210,10 +210,10 @@ function pchooseYangshan(n){
 			$("#yangshan2").addClass('Current');
 			chooseHarbor=4;
 			API_SetMapViewCenter(122.0806550090706, 30.614947206150408, 40000);
-			getWarningLevel();
+			//getWarningLevel();
 			// $("#harbor-title").text(harborTitle[1]);
-			getDepthLevel();
-			getRecentDate();
+			//getDepthLevel();
+			//getRecentDate();
 			break;
 		default:
 
@@ -224,7 +224,7 @@ function pchooseYangshan(n){
 	// $("#fourD-show").show();
 	// $("#fourD-view").show();
 	// $("#time-contain").show();
-	if(sessionStorage.privilege[1]=="Y"||sessionStorage.privilege=="admin"){
+	/*if(sessionStorage.privilege[1]=="Y"||sessionStorage.privilege=="admin"){
 		$("#future-data").show();
 	}
 	if(sessionStorage.privilege[5]=="Y"||sessionStorage.privilege=="admin"){
@@ -233,7 +233,7 @@ function pchooseYangshan(n){
 	if(sessionStorage.privilege[2]=="Y"||sessionStorage.privilege=="admin"){
 		$("#set-warn-level").show();
 		// $("#part-warn-level").show();
-	}
+	}*/
 	var buttomNow = allButtom[chooseHarbor - 1];
     
     var blength = buttomNow.length;
@@ -290,18 +290,18 @@ function pchooseLuojing(){
 	$("#luojing").addClass('Current');
 	level = levels[4];
 	warnlevel = warnlevels[4];
-	deleteFaces();	
+	//deleteFaces();	
 	chooseHarbor=5;
 	API_SetMapViewCenter(121.42, 31.49, 40000);
-	getWarningLevel();
-	getDepthLevel();
-	getRecentDate();
+	//getWarningLevel();
+	//getDepthLevel();
+	//getRecentDate();
 	$("#show-time").show();	
 	$("#switch-show").show();
 	$("#history-data").show();
 	// $("#fourD-show").show();
 	// $("#fourD-view").show();
-	if(sessionStorage.privilege[8]=="Y"||sessionStorage.privilege=="admin"){
+	/*if(sessionStorage.privilege[8]=="Y"||sessionStorage.privilege=="admin"){
 		$("#future-data").show();
 	}
 	if(sessionStorage.privilege[12]=="Y"||sessionStorage.privilege=="admin"){
@@ -310,7 +310,7 @@ function pchooseLuojing(){
 	if(sessionStorage.privilege[9]=="Y"||sessionStorage.privilege=="admin"){
 		$("#set-warn-level").show();
 		// $("#part-warn-level").show();
-	}
+	}*/
 	var buttomNow = allButtom[chooseHarbor - 1];
     
     var blength = buttomNow.length;
@@ -367,14 +367,14 @@ function pchooseHuangpujiang(n) {
 	chooseHarbor=6;
 	API_SetMapViewCenter(hpjpositon[n - 1][0],hpjpositon[n - 1][1],hpjpositon[n - 1][2]);
 	// $("#harbor-title").text(harborTitle[2]);
-	getDepthLevel();
+	//getDepthLevel();
 	switch (n) {
 		case n:
 			hpjn = n;
 			$("#huangpujiangI").html("<img id = 'huangpujiang_waring' src = 'img/green.png' height='15' width='15'>&#160;&#160;黄浦江"+n+"&#160;&#160;");
 			// console.log(n);
-			getWarningLevel();
-			getRecentDate(hpjn);
+			//getWarningLevel();
+			//getRecentDate(hpjn);
 			break;
 		default:
 
@@ -384,7 +384,7 @@ function pchooseHuangpujiang(n) {
 	$("#history-data").show();
 	// $("#fourD-show").show();
 	// $("#fourD-view").show();
-	if(sessionStorage.privilege[22]=="Y"||sessionStorage.privilege=="admin"){
+	/*if(sessionStorage.privilege[22]=="Y"||sessionStorage.privilege=="admin"){
 		$("#future-data").show();
 	}
 	if(sessionStorage.privilege[26]=="Y"||sessionStorage.privilege=="admin"){
@@ -393,8 +393,8 @@ function pchooseHuangpujiang(n) {
 	if(sessionStorage.privilege[23]=="Y"||sessionStorage.privilege=="admin"){
 		$("#set-warn-level").show();
 		// $("#part-warn-level").show();
-	}
-	 $("#rank20").hide();
+	}*/
+	$("#rank20").hide();
     $("#rank21").hide();
         $("#xianshi").click();
 		InitLoadParam();

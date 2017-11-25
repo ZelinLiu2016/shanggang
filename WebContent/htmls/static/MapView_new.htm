@@ -65,6 +65,7 @@
 	<script src="assets/js/route.js" type="text/javascript"></script>
 	<script src="assets/js/blacklist.js" type="text/javascript"></script>
 	<script src="assets/js/bootstrap-table.js"></script>
+	<script src="assets/js/bootstrap-table-zh-CN.js"></script>
 	<script src="assets/js/multiselect.min.js"></script>
 	<script src="assets/js/metismenu.js"></script>
     <script src="assets/js/dynamic.js"></script>
@@ -90,6 +91,31 @@
 			overflow-y: auto;
 		}
 	</style>
+	<style>
+    .ShowMouseMoveInfoStyle
+    {
+	    display:none; 
+	    position: absolute; 
+	    z-index: 500;
+	    font-size:12px;	
+	    color:White;
+	    border: 2px solid #379082; 
+	    line-height:150%;
+	    border-radius: 5px; 
+	    padding: 5px 5px;	 
+	    width: 65px; 
+	    height:23px;
+	    background-color:#3628ec;
+	    -webkit-opacity: 0.7; /* Netscape and Older than Firefox 0.9 */
+        -moz-opacity: 0.7; /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/
+        -khtml-opacity: 0.7; /* IE9 + etc...modern browsers */
+        opacity: .7; /* IE 4-9 */
+        filter: alpha(opacity=70); /*This works in IE 8 & 9 too*/
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)"; /*IE4-IE9*/
+        filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+    
+	    }
+    </style>
 </head>
 <body>
 <!-- Preloader -->
@@ -205,7 +231,7 @@
 						</li>
 						<li>
 						<a href="#" style="border-radius:0px;padding-left:40px;" title="" onclick="l2l3()">
-                            <img src = "image/i_10.png">
+                            <img src = "image/i_7.png">
                             <span id="L2L3" class="LeftText">异常检测</span>
 							<!--span class="label label-warning pull-right" style="height:20px;width:35px;">1002</span-->
                         </a>
@@ -367,7 +393,7 @@
 				<div id="history_time">
 					<span height="30px" color="black">开始时间</span>
 					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_start" id="monitor_start" ></input>
-					<span height="30px" color="black">结束时间</span>
+					<span height="30px" color="black" id="monitor_end_label">结束时间</span>
 					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_end" id="monitor_end"></input>
 				</div>
 			</div>
@@ -412,10 +438,11 @@
 		</div>
 
 		<div id = "mapBody" class="col-lg-12" style="height:94%;">
-			<div id="map" style="width:99%; height:100%;overflow:hidden;position:absolute; left:0; top:0%;z-index:1;"  oncontextmenu="return false;">     
+			<div id="map" style="width:1600px; height:1000px;overflow:hidden;position:absolute; z-index:1;"  oncontextmenu="return false;">
+				<div id="ShowSimpleInfoByMouseMoveDiv" class="ShowMouseMoveInfoStyle" style="z-index:6000;">
+				</div>
 			</div>
-			<div id="ShowSimpleInfoByMouseMoveDiv" class="ShowMouseMoveInfoStyle">
-			</div>
+			
 			<div id="ShowPlayShipTrackDiv" class="boxBigDivStyle" style="left:100px; top:30px; height:150px; width:400px; " >
 					<div class="boxTitleDivStyle" onmousedown="startDrayBox('ShowPlayShipTrackDiv');return false;" onmousemove="toDrayBox();return false;" onmouseup="endDrayBox()" onmouseout="endDrayBox()">
 							<a href="javascript:CloseDivBox('ShowPlayShipTrackDiv');ClearPlayShipInfo()" title="关闭"> 

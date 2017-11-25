@@ -235,6 +235,9 @@ function HSMonInit()
 	$("#monitor_search_modal").show();
 	$("#project_progress").hide();
 	$("#history_time").show();
+	$("#monitor_start").attr('type','datetime-local');
+	$("#monitor_end_label").show();
+	$("#monitor_end").show();
 	$("#monitor_search").val("");
 	$("#monitor_start").val("");
 	$("#monitor_end").val("");
@@ -383,6 +386,9 @@ function DTMonInit()
 	$("#monitor_search_modal").show();
 	$("#project_progress").hide();
 	$("#history_time").show();
+	$("#monitor_start").attr('type','date');
+	$("#monitor_end_label").hide();
+	$("#monitor_end").hide();
 	$("#monitor_search").val("");
 	$("#monitor_start").val("");
 	$("#monitor_end").val("");

@@ -71,8 +71,65 @@ function FleetStatsInit()
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#project_progress").hide();
-	InitFleetStatsTable();
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/workload/getallnewworkload",
+        success: function (data) {
+        	fillBoatWork(data);
+			InitFleetStatsTable();
+            },
+		error: function () {       
+            alert("获取数据失败");
+        }  
+	});
 }
+
+function fillBoatWork(data)
+{
+	allBoatWork = [];
+	allFleet = [];
+	allFleetDict = {};
+	for(var i = 0;i<data.length;++i)
+	{
+		var s = data[i].substr(0,data[i].length);
+		var c = s.split(",");
+		console.log(c);
+		var mm = c[0].split(":")[1];
+		var d = parseInt(c[1].split(":")[1]);
+		var w = parseInt(c[2].split(":")[1]);
+		var m = parseInt(c[3].split(":")[1]);
+		data[i] = {"mmsi":mm,"day":d,"week":w,"month":m};
+		console.log(data[i]);
+		if(data[i].mmsi in allMmsi)
+		{
+			var ship = allMmsi[data[i].mmsi];
+			var info = {"mmsi":data[i].mmsi,"day":data[i].day,"week":data[i].week,"month":data[i].month,
+						"shipname":ship.shipname,"companyid":ship.fleetid};
+			if(ship.fleetid in allCompany)
+			{
+				info.companyname = allCompany[ship.fleetid].name;
+			}
+			else{
+				info.companyname = "其他公司";
+			}
+			allBoatWork.push(info);
+			console.log(allFleetDict);
+			if(!(ship.fleetid in allFleetDict))
+			{
+				allFleetDict[ship.fleetid] = {"day":0,"week":0,"month":0,"name":info.companyname};
+			}
+			console.log(allFleetDict);
+			allFleetDict[ship.fleetid].day+=data[i].day;
+			allFleetDict[ship.fleetid].week+=data[i].week;
+			allFleetDict[ship.fleetid].month+=data[i].month;
+		}	
+	}
+	for(var f in allFleetDict)
+	{
+		allFleet.push({"fleetid":f,"fleetname":allFleetDict[f].name,"day":allFleetDict[f].day,"week":allFleetDict[f].week,"month":allFleetDict[f].month});
+	}
+}
+
 
 function InitFleetStatsTable()
 {
@@ -93,7 +150,7 @@ function InitFleetStatsTable()
 		console.log(companyid);
 		for(var i = 0;i<allBoatWork.length;++i)
 		{
-			if(allBoatWork[i].companyname==companyid)
+			if(allBoatWork[i].companyid==companyid)
 			{
 				tmp.push(allBoatWork[i]);
 			}
@@ -105,7 +162,7 @@ function InitFleetStatsTable()
     columns: [
 	{checkbox: true},
 	{
-        field: 'fleetid',
+        field: 'fleetname',
         title: '单位'
     }, 
 	{

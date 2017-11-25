@@ -51,8 +51,8 @@ $(document).ready(function() {
     // $("#hud").hide();
     // $("#plotForTransection1").hide();
     // $("#plotForTransection2").hide();
-	authority();
-	preWarning();
+	//authority();
+	//preWarning();
 	AddBorder();
 	// getDepthLevel();
 	//$("#quanjing").click();

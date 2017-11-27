@@ -43,6 +43,8 @@ public class HttpPostXml {
 			URL url = new URL(urlStr);
 			URLConnection con = url.openConnection();
 			con.setDoOutput(true);
+			con.setReadTimeout(3 * 1000);
+            con.setConnectTimeout(3 * 1000);
 			//con.setRequestProperty("Pragma:", "no-cache");
 			con.setRequestProperty("Cache-Control", "no-cache");
 			con.setRequestProperty("Content-Type", "text/xml");

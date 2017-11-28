@@ -56,13 +56,12 @@ public class WorkrecordController {
 	    return new ResponseEntity<List<Workrecord>>(record, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/abnormal",method=RequestMethod.POST)
+	@RequestMapping(value="/abnormal",method=RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<List<Workrecord>> abnormal(@RequestBody String pro) throws IOException{
-		JSONObject json = JSONObject.fromObject(pro);
-		System.out.println("获得船只"+json.getString("mmsi")+"的异常工作记录");
+	public ResponseEntity<List<Workrecord>> abnormal() throws IOException{
+		System.out.println("获得船只异常工作记录");
 		SqlSession session = this.getSession();
-		List<Workrecord> res = session.selectList("getabnormal",json.getString("mmsi"));
+		List<Workrecord> res = session.selectList("getabnormal");
 		return new ResponseEntity<List<Workrecord>>(res,HttpStatus.OK);
 	}
 }

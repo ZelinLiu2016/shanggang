@@ -19,9 +19,10 @@
 		<result column="CONSTRUCTION_COMPANY" property="construction_company" jdbcType="CHAR"/>
 		<result column="DESIGN_COMPANY" property="design_company" jdbcType="CHAR"/>
 		<result column="SUPERVISION_COMPANY" property="supervision_company" jdbcType="CHAR"/>
+		<result column="ISWORKING" property="isworking" jdbcType="INTEGER"/>
 	</resultMap>
 	    <insert id="addProject" parameterType="Project" >
-	        insert into project values (#{projectId},#{projectName},#{dumpingArea},#{squareVolume},#{beginDate},#{endDate},#{boatNum},#{harborName},#{mud_ratio},#{route_id},#{mmsilist},#{construction_company},#{design_company},#{supervision_company})    
+	        insert into project values (#{projectId},#{projectName},#{dumpingArea},#{squareVolume},#{beginDate},#{endDate},#{boatNum},#{harborName},#{mud_ratio},#{route_id},#{mmsilist},#{construction_company},#{design_company},#{supervision_company},#{isworking})    
 	    </insert>
 	    
 	    <delete id="deleteProject" parameterType="Project" >
@@ -32,7 +33,7 @@
 	        select * from   project  where PROJECT_ID = #{projectId}    
 	    </select>
 	    <select id="listbyharbor" parameterType="String" resultMap="ProjectMap">
-	    	select * from project where HARBOR_NAME=#{harbor}
+	    	select * from project where HARBOR_NAME like #{harbor}
 	    </select>
 	    <select id="getbegindate" parameterType="int" resultType="String">
 	    	select BEGIN_DATE from project where PROJECT_ID=#{project_id}
@@ -43,7 +44,7 @@
 	    </select>
 
 	    <update id="updateProject" parameterType="Project" >
-	        update project set PROJECT_NAME=#{projectName}, DUMPINGAREA =#{dumpingArea}, SQUARE_VOLUME=#{squareVolume}, BEGIN_DATE=#{beginDate}, END_DATE=#{endDate}, BOAT_NUM=#{boatNum}, HARBOR_NAME=#{harborName},MUD_RATIO=#{mud_ratio},ROUTE_ID=#{route_id},MMSILIST=#{mmsilist},CONSTRUCTION_COMPANY=#{construction_company},DESIGN_COMPANY=#{design_company},SUPERVISION_COMPANY=#{supervision_company}  where PROJECT_ID = #{projectId}    
+	        update project set PROJECT_NAME=#{projectName}, DUMPINGAREA =#{dumpingArea}, SQUARE_VOLUME=#{squareVolume}, BEGIN_DATE=#{beginDate}, END_DATE=#{endDate}, BOAT_NUM=#{boatNum}, HARBOR_NAME=#{harborName},MUD_RATIO=#{mud_ratio},ROUTE_ID=#{route_id},MMSILIST=#{mmsilist},CONSTRUCTION_COMPANY=#{construction_company},DESIGN_COMPANY=#{design_company},SUPERVISION_COMPANY=#{supervision_company},ISWORKING=#{isworking}  where PROJECT_ID = #{projectId}    
 	    </update>
 
 	    <select id="listProject" resultMap="ProjectMap">
@@ -53,7 +54,7 @@
 		<select id="getMmsilist" parameterType="int" resultType="String">
 			select MMSILIST from project where PROJECT_ID=#{project_id}
 		</select> 
-		<select id="getallmmsilist" resultType="String">
-			select mmsilist from project 
+		<select id="getworkingmmsilist" resultType="String">
+			select mmsilist from project where ISWORKING=1
 		</select>
 	</mapper>

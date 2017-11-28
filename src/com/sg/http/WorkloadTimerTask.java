@@ -64,7 +64,7 @@ public class WorkloadTimerTask extends TimerTask {
 		String date = d1.format(now);
 		System.out.println("生成工作流程记录"+date);
 		SqlSession session = getSession();
-		List<String> mmsi_str = session.selectList("getallmmsilist");
+		List<String> mmsi_str = session.selectList("getworkingmmsilist");
 		List<String> all_mmsi = new ArrayList<String>();
 		for(String str:mmsi_str){
 			String[] mm = str.split(";");
@@ -329,7 +329,7 @@ public class WorkloadTimerTask extends TimerTask {
 				double timelen = (sdf.parse(workrec.getExitdred()).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60;
 				System.out.println("挖泥时间："+timelen);
 				if(timelen>240)//unit is min
-					workrec.setState(1);
+					workrec.setState(1);//挖泥时间过长
 				session.insert("addworkrecord",workrec);
 				System.out.println(workrec);
 				List<String> recorddate = session.selectList("listMmsiRecorddate",Integer.valueOf(mmsi));
@@ -381,19 +381,6 @@ public class WorkloadTimerTask extends TimerTask {
 	
 	public static void main(String[] args) throws IOException, ParseException {
 
-//		workrecord();
-//		SqlSession session = RequestTimerTask.getSession();
-//		List<String> mmsi_str = session.selectList("getallmmsilist");
-//		List<String> all_mmsi = new ArrayList<String>();
-//		for(String str:mmsi_str){
-//			String[] mm = str.split(";");
-//			for(int i=0;i<mm.length;i++){
-//				if(!all_mmsi.contains(mm[i]))
-//					all_mmsi.add(mm[i]);
-//			}
-//		}
-//		for(String mmsi:all_mmsi)
-//			System.out.println(mmsi);
 		workrecord();
 	}
 		

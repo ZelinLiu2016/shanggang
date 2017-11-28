@@ -3,23 +3,23 @@
 
 .ShowMouseInfoDiv
 {
-		font-size:11px;
-		color:White;
-		border: 2px solid #000000; 
-		border-radius: 5px; 
-		padding: 5px 5px; 
-		width: 75px; 
-		height:50px;
-		background-color:Black;
-		-webkit-opacity: 0.6; /* Netscape and Older than Firefox 0.9 */
-		-moz-opacity: 0.6; /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/
-		-khtml-opacity: 0.6; /* IE9 + etc...modern browsers */
-		opacity: .6; /* IE 4-9 */
-		filter: alpha(opacity=60); /*This works in IE 8 & 9 too*/
-		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)"; /*IE4-IE9*/
-		filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
-
-	}
+	font-size:11px;
+	color:White;
+	border: 2px solid #000000; 
+	border-radius: 5px; 
+	padding: 5px 5px; 
+	line-height:14px;
+	width: 65px; 
+	height:23px;
+	background-color:Black;
+	-webkit-opacity: 0.6; /* Netscape and Older than Firefox 0.9 */
+	-moz-opacity: 0.6; /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/
+	-khtml-opacity: 0.6; /* IE9 + etc...modern browsers */
+	opacity: .6; /* IE 4-9 */
+	filter: alpha(opacity=60); /*This works in IE 8 & 9 too*/
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)"; /*IE4-IE9*/
+	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
+}
 	
 .ShowSpanTextDiv
 {
@@ -93,16 +93,18 @@
 	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
 	cursor:pointer;
 	}
-.zoomImgStyle:hover
+
+.TransparencyBgStyle
 {
-	-webkit-opacity: 1; /* Netscape and Older than Firefox 0.9 */
-	-moz-opacity: 1; /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/
-	-khtml-opacity: 1; /* IE9 + etc...modern browsers */
-	opacity: .9; /* IE 4-9 */
-	filter: alpha(opacity=100); /*This works in IE 8 & 9 too*/
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"; /*IE4-IE9*/
-	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-	cursor:pointer;
+		background-color:White;
+		-webkit-opacity: 0.1; /* Netscape and Older than Firefox 0.9 */
+		-moz-opacity: 0.1; /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/
+		-khtml-opacity: 0.1; /* IE9 + etc...modern browsers */
+		opacity: .1; /* IE 4-9 */
+		filter: alpha(opacity=10); /*This works in IE 8 & 9 too*/
+		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)"; /*IE4-IE9*/
+		filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=10);
+
 	}
 
 .zoomSlider 
@@ -123,13 +125,3 @@
     border-color:#858585 #858585 #858585 #858585; 
     border-radius: 3px; 
 	}
-.moveZoomSlider:hover
-{
-	-webkit-opacity: 1; /* Netscape and Older than Firefox 0.9 */
-	-moz-opacity: 1; /* Safari 1.x (pre WebKit!) 老式khtml内核的Safari浏览器*/
-	-khtml-opacity: 1; /* IE9 + etc...modern browsers */
-	opacity: .9; /* IE 4-9 */
-	filter: alpha(opacity=100); /*This works in IE 8 & 9 too*/
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)"; /*IE4-IE9*/
-	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-	cursor:pointer;

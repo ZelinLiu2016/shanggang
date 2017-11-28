@@ -31,7 +31,7 @@ function InitLoadManage()
 			InitManageTable();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	var thead = document.getElementById("info_head");
@@ -60,7 +60,7 @@ function RefreshLoadManage()
 			RefreshManageTable();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 }
@@ -80,7 +80,7 @@ function InitManageTable() {
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allManage,
-    height:280,
+    //height:280,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,
@@ -184,9 +184,16 @@ function InitManageTable() {
             if (arrselections.length <= 0) {
                 return;
             }
-			if(confirm("确定要删除吗？")){
-				manage_delete(arrselections[0].fleetid);
+			if(isCompanyInUse(arrselections[0].fleetid))
+			{
+				confirm("该公司属于某在建项目，不能删除！")
 			}
+			else{
+				if(confirm("确定要删除吗？")){
+					manage_delete(arrselections[0].fleetid);
+				}
+			}
+			
             /*$("#manage_update_label").text("删除");
 			$("#manage_fleetid").val(arrselections[0].fleetid);
 			$("#manage_name").val(arrselections[0].name);
@@ -232,12 +239,12 @@ function manage_add()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("新增数据成功！");
 			 $("#manage_update").modal('hide');
          	 RefreshLoadManage();
                },       
          error: function () {       
-                alert("fail");       
+                alert("新增数据失败！");       
            }       
      });
 }
@@ -256,14 +263,55 @@ function manage_edit()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("修改数据成功！");
 			 $("#manage_update").modal('hide');
          	 RefreshLoadManage();
                },       
          error: function () {       
-                alert("fail");       
+                alert("修改数据失败！");       
            }       
      });
+}
+
+function isCompanyInUse(id)
+{
+	for(var i = 0;i<allParam.length;++i)
+	{
+		if(allParam[i].inprogress=="是" && allParam[i].projectid in detailed)
+		{
+			var shigong = detailed[allParam[i].projectid].sggs;
+			if(shigong!="")
+			{
+				var tmp = shigong.split(";");
+				for(var j = 0;j<tmp.length;++j)
+				{
+					if(tmp[j] == id)
+					{return true;}
+				}
+			}
+			var jianli =  detailed[allParam[i].projectid].jlgs;
+			if(jianli!="")
+			{
+				var tmp = jianli.split(";");
+				for(var j = 0;j<tmp.length;++j)
+				{
+					if(tmp[j] == id)
+					{return true;}
+				}
+			}
+			var sheji =  detailed[allParam[i].projectid].sjgs;
+			if(sheji!="")
+			{
+				var tmp = sheji.split(";");
+				for(var j = 0;j<tmp.length;++j)
+				{
+					if(tmp[j] == id)
+					{return true;}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 function manage_delete(id)
@@ -276,12 +324,12 @@ function manage_delete(id)
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("删除数据成功！");
 			 $("#manage_update").modal('hide');
          	 RefreshLoadManage();
                },       
          error: function () {       
-                alert("fail");       
+                alert("删除数据失败！");       
            }       
      });
 }

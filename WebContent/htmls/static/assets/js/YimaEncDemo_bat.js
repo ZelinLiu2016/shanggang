@@ -205,23 +205,16 @@ function Test_AddLayer() {
     pointLayerInfo.type = 1;//类型：1=点图层，2=线图层，3=面图层
     pointLayerInfo.name = "点图层";//图层名称
     pointLayerInfo.bShow = true; //显示
-
-    pointLayerInfo.minShowScale = 1;//最大比例尺
-    pointLayerInfo.maxShowScale = 2000000000;//最小比例尺
-    pointLayerInfo.bShowTextOrNot = true;//是否显示名称
-    pointLayerInfo.iStartShowTextScale = 5000000;//开始显示名称的最小比例尺
-    
     var pointLayerPos = API_AddNewLayer(pointLayerInfo,null); //添加图层，得到图层的pos
     if (pointLayerPos > -1) {
         var pointStyle = [];
 
-
-        //点图片样式           
+        //点图片样式   
+        
         pointStyle.strImgSrc = "img/light.png"; //图片地址
         pointStyle.iImgWidth = 20; //图片的宽度
-        pointStyle.iImgHeight = 30; //图片的高度
-        pointStyle.offsetScrnPo = {x:0,y:-15};//显示的偏移量，(0,0)为图片中心
-
+        pointStyle.iImgHeight = 30; //图片的高度   
+          
         
         /*
         //点矢量符号样式
@@ -232,21 +225,20 @@ function Test_AddLayer() {
         pointStyle.arrSymbolPo = arrSymbolPo;
         */
         
-        
+        /*
         //小圆符号样式
-        //pointStyle.iCircleR = 5;//圆半径
-
+        pointStyle.iCircleR = 1;//圆半径
+        */
+        
         pointStyle.bShowImg = true;
         pointStyle.bShowText = true; //是否显示名称
-        pointStyle.textColor = "#FF0000"; //名称颜色
+        pointStyle.textColor = "#000000"; //名称颜色
         pointStyle.fontSize = "12px"; //名称字体大小
         pointStyle.iOpacity = 80;
         pointStyle.iTextOpacity = 80; //透明度
         pointStyle.bFilled = true; //是否填充颜色
         pointStyle.fillColor = "#ee5d72"; //填充的颜色
         g_iPointStylePos = API_AddPointLayerStyleByPos(pointLayerPos, pointStyle);
-
-        API_SetLayerTextBackGroundColorByPos(pointLayerPos,true,"#FF0000",50);//设置文字背景颜色
     }
 
     //---------------------------------添加线物标图层----------------------------
@@ -260,8 +252,8 @@ function Test_AddLayer() {
 
     if (lineLayerPos > -1) {
         var lineStyle = [];
-        lineStyle.borderWith = 1; //线的粗细
-        lineStyle.borderColor = "#0000FF"; //线的颜色
+        lineStyle.borderWith = 2; //线的粗细
+        lineStyle.borderColor = "#092ee8"; //线的颜色
         lineStyle.iOpacity = 80; //透明度
         lineStyle.bShowText = true; //是否显示名称
         lineStyle.textColor = "#000000"; //名称颜色
@@ -269,32 +261,28 @@ function Test_AddLayer() {
         lineStyle.iTextOpacity = 80; //透明度
 
         g_iLineStylePos = API_AddLineLayerStyleByPos(lineLayerPos, lineStyle);
-        API_SetLayerTextBackGroundColorByPos(lineLayerPos,true, "#00FF00", 50); //设置文字背景颜色
     }
 
     //-------------------------------------添加面物标图层---------------------
     var faceLayerInfo = [];
     faceLayerInfo.id = g_iFaceLayerId;
     faceLayerInfo.type = 3; //类型：1=点图层，2=线图层，3=面图层
-    faceLayerInfo.name = "面图层"; //图层名称
+    faceLayerInfo.name = "线图层"; //图层名称
     faceLayerInfo.bShow = true; //显示
     var faceLayerPos = API_AddNewLayer(faceLayerInfo,null); //添加图层，得到图层的pos
     if (faceLayerPos > -1) {
         var faceStyle = [];
-        faceStyle.borderWith = 1; //线的粗细
+        faceStyle.borderWith = 2; //线的粗细
         faceStyle.borderColor = "#092ee8"; //线的颜色
         faceStyle.bFilled = true; //是否填充颜色
-        //faceStyle.fillColor = "#FFFFFF"; //填充的颜色
-        faceStyle.fillColor = "#FF0000"; //填充的颜色
-        faceStyle.iOpacity = 50; //透明度
+        faceStyle.fillColor = "#ee5d72"; //填充的颜色
+        faceStyle.iOpacity = 60; //透明度
         faceStyle.bShowText = true; //是否显示名称
         faceStyle.textColor = "#000000"; //名称颜色
         faceStyle.fontSize = "12px"; //名称字体大小
         faceStyle.iTextOpacity = 80; //透明度
-        faceStyle.iLineOpacity = 100;
 
         g_iFaceStylePos = API_AddFaceLayerStyleByPos(faceLayerPos, faceStyle);
-        API_SetLayerTextBackGroundColorByPos(faceLayerPos,true, "#0000FF", 50); //设置文字背景颜色
     }
 
     //--------------------------------------添加气象图层(也是点物标一种)--------------
@@ -303,23 +291,20 @@ function Test_AddLayer() {
     weatherLayerInfo.type = 1; //类型：1=点图层，2=线图层，3=面图层
     weatherLayerInfo.name = "气象图层"; //图层名称
     weatherLayerInfo.bShow = true; //显示
-    weatherLayerInfo.bShowImg = true;//显示图片
+    weatherLayerInfo.bShowImg = true;
     weatherLayerInfo.minShowScale = 20000;//最小显示比例尺
-    weatherLayerInfo.maxShowScale = 5120000; //最大显示比例尺
+    weatherLayerInfo.maxShowScale = 5120000; //最大小时比例尺
     var weatherLayerPos = API_AddNewLayer(weatherLayerInfo,null); //添加图层，得到图层的pos
     if (weatherLayerPos > -1) {
         //这里添加两种气象样式
         var weatherStyle1 = [];
-        weatherStyle1.bShowImg = true;
         weatherStyle1.strImgSrc = "img/sunshine1.png"; //图片地址（晴天图片）
         weatherStyle1.iImgWidth = 30; //图片的宽度
         weatherStyle1.iImgHeight = 26; //图片的高度
         weatherStyle1.bShowText = false; //是否显示名称
-        
         var pos1 = API_AddPointLayerStyleByPos(weatherLayerPos, weatherStyle1);//添加第一种气象样式,这里的pos1应该是0
-
+        
         var weatherStyle2 = [];
-        weatherStyle2.bShowImg = true;//显示图片
         weatherStyle2.strImgSrc = "img/raining1.png"; //图片地址（阴天图片）
         weatherStyle2.iImgWidth = 30; //图片的宽度
         weatherStyle2.iImgHeight = 26; //图片的高度
@@ -338,7 +323,6 @@ function Test_AddLayer() {
     if (portLayerPos > -1) {
         //这里一种样式
         var portStyle = [];
-        portStyle.bShowImg = true; //显示图片
         portStyle.strImgSrc = "img/port.png"; //图片地址（晴天图片）
         portStyle.iImgWidth = 25; //图片的宽度
         portStyle.iImgHeight = 25; //图片的高度

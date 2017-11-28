@@ -281,6 +281,7 @@ function fullView() {
 	chooseHarbor=0;
 	$("#harbor-title").text(harborTitle[0]);
 	API_SetMapViewCenter(121.668, 31.338, 160000);
+	//API_SetMapLevel(8, {x:121.668, y:31.338});
 	$("#switch-show").hide();
 	$("#history-data").hide();
 	$("#future-data").hide();

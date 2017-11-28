@@ -36,21 +36,21 @@ function CleanMenu3()
 	}
 }
 
-function l1()
+function l1_menu()
 {
 	$("#L1").attr("class", "LeftTextSelect");
 	CleanMenu2();
 	CleanMenu3();
 }
 
-function l2()
+function l2_menu()
 {
 	$("#L2").attr("class", "LeftTextSelect");
 	CleanMenu1();
 	CleanMenu3();
 }
 
-function l3()
+function l3_menu()
 {
 	$("#L3").attr("class", "LeftTextSelect");
 	CleanMenu1();

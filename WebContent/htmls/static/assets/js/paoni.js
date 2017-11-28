@@ -23,6 +23,7 @@ function SetPaoniTable() {
 	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
+	delete_object();
 	
     $.ajax({
             type: "GET",
@@ -49,7 +50,7 @@ function RefreshLoadPaoni()
                   },       
             error: function () {       
                    alert("fail");       
-              }       
+              }
         });
 }
 function InitPaoniTable()
@@ -201,9 +202,13 @@ function InitPaoniTable()
 			return;
 		}
 		area_id = arrselections[0].areaid;
-		
-		//cpf(coorDict[area_id]);
-		deleteButtomFace()
+		var arrObjPo = [];
+		for(var i = 0;i<coorDict[area_id].length;++i)
+		{
+			arrObjPo.push({x:convertToLatitu(coorDict[area_id][i].x),y:convertToLatitu(coorDict[area_id][i].y)})
+		}
+		paoni_cpf(arrObjPo);
+		/*deleteButtomFace()
 		labelInfo = [];
 		AddButtomLayer();
 		buttomFaces = 1000;
@@ -217,7 +222,7 @@ function InitPaoniTable()
             ob.push(convertToLatitu(buttomPoint[i].x));
             labelInfo.push(ob);
         }
-        AddButtomFaces(labelInfo);
+        AddButtomFaces(labelInfo);*/
 		
 		
 		$('html, body').animate({
@@ -429,46 +434,60 @@ function AddCorner(OnePointCoor,index)
 		API_SetCurDrawDynamicUseType(DynamicSymbolType.none);
 };
 
-function cpf(arrObjPo)
+function paoni_cpf(arrObjPo)
 {
-	deleteButtomFace();
-		API_SetCurDrawDynamicUseType(DynamicSymbolType.drawFace);
-		var objType = DynamicSymbolType.drawFace;
-		var objName = "";
-		//坐标的数组
-		API_SetMapViewCenter(convertToLatitu(arrObjPo[0].x)/10000000, convertToLatitu(arrObjPo[0].y)/10000000, 80000);
-		var drawObjPoNum = arrObjPo.length;
-		for (var i = 0; i < drawObjPoNum; i++) {
-			AddCorner(arrObjPo[i],i+1);
-        }
-		if (objType == "3" && drawObjPoNum < parseInt(3)) {
-			alert("绘制的点数量不够组成一个面物标，请再添加绘制点。");
-			return;
-		}
-		var layerStylePos = 0;
-		var layerPos = -1;
-    //添加面
-        layerPos = API_GetLayerPosById(g_iFaceLayerId); //获取图层的pos
-        layerStylePos = g_iFaceStylePos;
-		var bAddResult = false;
-		if (layerPos > -1) {
-			g_iAddObjId++;
-			var objInfo = [];
-			var arrExpAttrValue = []; //扩展字段，假如没有可以传入null
+	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawFace);
+	var objType = DynamicSymbolType.drawFace;
+	var objName = "";
+	//坐标的数组
+	API_SetMapViewCenter(arrObjPo[0].x/10000000, arrObjPo[0].y/10000000, 80000);
+	var drawObjPoNum = arrObjPo.length;
+	for (var i = 0; i < drawObjPoNum; i++) {
+		AddCorner(arrObjPo[i],i+1);
+	}
+	if (objType == "3" && drawObjPoNum < parseInt(3)) {
+		alert("绘制的点数量不够组成一个面物标，请再添加绘制点。");
+		return;
+	}
+	var layerStylePos = 0;
+	var layerPos = -1;
+//添加面
+	layerPos = API_GetLayerPosById(g_iFaceLayerId); //获取图层的pos
+	layerStylePos = g_iFaceStylePos;
+	var bAddResult = false;
+	if (layerPos > -1) {
+		g_iAddObjId++;
+		var objInfo = [];
+		var arrExpAttrValue = []; //扩展字段，假如没有可以传入null
 
-			objInfo.layerPos = layerPos;
-			objInfo.objId = g_iAddObjId;
-			objInfo.name = objName;
-			objInfo.showText = objName;
-			objInfo.layerStylePos = layerStylePos;
-			arrExpAttrValue.push("来一个扩展字段");
-			
+		objInfo.layerPos = layerPos;
+		objInfo.objId = g_iAddObjId;
+		objInfo.name = objName;
+		objInfo.showText = objName;
+		objInfo.layerStylePos = layerStylePos;
+		arrExpAttrValue.push("来一个扩展字段");
+		
 
-			lineobjPos = API_AddNewObject(objInfo, arrObjPo, arrExpAttrValue);
-			if (lineobjPos > -1) {
-				bAddResult = true;
-			}
+		lineobjPos = API_AddNewObject(objInfo, arrObjPo, arrExpAttrValue);
+		if (lineobjPos > -1) {
+			bAddResult = true;
 		}
-        API_ReDrawLayer();
-		API_SetCurDrawDynamicUseType(DynamicSymbolType.none);
+	}
+	API_ReDrawLayer();
+	API_SetCurDrawDynamicUseType(DynamicSymbolType.none);
 }
+
+function delete_object()
+{
+	var layerCount = API_GetLayerCount();//获取所有图层数量
+    for (var iLayerPos = 0; iLayerPos < layerCount; iLayerPos++) {
+        var iLayerObjCount = API_GetLayerObjectCountByPos(iLayerPos);//循环遍历每个图层，获取该图层下的物标数量
+        while (iLayerObjCount > 0) {
+            iLayerObjCount--;
+            API_DelObjectByPos(iLayerPos, 0);//遍历删除图层下的每个物标
+        }
+    }
+	API_ReDrawLayer();
+}
+
+	

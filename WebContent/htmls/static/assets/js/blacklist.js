@@ -43,7 +43,7 @@ function InitBlackListTable()
     }, 
 	{
         field: 'area',
-        title: '经抛泥异常次数'
+        title: '抛泥异常次数'
     }, 
 	{
         field: 'route',

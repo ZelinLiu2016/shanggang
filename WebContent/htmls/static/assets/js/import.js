@@ -28,13 +28,12 @@ function InitLoadImport()
         method: "GET",
         url: "/shanggang/ship/list",
         success: function (data) {
-			console.log(data);
 			fillBoatData(data);
 			fillMmsiData(data);
 			InitImportTable();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	
@@ -61,11 +60,11 @@ function RefreshLoadImport()
         url: "/shanggang/ship/list",
         success: function (data) {
         	fillBoatData(data);
-        	console.log(allBoat);
+			fillMmsiData(data);
 			RefreshImportTable();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 }
@@ -103,7 +102,7 @@ function InitImportTable() {
         title: 'MMSl'
     }, 
 	{
-        field: 'fleetid',
+        field: 'fleetname',
         title: '施工单位'
     },
 	{
@@ -126,127 +125,129 @@ function InitImportTable() {
     $('#datatable').show();
 	$("#btn_search").off('click');
 	$("#btn_search").click(function () {
-			var search = $("#toolbar_search").val();
-			postData = {"str": search};
-			$.ajax({
-				type: "POST",
-				url: "/shanggang/ship/mohu",
-				data: JSON.stringify(postData),
-				contentType:"application/json",
-				success: function (data) {
-					allBoat = [];			
-					for(var i = 0;i<data.length;++i)
-					{
-						allBoat.push({"capacity":allMmsi[data[i]].capacity,
-						"fleetid":allMmsi[data[i]].fleetid,"imo":allMmsi[data[i]].IMO,"length":allMmsi[data[i]].length,
-						"width":allMmsi[data[i]].width,"mmsi":data[i],"shipname":allMmsi[data[i]].shipname,
-						"shiptype":allMmsi[data[i]].shiptype,"contact":allMmsi[data[i]].contact,"cellphone":allMmsi[data[i]].cellphone});
-					}
-					console.log(allBoat);
-					RefreshImportTable();
-				},       
-				error: function () {       
-					alert("fail");       
-				}       
-			});
-        });
+		var search = $("#toolbar_search").val();
+		postData = {"str": search};
+		$.ajax({
+			type: "POST",
+			url: "/shanggang/ship/mohu",
+			data: JSON.stringify(postData),
+			contentType:"application/json",
+			success: function (data) {
+				var info = {"capacity":allMmsi[data[i]].capacity,
+				"fleetid":allMmsi[data[i]].fleetid,"imo":allMmsi[data[i]].IMO,"length":allMmsi[data[i]].length,
+				"width":allMmsi[data[i]].width,"mmsi":data[i],"shipname":allMmsi[data[i]].shipname,
+				"shiptype":allMmsi[data[i]].shiptype,"contact":allMmsi[data[i]].contact,"cellphone":allMmsi[data[i]].cellphone};
+				if(info.fleetid in allCompany)
+				{
+					info.fleetname = allCompany[info.fleet_id].name;
+				}
+				else{
+					info.fleetname = "-";
+				}
+				allBoat.push(info);
+				RefreshImportTable();
+			},       
+			error: function () {       
+				alert("获取数据失败！");       
+			}       
+		});
+	});
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
-			document.getElementById("import_update_label").className = "modal-title glyphicon glyphicon-plus";
-            var select_work = document.getElementById("import_fleetid");
-			while(select_work.hasChildNodes()) 
-			{
-				select_work.removeChild(select_work.firstChild);
-			}
-			var entry = "";
-			for (var c in allCompany) {
-				console.log(allCompany);
-				entry += '<option value="'+c+'">'+ c+'---'+allCompany[c].name +'</option>';
-			}
-			$("#import_fleetid").append(entry);
-			$("#import_update_label").text("新增");
-			$("#import_mmsl").val("");
-			$("#import_fleetid").val("");
-			$("#import_shipname").val("");
-			$("#import_imo").val("");
-			$("#import_length").val("");
-			$("#import_width").val("");
-			$("#import_shiptype").val("");
-		    $("#import_capacity").val("");
-			$("#import_contact").val("");
-			$("#import_cellphone").val("");
-			$('#import_update').modal('show');
-			$('#import_add_button').show();
-			$('#import_edit_button').hide();
-			$('#import_delete_button').hide();
-			$("#import_owner").val("");
-			$("#import_ownerphone").val("");
-        });
+		document.getElementById("import_update_label").className = "modal-title glyphicon glyphicon-plus";
+		var select_work = document.getElementById("import_fleetid");
+		while(select_work.hasChildNodes()) 
+		{
+			select_work.removeChild(select_work.firstChild);
+		}
+		var entry = "";
+		for (var c in allCompany) {
+			entry += '<option value="'+c+'">'+ c+'---'+allCompany[c].name +'</option>';
+		}
+		$("#import_fleetid").append(entry);
+		$("#import_update_label").text("新增");
+		$("#import_mmsl").val("");
+		$("#import_fleetid").val("");
+		$("#import_shipname").val("");
+		$("#import_imo").val("");
+		$("#import_length").val("");
+		$("#import_width").val("");
+		$("#import_shiptype").val("");
+		$("#import_capacity").val("");
+		$("#import_contact").val("");
+		$("#import_cellphone").val("");
+		$('#import_update').modal('show');
+		$('#import_add_button').show();
+		$('#import_edit_button').hide();
+		$('#import_delete_button').hide();
+		$("#import_owner").val("");
+		$("#import_ownerphone").val("");
+	});
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
-            var arrselections = $("#table").bootstrapTable('getSelections');
-            if (arrselections.length > 1) {
-                return;
-            }
-            if (arrselections.length <= 0) {
-                return;
-            }
-			document.getElementById("import_update_label").className = "modal-title glyphicon glyphicon-pencil";
-            var select_work = document.getElementById("import_fleetid");
-			while(select_work.hasChildNodes()) 
-			{
-				select_work.removeChild(select_work.firstChild);
-			}
-			var entry = "";
-			for (var c in allCompany) {
-				entry += '<option value="'+c+'">'+ c+'---'+allCompany[c].name +'</option>';
-			}
-			$("#import_fleetid").append(entry);
-			$("#import_fleetid").val(arrselections[0].fleetid);
-            $("#import_update_label").text("编辑");
-			$("#import_mmsl").val(arrselections[0].mmsi);
-			$("#import_fleetid").val(arrselections[0].fleetid);
-			$("#import_shipname").val(arrselections[0].shipname);
-			$("#import_imo").val(arrselections[0].imo);
-			$("#import_length").val(arrselections[0].length);
-			$("#import_width").val(arrselections[0].width);
-			$("#import_shiptype").val(arrselections[0].shiptype);
-			$("#import_capacity").val(arrselections[0].capacity);
-			$("#import_contact").val(arrselections[0].contact);
-			$("#import_cellphone").val(arrselections[0].cellphone);
-			$("#import_owner").val(arrselections[0].owner);
-			$("#import_ownerphone").val(arrselections[0].ownerphone);
-			$('#import_update').modal('show');
-			$('#import_add_button').hide();
-			$('#import_edit_button').show();
-			$('#import_delete_button').hide();
-        });
+		var arrselections = $("#table").bootstrapTable('getSelections');
+		if (arrselections.length > 1) {
+			return;
+		}
+		if (arrselections.length <= 0) {
+			return;
+		}
+		document.getElementById("import_update_label").className = "modal-title glyphicon glyphicon-pencil";
+		var select_work = document.getElementById("import_fleetid");
+		while(select_work.hasChildNodes()) 
+		{
+			select_work.removeChild(select_work.firstChild);
+		}
+		var entry = "";
+		for (var c in allCompany) {
+			entry += '<option value="'+c+'">'+ c+'---'+allCompany[c].name +'</option>';
+		}
+		$("#import_fleetid").append(entry);
+		$("#import_fleetid").val(arrselections[0].fleetid);
+		$("#import_update_label").text("编辑");
+		$("#import_mmsl").val(arrselections[0].mmsi);
+		$("#import_fleetid").val(arrselections[0].fleetid);
+		$("#import_shipname").val(arrselections[0].shipname);
+		$("#import_imo").val(arrselections[0].imo);
+		$("#import_length").val(arrselections[0].length);
+		$("#import_width").val(arrselections[0].width);
+		$("#import_shiptype").val(arrselections[0].shiptype);
+		$("#import_capacity").val(arrselections[0].capacity);
+		$("#import_contact").val(arrselections[0].contact);
+		$("#import_cellphone").val(arrselections[0].cellphone);
+		$("#import_owner").val(arrselections[0].owner);
+		$("#import_ownerphone").val(arrselections[0].ownerphone);
+		$('#import_update').modal('show');
+		$('#import_add_button').hide();
+		$('#import_edit_button').show();
+		$('#import_delete_button').hide();
+	});
 	$("#btn_delete").off('click');
 	$("#btn_delete").click(function () {
-            var arrselections = $("#table").bootstrapTable('getSelections');
-            if (arrselections.length > 1) {
-                return;
-            }
-            if (arrselections.length <= 0) {
-                return;
-            }
-			if(confirm("确定要删除吗？")){
-				import_delete(arrselections[0].mmsi);
-			}
-            /*$("#import_update_label").text("删除");
-			$("#import_mmsl").val(arrselections[0].mmsi);
-			$("#import_fleetid").val(arrselections[0].fleetid);
-			$("#import_shipname").val(arrselections[0].shipname);
-			$("#import_imo").val(arrselections[0].imo);
-			$("#import_length").val(arrselections[0].length);
-			$("#import_width").val(arrselections[0].width);
-			$("#import_shiptype").val(arrselections[0].shiptype);
-			$("#import_capacity").val(arrselections[0].capacity);
-			$('#import_update').modal('show');
-			$('#import_add_button').hide();
-			$('#import_edit_button').hide();
-			$('#import_delete_button').show();*/
-        });
+		var arrselections = $("#table").bootstrapTable('getSelections');
+		if (arrselections.length > 1) {
+			return;
+		}
+		if (arrselections.length <= 0) {
+			return;
+		}
+		if(confirm("确定要删除吗？")){
+			import_delete(arrselections[0].mmsi);
+		}
+		/*$("#import_update_label").text("删除");
+		$("#import_mmsl").val(arrselections[0].mmsi);
+		$("#import_fleetid").val(arrselections[0].fleetid);
+		$("#import_shipname").val(arrselections[0].shipname);
+		$("#import_imo").val(arrselections[0].imo);
+		$("#import_length").val(arrselections[0].length);
+		$("#import_width").val(arrselections[0].width);
+		$("#import_shiptype").val(arrselections[0].shiptype);
+		$("#import_capacity").val(arrselections[0].capacity);
+		$('#import_update').modal('show');
+		$('#import_add_button').hide();
+		$('#import_edit_button').hide();
+		$('#import_delete_button').show();*/
+    });
 }
 
 function RefreshImportTable() {
@@ -258,14 +259,21 @@ function RefreshImportTable() {
 function fillBoatData(data)
 {
 	allBoat = [];
-	for(var i = 0;i<data.length;++i)
-		{
-		allBoat.push({"capacity":data[i].capacity,
+	for(var i = 0;i<data.length;++i){
+		var info = {"capacity":data[i].capacity,
 			"fleetid":data[i].fleet_id,"imo":data[i].imo,"length":data[i].length,
 			"width":data[i].width,"mmsi":data[i].mmsi,"shipname":data[i].shipname,
 			"shiptype":data[i].shiptype,"contact":data[i].contact,"cellphone":data[i].cellphone,
-			"owner":data[i].owner, "ownerphone":data[i].owner_phone});
+			"owner":data[i].owner, "ownerphone":data[i].owner_phone};
+		
+		if(info.fleetid in allCompany){
+			info.fleetname = allCompany[info.fleetid].name;
 		}
+		else{
+			info.fleetname = "-";
+		}
+		allBoat.push(info);
+	}
 }
 
 function import_add()
@@ -277,6 +285,7 @@ function import_add()
 	postData["width"] = $("#import_width").val();
 	postData["shiptype"] =	$("#import_shiptype").val();
 	postData["capacity"] = $("#import_capacity").val();
+	postData["fleet_id"] = $("#import_fleetid").val();
 	postData["contact"] = $("#import_contact").val();
 	postData["cellphone"] = $("#import_cellphone").val();
 	postData["owner"] = $("#import_owner").val();
@@ -288,12 +297,12 @@ function import_add()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("新增数据成功！");
 			 $("#import_update").modal('hide');
          	 RefreshLoadImport();
                },       
          error: function () {       
-                alert("fail");       
+                alert("新增数据失败！");       
            }       
      });
 }
@@ -319,12 +328,12 @@ function import_edit()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("修改数据成功！");
 			 $("#import_update").modal('hide');
          	 RefreshLoadImport();
                },       
          error: function () {       
-                alert("fail");       
+                alert("修改数据失败！");       
            }       
      });
 }
@@ -339,12 +348,12 @@ function import_delete(mmsi)
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("删除数据成功！");
 			 $("#import_update").modal('hide');
          	 RefreshLoadImport();
                },       
          error: function () {       
-                alert("fail");       
+                alert("删除数据失败！");       
            }       
      });
 }

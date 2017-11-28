@@ -939,7 +939,7 @@ function AddSomePlayHistoryTracksShipInfo(shipCount, bShowTrack, hisAbmData) {
 		curHistroyTrack.trackSpeed = parseInt(1); //航速
 		curHistroyTrack.trackTime = "2017/9/6 00:00:0"; //时间，格式例如"2015/5/31 12:1:3"
 
-		arrCurShipHistroryTracks.push(curHistroyTrack);
+		//arrCurShipHistroryTracks.push(curHistroyTrack);
             //arrCurShipHistroryTracks.push(curHistroyTrack);
         API_AddOnePlayShipInfo(curShipInfo, arrCurShipHistroryTracks);
     }

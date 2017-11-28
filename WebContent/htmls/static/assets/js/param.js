@@ -222,30 +222,37 @@ function InitParamTable() {
 	onClickRow: function (row, $element) {
 		var tbody = document.getElementById("company-tbody");
 		var selected = detailed[row.projectid];
+		console.log()
 		while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
 		{
 			tbody.removeChild(tbody.firstChild);
 		}
 		var entry = "";
-		if(selected.sggs != null)
+		if(selected.sggs != "")
 		{
 			sggs = selected.sggs.split(';');
 			for (var i = 0; i < sggs.length; i++) {
-				entry += '<tr><td>'+"施工公司"+'</td><td>'+allSgdw[sggs[i]].name+'</td><td>'+allSgdw[sggs[i]].contact+'</td><td>'+allSgdw[sggs[i]].cellphone+'</td></tr>';
+				if(sggs[i] in allSgdw){
+					entry += '<tr><td>'+"施工公司"+'</td><td>'+allSgdw[sggs[i]].name+'</td><td>'+allSgdw[sggs[i]].contact+'</td><td>'+allSgdw[sggs[i]].cellphone+'</td></tr>';
+				}
 			}
 		}
-		if(selected.sjgs != null)
+		if(selected.sjgs != "")
 		{
 			sjgs = selected.sjgs.split(';');
 			for (var i = 0; i < sjgs.length; i++) {
-				entry += '<tr><td>'+"设计公司"+'</td><td>'+allSjdw[sjgs[i]].name+'</td><td>'+allSjdw[sjgs[i]].contact+'</td><td>'+allSjdw[sjgs[i]].cellphone+'</td></tr>';
+				if(sjgs[i] in allSjdw){
+					entry += '<tr><td>'+"设计公司"+'</td><td>'+allSjdw[sjgs[i]].name+'</td><td>'+allSjdw[sjgs[i]].contact+'</td><td>'+allSjdw[sjgs[i]].cellphone+'</td></tr>';
+				}
 			}
 		}
-		if(selected.jlgs != null)
+		if(selected.jlgs != "")
 		{
 			jlgs = selected.jlgs.split(';');
 			for (var i = 0; i < jlgs.length; i++) {
+				if(jlgs[i] in allJldw){
 				entry += '<tr><td>'+"监理公司"+'</td><td>'+allJldw[jlgs[i]].name+'</td><td>'+allJldw[jlgs[i]].contact+'</td><td>'+allJldw[jlgs[i]].cellphone+'</td></tr>';
+				}
 			}
 		}
 		$("#company-tbody").append(entry);
@@ -316,7 +323,11 @@ function InitParamTable() {
 	{
         field: 'enddate',
         title: '结束日期'
-    } 
+    },
+	{
+        field: 'inprogress',
+        title: '是否在建'
+    }
 	]});
 	
     $('#datatable').show();
@@ -428,10 +439,10 @@ function fillParamData(data)
 		allParam.push({"projectid":data[i].projectId,"projectname":data[i].projectName,
 			"area":data[i].dumpingArea,"capacity":data[i].squareVolume,"startdate":data[i].beginDate,
 			"enddate":data[i].endDate,"shipnum":data[i].boatNum,"harborname":data[i].harborName,
-			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id});
+			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id,"inprogress":"是"});
 		detailed[data[i].projectId] = {"sggs":data[i].construction_company,"sjgs":data[i].design_company,
 		"jlgs":data[i].supervision_company,"mmsi":data[i].mmsilist,"projectname":data[i].projectName,
-		"startdate":data[i].beginDate, "enddate":data[i].endDate};
+		"startdate":data[i].beginDate, "enddate":data[i].endDate,"inprogress":"是"};
 		}
 }
 
@@ -446,7 +457,7 @@ function fillCompanyData(data)
 		allCompany[data[i].company_id] = {"name":data[i].company_name,"contact":data[i].contact,"cellphone":data[i].cellphone};
 		switch (data[i].company_type)
 		{
-			case "建设单位":
+			case "施工单位":
 				allSgdw[data[i].company_id] = {"name":data[i].company_name,"contact":data[i].contact,"cellphone":data[i].cellphone};
 				break;
 			case "设计单位":
@@ -677,7 +688,10 @@ function choose_sjdw()
 	$("#multiselect").append(entry);
 	entry = "";
 	for (var comp in s) {
-		entry += '<option>'+comp+'---'+allSjdw[comp].name+'</option>';
+		if(comp in allSjdw)
+		{
+			entry += '<option>'+comp+'---'+allSjdw[comp].name+'</option>';
+		}	
 	}
 	$("#multiselect_to").append(entry);
 	$("#multiselect_label").text("设计单位");
@@ -730,7 +744,10 @@ function choose_jldw()
 	$("#multiselect").append(entry);
 	entry = "";
 	for (var comp in s) {
-		entry += '<option>'+comp+'---'+allJldw[comp].name+'</option>';
+		if(comp in allJldw)
+		{
+			entry += '<option>'+comp+'---'+allJldw[comp].name+'</option>';
+		}
 	}
 	$("#multiselect_to").append(entry);
 	$("#multiselect_label").text("监理单位");

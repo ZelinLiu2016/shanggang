@@ -1,12 +1,4 @@
-﻿allBoatWork = [{"mmsi":"412375620","day":1,"week":10,"month":10,"companyname":"中港建务三公司","companyid":"1","shipname":"远洋号"},
-           {"mmsi":"412380310","day":2,"week":13,"month":13,"companyname":"中港建务三公司","companyid":"1","shipname":"远洋号"},
-           {"mmsi":"413770463","day":4,"week":6,"month":6,"companyname":"中港建务三公司","companyid":"1","shipname":"远洋号"},
-           {"mmsi":"413370410","day":6,"week":17,"month":17,"companyname":"中交水运","companyid":"3","shipname":"远洋号"},
-           {"mmsi":"413765442","day":3,"week":15,"month":15,"companyname":"中交水运","companyid":"3","shipname":"远洋号"},
-           {"mmsi":"413373880","day":5,"week":16,"month":16,"companyname":"中交水运","companyid":"3","shipname":"远洋号"},
-          ];
-allFleet = [{"fleetid":"中港建务三公司","day":10,"week":60,"month":200}];
-allPort = [{"port":"2017洋山港前航道疏浚","day":10,"week":60,"month":200}];
+﻿allPort = [{"port":"2017洋山港前航道疏浚","day":10,"week":60,"month":200}];
 
 function BoatStatsInit()
 {	

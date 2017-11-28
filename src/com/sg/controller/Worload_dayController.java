@@ -61,7 +61,7 @@ public class Worload_dayController {
 	public ResponseEntity<List<String>> getallnewworkload() throws IOException{
 		//查询所有船当天目前的工作量
 		SqlSession session = getSession();
-		List<String> mmsi_str = session.selectList("getallmmsilist");
+		List<String> mmsi_str = session.selectList("getworkingmmsilist");
 		List<String> all_mmsi = new ArrayList<String>();
 		for(String str:mmsi_str){
 			String[] mm = str.split(";");

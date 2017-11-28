@@ -25,6 +25,7 @@ function SetPaoniTable() {
 	$("#project_progress").hide();
 	
 	delete_object();
+	ClearPlayShipInfo();
     $.ajax({
             type: "GET",
             url: "/shanggang/dumping_area/list",
@@ -194,7 +195,6 @@ function InitPaoniTable()
 	$("#btn_show").off('click');
 	$("#btn_show").click(function () {
 		var arrselections = $("#table").bootstrapTable('getSelections');
-		console.log(arrselections);
 		if (arrselections.length > 1) {
 			return;
 		}

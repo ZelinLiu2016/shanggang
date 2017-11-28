@@ -33,12 +33,15 @@ function RTMonInit()
     });
 	allMonitor = [];
 	historyData = [];
+	delete_object();
 	ClearPlayShipInfo();
 	$("#toolbar").hide();
 	//document.getElementById("btn_delete").setAttribute("disabled", true)
 	
 	$("#monitor_show").off('click');
 	$("#monitor_show").click(function(){
+		delete_object();
+		ClearPlayShipInfo();
 		var arrselections = $("#table").bootstrapTable('getSelections');
         if (arrselections.length > 1) {
             return;
@@ -207,6 +210,7 @@ function HSMonInit()
     });
 	allMonitor = [];
 	historyData = [];
+	delete_object();
 	ClearPlayShipInfo();
 	$("#toolbar").hide();
 	$("#btn_backup").hide();
@@ -216,6 +220,8 @@ function HSMonInit()
 	$("#btn_show").hide();
 	$("#monitor_show").off('click');
 	$("#monitor_show").click(function(){
+		delete_object();
+		ClearPlayShipInfo();
 		var arrselections = $("#table").bootstrapTable('getSelections');
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
@@ -340,6 +346,7 @@ function DTMonInit()
         }  
     });
 	allDetect = [];
+	delete_object();
 	ClearPlayShipInfo();
 	$("#toolbar").hide();
 	$("#btn_backup").hide();
@@ -349,6 +356,8 @@ function DTMonInit()
 	$("#btn_show").hide();
 	$("#monitor_show").off('click');
 	$("#monitor_show").click(function(){
+		delete_object();
+		ClearPlayShipInfo();
 		var arrselections = $("#table").bootstrapTable('getSelections');
 		postData["mmsi"] = arrselections[0].mmsi;
 		//postData["starttime"] = arrselections[0].start_time;

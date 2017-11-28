@@ -23,7 +23,7 @@ function ProjectErrorInit()
 	$("#error_handle").show();
 	$("#detailtable").hide();
 	$("#info_div").hide();
-	
+	allProjectError = [];
 	InitProjectErrorTable();
 }
 

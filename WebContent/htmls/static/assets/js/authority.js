@@ -129,36 +129,38 @@ $(document).ready(function() {
             alert("fail");
         }  
     });
-	$.ajax({
+	/*$.ajax({
         method: "GET",
         url: "/shanggang/abnormalinfo/exceedspeedfre",
         success: function (data) {
+			data=[];
         	fillSpeedfre(data);
             },
 		error: function () {       
             alert("fail");
         }  
-    });
+    });*/
 	$.ajax({
         method: "GET",
-        url: "/shanggang/abnormalinfo/areafre",
+        url: "/shanggang/workrecord/abnormal",
         success: function (data) {
         	fillAreafre(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败");
         }  
     });
-	$.ajax({
+	/*$.ajax({
         method: "GET",
         url: "/shanggang/abnormalinfo/routefre",
         success: function (data) {
+			data=[];
         	fillRoutefre(data);
             },
 		error: function () {       
             alert("fail");
         }  
-    });
+    });*/
 });
 
 function fillMmsiProjectData(data)
@@ -189,7 +191,11 @@ function fillAreafre(data)
 	areafre = {};
 	for(var i = 0;i<data.length;++i)
 	{
-		areafre[data[i].mmsi] = data[i].frequency;
+		if(!(data[i].mmsi in areafre))
+		{
+			areafre[data[i].mmsi] = 0;
+		}
+		areafre[data[i].mmsi] += 1;
 	}
 }
 

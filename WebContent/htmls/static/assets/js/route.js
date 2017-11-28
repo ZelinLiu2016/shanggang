@@ -27,6 +27,9 @@ function SetRouteTable() {
 	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
+	
+	delete_object();
+	ClearPlayShipInfo();
     $.ajax({
             method: "GET",
             url: "/shanggang/route/listall",

@@ -2,6 +2,7 @@
 var allError = [];
 var postData = {};
 var abtype = "";
+var dirt_abnormal_type = {1:"未进入抛泥区域抛泥",2:"施工区域停留太久"};
 function BoatErrorInit()
 {
 	$('#data_clean').hide();
@@ -84,6 +85,8 @@ function DirtError()
 	$("#L2L3L1").attr("class", "LeftTextSelect");
 	
 	API_DelAllShips();
+	delete_object();
+	ClearPlayShipInfo();
 	abtype = "Dumping_area Abnormal";
 	$("#toolbar").hide();
 	$("#btn_backup").hide();
@@ -106,10 +109,7 @@ function DirtError()
             if (arrselections.length <= 0) {
                 return;
             }
-		$('html, body').animate({
-        scrollTop: $("#mapBody").offset().top
-		}, 100);
-        postData = {"mmsi":arrselections[0].mmsi,"time":arrselections[0].time};
+        /*postData = {"mmsi":arrselections[0].mmsi,"time":arrselections[0].time};
 		$.ajax({
          type: "POST",
          url: "/shanggang/abnormalinfo/locationplayback",
@@ -124,7 +124,60 @@ function DirtError()
          error: function () {       
                 alert("fail");       
            }       
-     });
+		});*/
+		delete_object();
+		ClearPlayShipInfo();
+		var dredgingid = arrselections[0].dredging;
+		dredgingid = "2";
+		if(dredgingid in allDredging)
+		{
+			var arrObjPo = [];
+			for(var i = 0;i<sj_coorDict[dredgingid].length;++i)
+			{
+				arrObjPo.push({x:convertToLatitu(sj_coorDict[dredgingid][i].x),y:convertToLatitu(sj_coorDict[dredgingid][i].y)})
+			}
+			draw_area(arrObjPo);
+		}
+		
+		var dumpingid = arrselections[0].dumping;
+		dumpingid = "2_1";
+		if(dumpingid in allDumping)
+		{
+			var arrObjPo = [];
+			for(var i = 0;i<coorDict[dumpingid].length;++i)
+			{
+				arrObjPo.push({x:convertToLatitu(coorDict[dumpingid][i].x),y:convertToLatitu(coorDict[dumpingid][i].y)})
+			}
+			draw_area(arrObjPo);
+		}
+		
+		postData["starttime"] = arrselections[0].indred;
+		postData["endtime"] = arrselections[0].exitdump;
+		postData["mmsi"]=arrselections[0].mmsi;
+		$.ajax({
+			method: "POST",
+			url: "/shanggang/shipinfo/listinfoduring",
+			data: JSON.stringify(postData),
+			contentType:"application/json",
+			success: function (data) {
+				console.log(data);
+				fillMonitorData(data);
+				$('html, body').animate({
+					scrollTop: $("#mapBody").offset().top
+				}, 100);
+				if (historyData.length>0)
+				{
+					PlayShipHistoryTracks('ship', historyData);
+					return false;
+				}
+			},
+			error: function () {       
+				alert("查询失败！");
+			}  
+		});
+		$('html, body').animate({
+        scrollTop: $("#mapBody").offset().top
+		}, 100);
 	})
 
 	$("#mapBody").show();
@@ -140,13 +193,13 @@ function DirtError()
 	$("#error_handle").show();
 	$.ajax({
         method: "GET",
-        url: "/shanggang/abnormalinfo/listallabnormal",
+        url: "/shanggang/workrecord/abnormal",
         success: function (data) {
         	fillDirtError(data);
 			InitDirtTable();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 }
@@ -155,29 +208,29 @@ function fillDirtError(data)
 {
 	allError = [];
 	console.log(mmsi_project);
-	for(var i = 0;i<data.length;++i)
+	for(var i = 0;i<data.length;++i){
+		var info = {"mmsi":data[i].mmsi,"date":data[i].date,"indred":data[i].indred,
+					"exitdred":data[i].exitdred,"indump":data[i].indump,"exitdump":data[i].exitdump,
+					"state":data[i].state,"dredging":"-","dumping":"-","route":"-","handle":"-"};
+				
+		if(data[i].mmsi in allMmsi)
 		{
-			if(data[i].abnormal_type=="Dumping_area Abnormal")
+			info.name = allMmsi[data[i].mmsi].shipname;
+			if(allMmsi[data[i].mmsi].fleetid in allCompany)
 			{
-				if(data[i].mmsi in allMmsi)
-				{
-					var dr = "-";
-					var du = "-";
-					if(data[i].mmsi in mmsi_project)
-					{
-						dr = mmsi_project[data[i].mmsi].dredging;
-						du = mmsi_project[data[i].mmsi].dumping;
-					}
-						
-					allError.push(
-					{"mmsi":data[i].mmsi,"type":data[i].abnormal_type,
-					"lon":data[i].lon,"lat":data[i].lat,
-					"time":data[i].time,"handle":data[i].handle,"name":allMmsi[data[i].mmsi].shipname,"company":allMmsi[data[i].mmsi].fleetid,
-					"dredging":dr,"dumping":du}
-					);
-				}
+				info.company=allCompany[allMmsi[data[i].mmsi].fleetid].name;
+			}
+			else{
+				info.company="-";
 			}
 		}
+		else{
+			info.name = "-";
+			info.company="-";
+		}
+		info.type = dirt_abnormal_type[data[i].state];
+		allError.push(info);
+	}
 }
 
 function InitDirtTable()
@@ -186,7 +239,7 @@ function InitDirtTable()
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allError,
-    height:380,
+    //height:380,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,
@@ -212,18 +265,34 @@ function InitDirtTable()
 	{
         field: 'dumping',
         title: '抛泥区域'
-    }, 
-	{
-        field: 'lon',
-        title: '经度'
-    }, 
-	{
-        field: 'lat',
-        title: '纬度'
     },
 	{
-        field: 'time',
-        title: '异常时间'
+        field: 'route',
+        title: '抛泥航线'
+    }, 	
+	{
+        field: 'type',
+        title: '异常类型'
+    },
+	{
+        field: 'date',
+        title: '日期'
+    },
+	{
+        field: 'indred',
+        title: '进入施工区域'
+    },
+	{
+        field: 'exitdred',
+        title: '离开施工区域'
+    },
+	{
+        field: 'indump',
+        title: '进入抛泥区域'
+    },
+	{
+        field: 'exitdump',
+        title: '离开抛泥区域'
     },
 	{
         field: 'handle',
@@ -299,6 +368,7 @@ function RunError()
         method: "GET",
         url: "/shanggang/abnormalinfo/listallabnormal",
         success: function (data) {
+			data=[];
         	fillRunError(data);
 			InitRunTable();
             },
@@ -416,6 +486,7 @@ function SpeedError()
         method: "GET",
         url: "/shanggang/abnormalinfo/listallabnormal",
         success: function (data) {
+			data=[];
         	fillSpeedError(data);
 			InitSpeedTable();
             },
@@ -535,6 +606,7 @@ function WeatherError()
         method: "GET",
         url: "/shanggang/abnormalinfo/listallabnormal",
         success: function (data) {
+			data=[];
 			console.log(data);
         	fillWeatherError(data);
 			InitWeatherTable();

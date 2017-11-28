@@ -24,6 +24,7 @@ function SetShujunTable() {
 	$("#project_progress").hide();
 	
 	delete_object();
+	ClearPlayShipInfo();
     $.ajax({
 		type: "GET",
 		url: "/shanggang/dredging_area/listall",

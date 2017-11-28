@@ -1,6 +1,6 @@
 ﻿allPaoni = [];
 var postData = {};
-var coorDict = {};
+
 var coorNum = 4;
 function SetPaoniTable() {
 	CleanAll();
@@ -23,8 +23,8 @@ function SetPaoniTable() {
 	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
-	delete_object();
 	
+	delete_object();
     $.ajax({
             type: "GET",
             url: "/shanggang/dumping_area/list",
@@ -32,9 +32,9 @@ function SetPaoniTable() {
             	    console.log(data);
             	    fillAllPaoni(data);
             	    InitPaoniTable();
-                  },       
+                  },
             error: function () {       
-                   alert("fail");       
+                   alert("获取数据失败！");       
               }       
         });
 }
@@ -49,7 +49,7 @@ function RefreshLoadPaoni()
             	    RefreshPaoniTable();
                   },       
             error: function () {       
-                   alert("fail");       
+                   alert("获取数据失败！");       
               }
         });
 }
@@ -207,7 +207,8 @@ function InitPaoniTable()
 		{
 			arrObjPo.push({x:convertToLatitu(coorDict[area_id][i].x),y:convertToLatitu(coorDict[area_id][i].y)})
 		}
-		paoni_cpf(arrObjPo);
+		delete_object();
+		draw_area(arrObjPo);
 		/*deleteButtomFace()
 		labelInfo = [];
 		AddButtomLayer();
@@ -245,12 +246,15 @@ function fillAllPaoni(data) {
 			continue;
 		allPaoni.push({"areaid":data[i].area_id,"port":data[i].areaname});
 		var locationstr = data[i].location;
-		var point = locationstr.split("-");
 		coor = [];
-		for (var j = 0;j<point.length;++j)
-		{	
-		    var p = point[j].split(",");
-		    coor.push({x:p[1],y:p[0]});
+		if(locationstr != "")
+		{
+			var point = locationstr.split("-");
+			for (var j = 0;j<point.length;++j)
+			{	
+				var p = point[j].split(",");
+				coor.push({x:p[1],y:p[0]});
+			}
 		}
 		coorDict[data[i].area_id] = coor;
 	}
@@ -272,12 +276,12 @@ function paoni_add()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("新增数据成功！");
 			 $('#paoni_update').modal('hide');
          	 RefreshLoadPaoni();
                },       
          error: function () {       
-                alert("fail");       
+                alert("新增数据失败！");       
            }       
      });
 }
@@ -298,12 +302,12 @@ function paoni_edit()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("修改数据成功！");
 			 $('#paoni_update').modal('hide');
          	 RefreshLoadPaoni();
                },       
          error: function () {       
-                alert("fail");       
+                alert("修改数据失败！");  
            }       
      });
 }
@@ -319,12 +323,12 @@ function paoni_delete(id)
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("删除数据成功！");
 			 $('#paoni_update').modal('hide');
          	 RefreshLoadPaoni();
                },       
-         error: function () {       
-                alert("fail");       
+         error: function () {
+                alert("删除数据失败！");   
            }       
      });
 }
@@ -391,7 +395,7 @@ function AddCorner(OnePointCoor,index)
 	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawPoint);
 	
 	var objType = DynamicSymbolType.drawPoint;
-    var objName = index+"";
+    var objName = "坐标点-"+index;
 	//坐标的数组
     
 	var arrObjPo = [{x: OnePointCoor.x , y: OnePointCoor.y}];
@@ -434,13 +438,18 @@ function AddCorner(OnePointCoor,index)
 		API_SetCurDrawDynamicUseType(DynamicSymbolType.none);
 };
 
-function paoni_cpf(arrObjPo)
+function draw_area(arrObjPo)
 {
+	console.log(arrObjPo);
+	if(arrObjPo.length == 0)
+	{
+		return;
+	}
 	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawFace);
 	var objType = DynamicSymbolType.drawFace;
 	var objName = "";
 	//坐标的数组
-	API_SetMapViewCenter(arrObjPo[0].x/10000000, arrObjPo[0].y/10000000, 80000);
+	API_SetMapViewCenter(arrObjPo[0].x/10000000, arrObjPo[0].y/10000000, 40000);
 	var drawObjPoNum = arrObjPo.length;
 	for (var i = 0; i < drawObjPoNum; i++) {
 		AddCorner(arrObjPo[i],i+1);

@@ -1,6 +1,5 @@
 var allShujun = [];
 var postData = {};
-var sj_coorDict = {};
 var coorNum = 4;
 function SetShujunTable() {
 	CleanAll();
@@ -24,16 +23,16 @@ function SetShujunTable() {
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
 	
+	delete_object();
     $.ajax({
 		type: "GET",
 		url: "/shanggang/dredging_area/listall",
 		success: function (data) {    
-				console.log(data);
-				fillAllShujun(data);
-				InitShujunTable();
-			  },       
+			fillAllShujun(data);
+			InitShujunTable();
+		  },       
 		error: function () {       
-			   alert("fail");       
+			   alert("获取数据失败！");       
 		  }       
 	});
 }
@@ -48,7 +47,7 @@ function RefreshLoadShujun()
             	    RefreshShujunTable();
                   },       
             error: function () {       
-                   alert("fail");       
+                   alert("获取数据失败！");       
               }       
         });
 }
@@ -110,48 +109,48 @@ function InitShujunTable()
         });
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
-            var arrselections = $("#table").bootstrapTable('getSelections');
-            if (arrselections.length > 1) {
-                return;
-            }
-            if (arrselections.length <= 0) {
-                return;
-            }
-			dredging_id = arrselections[0].dredgingid;
-			dredging_name = arrselections[0].dredgingname;
-			dredging_harbor = arrselections[0].harbor;
-			$("#shujunquyu").val(dredging_id);
-			$("#shujungangqu").val(dredging_harbor);
-			$("#shujunmingcheng").val(dredging_name);
-			var body = document.getElementById("shujun_update_body");
-			while(body.hasChildNodes()) //当div下还存在子节点时 循环继续  
-			{  
-				body.removeChild(body.firstChild); 
-			}
-			var buttomPoint = sj_coorDict[dredging_id];
-			coorNum = buttomPoint.length;	
-			var entry = "";
-			for (var i = 1; i < coorNum + 1; i++) {
-				entry += '<div id="sj'+i+'" class="row" style="margin:0;height:13%;">';
-				entry += '<div class="col-sm-2 nopadding">坐标点'+i+'经度</div>';
-				entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundianx" id="shujundianx'+i+'"style="width:145px;height:25px" /></div>';
-				entry += '<div class="col-sm-2 nopadding">坐标点'+i+'纬度</div>';
-				entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundiany" id="shujundiany'+i+'"style="width:145px;height:25px" /></div></div>';
-			}
-			$("#shujun_update_body").append(entry);
-			for (var i = 1;i<coorNum + 1;++i){ 
-				$('#shujundianx' + i).val(buttomPoint[i - 1].x)
-				$('#shujundiany' + i).val(buttomPoint[i - 1].y)
-			}
-			document.getElementById("shujun_update_label").className = "modal-title glyphicon glyphicon-pencil";
-            $("#shujun_update_label").text("编辑");
-			$('#shujun_update').modal('show');
-			$("#shujun_add_point_button").show();
-			$("#shujun_delete_point_button").show();
-			$('#shujun_add_button').hide();
-			$('#shujun_edit_button').show();
-			$('#shujun_delete_button').hide();
-        });
+		var arrselections = $("#table").bootstrapTable('getSelections');
+		if (arrselections.length > 1) {
+			return;
+		}
+		if (arrselections.length <= 0) {
+			return;
+		}
+		dredging_id = arrselections[0].dredgingid;
+		dredging_name = arrselections[0].dredgingname;
+		dredging_harbor = arrselections[0].harbor;
+		$("#shujunquyu").val(dredging_id);
+		$("#shujungangqu").val(dredging_harbor);
+		$("#shujunmingcheng").val(dredging_name);
+		var body = document.getElementById("shujun_update_body");
+		while(body.hasChildNodes()) //当div下还存在子节点时 循环继续  
+		{  
+			body.removeChild(body.firstChild); 
+		}
+		var buttomPoint = sj_coorDict[dredging_id];
+		coorNum = buttomPoint.length;	
+		var entry = "";
+		for (var i = 1; i < coorNum + 1; i++) {
+			entry += '<div id="sj'+i+'" class="row" style="margin:0;height:13%;">';
+			entry += '<div class="col-sm-2 nopadding">坐标点'+i+'经度</div>';
+			entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundianx" id="shujundianx'+i+'"style="width:145px;height:25px" /></div>';
+			entry += '<div class="col-sm-2 nopadding">坐标点'+i+'纬度</div>';
+			entry += '<div class="col-sm-4 nopadding"><input type="text" name="shujundiany" id="shujundiany'+i+'"style="width:145px;height:25px" /></div></div>';
+		}
+		$("#shujun_update_body").append(entry);
+		for (var i = 1;i<coorNum + 1;++i){ 
+			$('#shujundianx' + i).val(buttomPoint[i - 1].x)
+			$('#shujundiany' + i).val(buttomPoint[i - 1].y)
+		}
+		document.getElementById("shujun_update_label").className = "modal-title glyphicon glyphicon-pencil";
+		$("#shujun_update_label").text("编辑");
+		$('#shujun_update').modal('show');
+		$("#shujun_add_point_button").show();
+		$("#shujun_delete_point_button").show();
+		$('#shujun_add_button').hide();
+		$('#shujun_edit_button').show();
+		$('#shujun_delete_button').hide();
+    });
 	$("#btn_delete").off('click');
 	$("#btn_delete").click(function () {
             var arrselections = $("#table").bootstrapTable('getSelections');
@@ -196,11 +195,10 @@ function InitShujunTable()
 			$('#paoni_add_button').hide();
 			$('#paoni_edit_button').hide();
 			$('#paoni_delete_button').show();*/
-        });
+    });
 	$("#btn_show").off('click');
 	$("#btn_show").click(function () {
 		var arrselections = $("#table").bootstrapTable('getSelections');
-		console.log(arrselections);
 		if (arrselections.length > 1) {
 			return;
 		}
@@ -208,7 +206,14 @@ function InitShujunTable()
 			return;
 		}
 		dredging_id = arrselections[0].dredgingid;
-		deleteButtomFace();
+		delete_object();
+		var arrObjPo = [];
+		for(var i = 0;i<sj_coorDict[dredging_id].length;++i)
+		{
+			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
+		}
+		draw_area(arrObjPo);
+		/*deleteButtomFace();
 		labelInfo = [];
 		AddButtomLayer();
 		buttomFaces = 1000;
@@ -221,7 +226,7 @@ function InitShujunTable()
             ob.push(convertToLatitu(buttomPoint[i].x));
             labelInfo.push(ob);
         }
-        AddButtomFaces(labelInfo);
+        AddButtomFaces(labelInfo);*/
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
 		}, 100);
@@ -239,13 +244,16 @@ function fillAllShujun(data) {
 	for(var i = 0;i<data.length;++i)
 	{
 		allShujun.push({"dredgingid":data[i].dredging_id,"dredgingname":data[i].dredging_name,"harbor":data[i].harbor});
-		var locationstr = data[i].location;
-		var point = locationstr.split("-");
+		var locationstr = data[i].location;	
 		coor = [];
-		for (var j = 0;j<point.length;++j)
-		{	
-		    var p = point[j].split(",");
-		    coor.push({x:p[1],y:p[0]});
+		if(locationstr != "")
+		{
+			var point = locationstr.split("-");
+			for (var j = 0;j<point.length;++j)
+			{	
+				var p = point[j].split(",");
+				coor.push({x:p[1],y:p[0]});
+			}
 		}
 		sj_coorDict[data[i].dredging_id] = coor;
 	}
@@ -268,12 +276,12 @@ function shujun_add()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("新增数据成功！");
 			 $('#shujun_update').modal('hide');
          	 RefreshLoadShujun();
                },       
          error: function () {       
-                alert("fail");       
+                alert("删除数据失败！");       
            }       
      });
 }
@@ -295,12 +303,12 @@ function shujun_edit()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("修改数据成功！");
 			 $('#shujun_update').modal('hide');
          	 RefreshLoadShujun();
                },       
          error: function () {       
-                alert("fail");       
+                alert("修改数据失败！");
            }       
      });
 }
@@ -316,12 +324,12 @@ function shujun_delete(id)
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("删除数据成功！");
 			 $('#shujun_update').modal('hide');
          	 RefreshLoadShujun();
                },       
          error: function () {       
-                alert("fail");       
+                alert("删除数据失败！");       
            }       
      });
 }

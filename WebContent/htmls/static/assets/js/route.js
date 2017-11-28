@@ -35,7 +35,7 @@ function SetRouteTable() {
             	    InitRouteTable();
                   },       
             error: function () {       
-                   alert("fail");       
+                   alert("获取数据失败！");       
               }       
         });
 	$.ajax({
@@ -45,7 +45,7 @@ function SetRouteTable() {
         	fillDredgingData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -55,7 +55,7 @@ function SetRouteTable() {
         	fillDumpingData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 }
@@ -70,7 +70,7 @@ function RefreshLoadRoute()
             	    RefreshRouteTable();
                   },       
             error: function () {       
-                   alert("fail");       
+                   alert("获取数据失败！");       
               }       
         });
 }
@@ -90,7 +90,7 @@ function InitRouteTable()
 	{checkbox: true},
 	{
         field: 'routeid',
-        title: '航线 ID'
+        title: '航线编号'
     }, 
 	{
         field: 'harbor',
@@ -281,11 +281,29 @@ function InitRouteTable()
 		if (arrselections.length <= 0) {
 			return;
 		}
+		delete_object();
+		area_id = arrselections[0].dumpingid;
+		var arrObjPo = [];
+		for(var i = 0;i<coorDict[area_id].length;++i)
+		{
+			arrObjPo.push({x:convertToLatitu(coorDict[area_id][i].x),y:convertToLatitu(coorDict[area_id][i].y)})
+		}
+		draw_area(arrObjPo);
+		
+		dredging_id = arrselections[0].dredgingid;
+		var arrObjPo = [];
+		for(var i = 0;i<sj_coorDict[dredging_id].length;++i)
+		{
+			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
+		}
+		draw_area(arrObjPo);
+		
+		AddNewLine();
+		
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
 		}, 100);
-		AddNewLine();
-        });
+    });
 }
 
 function RefreshRouteTable() {
@@ -299,7 +317,7 @@ function fillAllRoute(data) {
 	for(var i = 0;i<data.length;++i)
 	{
 		allRoute.push({"routeid":data[i].route_id,"harbor":allDredging[data[i].harbor].dredgingname,
-		"dumping": allDumping[data[i].dumping_area].areaname, "speed": data[i].speedlimit});
+		"dumping": allDumping[data[i].dumping_area].areaname, "speed": data[i].speedlimit,"dredgingid":data[i].harbor,"dumpingid":data[i].dumping_area});
 		var locationstr = data[i].location;
 		var point = locationstr.split("-");
 		coor = [];
@@ -332,12 +350,12 @@ function route_add()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("新增数据成功！");
 			 $('#route_update').modal('hide');
          	 RefreshLoadRoute();
                },       
          error: function () {       
-                alert("fail");       
+                alert("新增数据失败！");       
            }       
      });
 }
@@ -360,12 +378,12 @@ function route_edit()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("修改数据成功！");
 			 $('#route_update').modal('hide');
          	 RefreshLoadRoute();
                },       
          error: function () {       
-                alert("fail");       
+                alert("修改数据失败！");       
            }       
      });
 }
@@ -381,12 +399,12 @@ function route_delete(id)
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("删除数据成功！");
 			 $('#route_update').modal('hide');
          	 RefreshLoadRoute();
                },       
          error: function () {       
-                alert("fail");       
+                alert("删除数据失败！");       
            }       
      });
 }
@@ -417,7 +435,6 @@ function route_delete_button()
 
 function AddNewLine()
 {
-	deleteButtomFace();
 	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawLine);
 	var objType = DynamicSymbolType.drawLine;
     var objName = "";

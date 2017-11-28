@@ -236,6 +236,7 @@ function HSMonInit()
 	$("#project_progress").hide();
 	$("#history_time").show();
 	$("#monitor_start").attr('type','datetime-local');
+	$("#monitor_start_label").text("开始时间");
 	$("#monitor_end_label").show();
 	$("#monitor_end").show();
 	$("#monitor_search").val("");
@@ -312,7 +313,6 @@ function HSMonitorSearch()
 
 function DTMonInit()
 {
-	//API_SetMapViewCenter(121.668, 31.338, 160000);
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L2").attr("class", "LeftTextSelect");
@@ -387,6 +387,7 @@ function DTMonInit()
 	$("#project_progress").hide();
 	$("#history_time").show();
 	$("#monitor_start").attr('type','date');
+	$("#monitor_start_label").text("选择日期");
 	$("#monitor_end_label").hide();
 	$("#monitor_end").hide();
 	$("#monitor_search").val("");

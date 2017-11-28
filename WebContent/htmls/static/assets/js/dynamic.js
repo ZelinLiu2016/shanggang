@@ -27,7 +27,7 @@ function Test_AddShip(mmsi) {
     for (var i = 0; i < iAddShipCount; i++) {
         var shipId = i;
         var shipMMSI = mmsi; //mmsi
-        var shipName = ""; //船名
+        var shipName = allMmsi[mmsi].shipname; //船名
         //var shipGeoPoX = parseInt(1220000000) + parseInt(Math.random() * 30000000); //经度
         //var shipGeoPoY = parseInt(300000000) + parseInt(Math.random() * 30000000); //纬度
 
@@ -35,16 +35,16 @@ function Test_AddShip(mmsi) {
         var shipGeoPoX = parseInt(10000000*arrselections[0].lon); //经度
         var shipGeoPoY = parseInt(10000000*arrselections[0].lat); //纬度
         
-        var shipCourse = parseInt(Math.random() * 360); //航向
-        var shipSpeed = parseInt(Math.random() * 10); //航速
-        var shipLength = 20; //船长度
-        var shipWidth = 10; //船宽度
-        var shipTime = "2015-01-27 10:00:01"; //时间
+        var shipCourse = arrselections[0].co; //航向
+        var shipSpeed = arrselections[0].sp; //航速
+        var shipLength = allMmsi[mmsi].length; //船长度
+        var shipWidth = allMmsi[mmsi].width; //船宽度
+        var shipTime = arrselections[0].ti; //时间
         var iShipState = i % 2; //船舶的状态，当前演示只设置了2种(状态值0和1),见Test_AddShipStyle方法
         var bOnlineOrNot = true;
         var bShowTrack = false;
         var arrExpAttrValue = []; //扩展字段
-        if (iShipState == 0) {
+        /*if (iShipState == 0) {
             shipName = "远洋渔船" + i;
             bShowTrack = true;
         }
@@ -53,7 +53,7 @@ function Test_AddShip(mmsi) {
         }
         
         arrExpAttrValue.push("远洋集团");
-        arrExpAttrValue.push("渔船");
+        arrExpAttrValue.push("渔船");*/
 
         var curShipInfo = [];//当前船舶的结构体信息
         curShipInfo.shipId = shipId;       //船舶的id
@@ -76,8 +76,6 @@ function Test_AddShip(mmsi) {
     //API_ReDrawShips(); //添加完之后就重绘，这样就立刻显示出来，否则只能等拖动或者缩放激发绘制
     //API_SetMapViewCenter(123.5, 31.5, 640000); //切换到有船舶的区域,调用了这个接口，可以不再调用API_ReDrawShips
     API_SetMapViewCenter(arrselections[0].lon, arrselections[0].lat, 80000); //切换到有船舶的区域,调用了这个接口，可以不再调用API_ReDrawShips
-    console.log(arrselections[0].lon);
-    console.log(arrselections[0].lat);
 	rtinfo["lon"] = arrselections[0].lon;
 	rtinfo["lat"] = arrselections[0].lat;
 	rtinfo["co"] = arrselections[0].co;
@@ -116,7 +114,7 @@ function Test_UpdateShipInfo() {
             alert("fail");
         }  
     });
-    for (var i = 0; i < 200; i++) {
+    for (var i = 0; i < 1; i++) {
         var shipId = i;
         var shipPos = API_GetShipPosById(shipId);
         var curShipInfo = API_GetShipInfoByPos(shipPos);
@@ -146,34 +144,17 @@ function Test_UpdateShipInfo() {
             
             //document.getElementById("speed").value = "0";
             //document.getElementById("cc").value = "0";
-            
-            if(iRandom % 2 == 0)
-            {
-                shipCourse -= iRandom;
-            }
-            else
-            {
-                shipCourse += iRandom;
-            }
-             
-            
-            if (shipGeoPoX < 120000000 || shipGeoPoX > 1500000000 || shipGeoPoY < 200000000 || shipGeoPoY > 500000000) {
-                shipCourse = parseInt(Math.random() * 100);
-            }
-            var nowTime = new Date();
-            var shipTime = nowTime.getFullYear() + "/" + nowTime.getMonth() + "/" + nowTime.getDay() + " " + nowTime.getHours() + ":" + nowTime.getMinutes() + ":" + nowTime.getSeconds(); //时间
             //----------------------------------------------------------------
             
             var curShipDynamicInfo = [];//更新的时候，只要把这些值设置好即可
             curShipDynamicInfo.shipGeoPoX = parseInt(10000000*rtinfo.lon);
             curShipDynamicInfo.shipGeoPoY = parseInt(10000000*rtinfo.lat);
 			console.log(rtinfo);
-            curShipDynamicInfo.shipSpeed = 12;
+            curShipDynamicInfo.shipSpeed = rtinfo.sp;
             curShipDynamicInfo.shipCourse = rtinfo.co;
-            curShipDynamicInfo.shipTime = shipTime;
+            curShipDynamicInfo.shipTime = rtinfo.ti;
             curShipDynamicInfo.iShipState = iShipState;
             curShipDynamicInfo.bOnlineOrNot = bOnlineOrNot;
-            
             API_UpdateOneShipDynamicInfoByPos(shipPos, curShipDynamicInfo); //更新一艘船舶动态信息
         }
     }
@@ -888,20 +869,18 @@ function AddSomePlayHistoryTracksShipInfo(shipCount, bShowTrack, hisAbmData) {
     for (var i = 0; i < shipCount; i++) {
         var shipId = i;
         var shipMMSI = hisAbmData[0].mmsi; //mmsi
-        var shipName = ""; //船名        
-        var shipLength = 30; //船长度
-        var shipWidth = 10; //船宽度        
+        var shipName = "-"; //船名
+		if(shipMMSI in allMmsi)
+		{
+			shipName = allMmsi[shipMMSI].shipname;
+		}
+        var shipLength = allMmsi[shipMMSI].width; //船长度
+        var shipWidth = allMmsi[shipMMSI].length; //船宽度        
         var iShipState = i % 2; //船舶的状态，当前演示只设置了2种(状态值0和1),见Test_AddShipStyle方法
         var bOnlineOrNot = true;
         var bShowTrack = bShowTrack; //是否显示轨迹
         
         var arrExpAttrValue = []; //扩展字段
-        if (iShipState == 0) {
-            shipName = "远洋渔船" + i;
-        }
-        else {
-            shipName = "华东海运" + i;
-        }
 
         var curShipInfo = []; //当前船舶的结构体信息
         curShipInfo.shipId = shipId;       //船舶的id

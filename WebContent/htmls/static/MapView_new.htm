@@ -392,7 +392,7 @@
 					</div>
 				</div>
 				<div id="history_time">
-					<span height="30px" color="black">开始时间</span>
+					<span height="30px" color="black" id="monitor_start_label">开始时间</span>
 					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_start" id="monitor_start" ></input>
 					<span height="30px" color="black" id="monitor_end_label">结束时间</span>
 					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_end" id="monitor_end"></input>
@@ -440,7 +440,7 @@
 
 		
 		<div id = "mapBody" class="col-lg-12" style="height:94%;">
-			<div id="map" style="width:1600px; height:1000px;overflow:hidden;position:absolute; z-index:1;"  oncontextmenu="return false;">
+			<div id="map" style="width:99%; height:100%;overflow:hidden;position:absolute; z-index:1;"  oncontextmenu="return false;">
 				<div id="ShowSimpleInfoByMouseMoveDiv" class="ShowMouseMoveInfoStyle" style="z-index:6000;">
 				</div>
 			</div>
@@ -493,7 +493,7 @@
 					</div>            
 			</div>
 
-			<div id = "modal-select">
+			<!--div id = "modal-select">
 				<div class="dropdown">
 		   <button type="button" class="btn dropdown-toggle SB" id="xianshi" 
 			  data-toggle="dropdown" >
@@ -525,7 +525,7 @@
 
 
 
-		   <div id = "ranklevel"  style="position:absolute;width:100px top:0%;right:1.5%">
+		   <!--div id = "ranklevel"  style="position:absolute;width:100px top:0%;right:1.5%">
 		<div class="panel panel-info">
 		   <div class="panel-heading">分级颜色</div>
 		   <table class="table">
@@ -575,17 +575,17 @@
 				 <span class="input-group-addon">秒</span>
 			</div>
 			<button id = "fourD-show" class="btn btn btn-primary SB" type="button"   style="position:absolute;top:825px;left:700px;" 
-			onclick="fourDshow()">播放</button>
+			onclick="fourDshow()">播放</button-->
 			 
 		  
 
 			<script type="text/javascript">
 				init();
 				//Test_AddLayer();
-				$("#webgl3d").hide();
+				/*$("#webgl3d").hide();
 				$("#hud").hide();
 				$("#plotForTransection1").hide();
-				$("#plotForTransection2").hide();
+				$("#plotForTransection2").hide();*/
 			</script> 
 		</div>
 		
@@ -948,6 +948,17 @@
 					</div>
 					<div class="col-sm-4 nopadding">
 						<input type="date" style="color:black;width:145px;height:25px" name="param_enddate" id="param_enddate"/>
+					</div>
+				</div>
+				<div class="row" style="margin:0;height:13%;">
+					<div class="col-sm-2 nopadding">
+						是否在建
+					</div>
+					<div class="col-sm-4 nopadding">
+						<select name="param_inprogress" id="param_inprogress" style="width:145px;height:25px">
+							<option value=1>是</option>
+							<option value=0>否</option>
+						</select>
 					</div>
 				</div>
 			</div>

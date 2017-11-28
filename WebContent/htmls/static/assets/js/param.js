@@ -7,6 +7,8 @@ var allCompany = {};
 var allMmsi = {};
 var allDredging = {};
 var allDumping = {};
+var coorDict = {};
+var sj_coorDict = {};
 postData = {};
 
 function InitLoadParam()
@@ -62,7 +64,7 @@ function InitLoadParam()
 			InitParamTable();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	}
@@ -77,7 +79,7 @@ function InitLoadParam()
 			InitParamTable();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	}
@@ -89,7 +91,7 @@ function InitLoadParam()
         	fillCompanyData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -99,7 +101,7 @@ function InitLoadParam()
         	fillMmsiData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -109,7 +111,7 @@ function InitLoadParam()
         	fillDredgingData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -119,7 +121,7 @@ function InitLoadParam()
         	fillDumpingData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -129,7 +131,7 @@ function InitLoadParam()
 				fillAllRoute(data);
 			  },
 		error: function () {       
-			   alert("fail");       
+			   alert("获取数据失败！");       
 		  }       
     });
 }
@@ -146,7 +148,7 @@ function RefreshLoadParam()
 			RefreshParamTable();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	}
@@ -161,7 +163,7 @@ function RefreshLoadParam()
 			RefreshParamTable();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	}
@@ -172,7 +174,7 @@ function RefreshLoadParam()
         	fillCompanyData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -182,7 +184,7 @@ function RefreshLoadParam()
         	fillMmsiData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -192,7 +194,7 @@ function RefreshLoadParam()
         	fillDredgingData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -202,7 +204,7 @@ function RefreshLoadParam()
         	fillDumpingData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 }
@@ -267,11 +269,13 @@ function InitParamTable() {
 			tbody.removeChild(tbody.firstChild);
 		}
 		entry = "";
-		if(selected.mmsi != null)
+		if(selected.mmsi != "")
 		{
 			mmsilist = selected.mmsi.split(';');
 			for (var i = 0; i < mmsilist.length; i++) {
-				entry += '<tr><td>'+mmsilist[i]+'</td><td>'+allMmsi[mmsilist[i]].shipname+'</td><td>'+allMmsi[mmsilist[i]].contact+'</td><td>'+allMmsi[mmsilist[i]].cellphone+'</td></tr>';
+				if(mmsilist[i] in allMmsi){
+					entry += '<tr><td>'+mmsilist[i]+'</td><td>'+allMmsi[mmsilist[i]].shipname+'</td><td>'+allMmsi[mmsilist[i]].contact+'</td><td>'+allMmsi[mmsilist[i]].cellphone+'</td></tr>';	
+				}
 			}
 		}
 		$("#mmsi-tbody").append(entry);
@@ -349,6 +353,7 @@ function InitParamTable() {
 			$("#mmsi_input").val("");
 			$("#param_mudratio").val("");
 			$("#param_route").val("");
+			$("#param_inprogress").val(1);
 			$('#param_update').modal('show');
 			$('#param_add_button').show();
 			$('#param_edit_button').hide();
@@ -381,6 +386,7 @@ function InitParamTable() {
 			$("#sj_input").val(detailed[project_id].sjgs);
 			$("#jl_input").val(detailed[project_id].jlgs);
 			$("#mmsi_input").val(detailed[project_id].mmsi);
+			$("#param_inprogress").val(arrselections[0].isworking);
 			
 			$('#param_update').modal('show');
 			$('#param_add_button').hide();
@@ -432,17 +438,26 @@ function RefreshParamTable() {
 
 function fillParamData(data)
 {
+	console.log(data);
 	allParam = [];
 	detailed = {};
 	for(var i = 0;i<data.length;++i)
 		{
-		allParam.push({"projectid":data[i].projectId,"projectname":data[i].projectName,
+			var info = {"projectid":data[i].projectId,"projectname":data[i].projectName,
 			"area":data[i].dumpingArea,"capacity":data[i].squareVolume,"startdate":data[i].beginDate,
 			"enddate":data[i].endDate,"shipnum":data[i].boatNum,"harborname":data[i].harborName,
-			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id,"inprogress":"是"});
+			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id,"isworking":data[i].isworking};
+			if(data[i].isworking == 0)
+			{
+				info.inprogress = "否";
+			}
+			else{
+				info.inprogress = "是";
+			}
+			allParam.push(info);
 		detailed[data[i].projectId] = {"sggs":data[i].construction_company,"sjgs":data[i].design_company,
 		"jlgs":data[i].supervision_company,"mmsi":data[i].mmsilist,"projectname":data[i].projectName,
-		"startdate":data[i].beginDate, "enddate":data[i].endDate,"inprogress":"是"};
+		"startdate":data[i].beginDate, "enddate":data[i].endDate,"isworking":data[i].isworking};
 		}
 }
 
@@ -489,6 +504,18 @@ function fillDumpingData(data)
 	for(var i = 0;i<data.length;++i)
 	{
 		allDumping[data[i].area_id] = {"areaname":data[i].areaname};
+		var locationstr = data[i].location;
+		coor = [];
+		if(locationstr != "")
+		{
+			var point = locationstr.split("-");
+			for (var j = 0;j<point.length;++j)
+			{	
+				var p = point[j].split(",");
+				coor.push({x:p[1],y:p[0]});
+			}
+		}
+		coorDict[data[i].area_id] = coor;
 	}
 }
 
@@ -498,6 +525,18 @@ function fillDredgingData(data)
 	for(var i = 0;i<data.length;++i)
 	{
 		allDredging[data[i].dredging_id] = {"dredgingname":data[i].dredging_name};
+		var locationstr = data[i].location;	
+		coor = [];
+		if(locationstr != "")
+		{
+			var point = locationstr.split("-");
+			for (var j = 0;j<point.length;++j)
+			{	
+				var p = point[j].split(",");
+				coor.push({x:p[1],y:p[0]});
+			}
+		}
+		sj_coorDict[data[i].dredging_id] = coor;
 	}
 }
 
@@ -519,18 +558,19 @@ function param_add()
 	postData["construction_company"] = $("#sg_input").val();
 	postData["design_company"] = $("#sj_input").val();
 	postData["supervision_company"] = $("#jl_input").val();
+	postData["isworking"] = $("#param_inprogress").val();
 	$.ajax({
          type: "POST",
          url: "/shanggang/project/add",
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("新增数据成功！");
 			 $("#param_update").modal('hide');
          	 RefreshLoadParam();
                },       
          error: function () {       
-                alert("fail");       
+                alert("新增数据失败！");       
            }       
      });
 }
@@ -552,18 +592,19 @@ function param_edit()
 	postData["construction_company"] = $("#sg_input").val();
 	postData["design_company"] = $("#sj_input").val();
 	postData["supervision_company"] = $("#jl_input").val();
+	postData["isworking"] = $("#param_inprogress").val();
 	$.ajax({
          type: "POST",
          url: "/shanggang/project/update",
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("修改数据成功！");
 			 $("#param_update").modal('hide');
          	 RefreshLoadParam();
                },       
          error: function () {       
-                alert("fail");       
+                alert("修改数据失败！");       
            }       
      });
 }
@@ -578,12 +619,12 @@ function param_delete(id)
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("success");
+        	 alert("删除数据成功！");
 			 $("#param_update").modal('hide');
          	 RefreshLoadParam();
                },       
          error: function () {       
-                alert("fail");       
+                alert("删除数据失败！");       
            }       
      });
 }
@@ -795,13 +836,16 @@ function choose_mmsi()
 	}
 	var entry = "";
 	for (var mmsi in allMmsi) {
-		if(!(mmsi in s))
+		if(!(mmsi in s)){
 			entry += '<option>'+mmsi+'---'+allMmsi[mmsi].shipname+'</option>';
+		}
 	}
 	$("#multiselect").append(entry);
 	entry = "";
 	for (var mmsi in s) {
-		entry += '<option>'+mmsi+'---'+allMmsi[mmsi].shipname+'</option>';
+		if(mmsi in allMmsi){
+			entry += '<option>'+mmsi+'---'+allMmsi[mmsi].shipname+'</option>';
+		}
 	}
 	$("#multiselect_to").append(entry);
 	$("#multiselect_label").text("选择船舶");

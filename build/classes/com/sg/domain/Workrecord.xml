@@ -29,8 +29,8 @@
 	    <select id="getlastrecord01" parameterType="String" resultMap="WorkrecordMap">
 	    	select * from workrecord where mmsi=#{mmsi} order by exitdump desc limit 1
 	    </select>
-	    <select id="getabnormal" parameterType="String" resultMap="WorkrecordMap">
-	    	select * from workrecord where (state=1 OR state=2) AND mmsi=#{mmsi}
+	    <select id="getabnormal" resultMap="WorkrecordMap">
+	    	select * from workrecord where (state=1 OR state=2) 
 	    </select>
 	    <delete id="deletework" parameterType="Workrecord">
 	    	delete from workrecord where mmsi=#{mmsi} AND indred=#{indred}

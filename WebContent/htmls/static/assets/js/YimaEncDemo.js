@@ -238,15 +238,15 @@ function Test_AddLayer() {
 
         pointStyle.bShowImg = true;
         pointStyle.bShowText = true; //是否显示名称
-        pointStyle.textColor = "#FF0000"; //名称颜色
-        pointStyle.fontSize = "12px"; //名称字体大小
+        pointStyle.textColor = "#000000"; //名称颜色
+        pointStyle.fontSize = "14px"; //名称字体大小
         pointStyle.iOpacity = 80;
         pointStyle.iTextOpacity = 80; //透明度
-        pointStyle.bFilled = true; //是否填充颜色
+        pointStyle.bFilled = false; //是否填充颜色
         pointStyle.fillColor = "#ee5d72"; //填充的颜色
         g_iPointStylePos = API_AddPointLayerStyleByPos(pointLayerPos, pointStyle);
 
-        API_SetLayerTextBackGroundColorByPos(pointLayerPos,true,"#FF0000",50);//设置文字背景颜色
+        API_SetLayerTextBackGroundColorByPos(pointLayerPos,false,"#FF0000",50);//设置文字背景颜色
     }
 
     //---------------------------------添加线物标图层----------------------------

@@ -67,6 +67,8 @@ public class RequestTimerTask extends TimerTask {
 			URL url = new URL(urlStr);
 			URLConnection con = url.openConnection();
 			con.setDoOutput(true);
+			con.setReadTimeout(3 * 10000);
+            con.setConnectTimeout(2 * 10000);
 			//con.setRequestProperty("Pragma:", "no-cache");
 			con.setRequestProperty("Cache-Control", "no-cache");
 			con.setRequestProperty("Content-Type", "text/xml");
@@ -141,7 +143,7 @@ public class RequestTimerTask extends TimerTask {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		List<String> mmsi_str = session.selectList("getallmmsilist");
+		List<String> mmsi_str = session.selectList("getworkingmmsilist");
 		List<Integer> mmsi = new ArrayList<Integer>();
 		for(String str:mmsi_str){
 			String[] mm = str.split(";");
@@ -188,7 +190,7 @@ public class RequestTimerTask extends TimerTask {
 				System.out.println("this record is exist!");
 				exist = true;
 			}
-			else{
+			else if(shipinfo.mmsi!=null&&shipinfo.mmsi!=""){
 				session.insert("addShipInfo",shipinfo);
 				session.commit();
 				System.out.println("INSERT SUCCESSFULLY!");

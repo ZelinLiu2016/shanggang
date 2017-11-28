@@ -4,6 +4,7 @@
 package com.sg.http;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,7 +13,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
+import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -32,7 +36,15 @@ import net.sf.json.JSONObject;
  * 2017-11-03
  */
 public class WorkloadTimerTask extends TimerTask {
-
+	
+	public static SqlSession getSession() throws IOException{
+		String resource = "mybatis-config.xml";
+		InputStream inputStream = Resources.getResourceAsStream(resource);
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession session=sqlSessionFactory.openSession();
+        return session;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.util.TimerTask#run()
 	 */
@@ -47,8 +59,12 @@ public class WorkloadTimerTask extends TimerTask {
 	}
 
 	public static void workrecord() throws IOException, ParseException{	
-		SqlSession session = RequestTimerTask.getSession();
-		List<String> mmsi_str = session.selectList("getallmmsilist");
+		Date now = new Date();
+		DateFormat d1 = DateFormat.getDateInstance();
+		String date = d1.format(now);
+		System.out.println("生成工作流程记录"+date);
+		SqlSession session = getSession();
+		List<String> mmsi_str = session.selectList("getworkingmmsilist");
 		List<String> all_mmsi = new ArrayList<String>();
 		for(String str:mmsi_str){
 			String[] mm = str.split(";");
@@ -58,10 +74,7 @@ public class WorkloadTimerTask extends TimerTask {
 			}
 		}
 		
-		for(String mmsi:all_mmsi){			
-			Date now = new Date();
-			DateFormat d1 = DateFormat.getDateInstance();
-			String date = d1.format(now);
+		for(String mmsi:all_mmsi){							
 			String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(mmsi));
 			if(route_id.equals("2")||route_id.equals("3"))
 				others(mmsi,date);
@@ -72,7 +85,7 @@ public class WorkloadTimerTask extends TimerTask {
 	}
 	
 	public static void  huangpu(String mmsi, String today) throws IOException, NumberFormatException, ParseException{
-		SqlSession session = RequestTimerTask.getSession();
+		SqlSession session = getSession();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //		String date = d1.format(now);
 		String begin = today+" 00:00:00";
@@ -217,7 +230,7 @@ public class WorkloadTimerTask extends TimerTask {
 	}
 	
 	public static void others(String mmsi, String date) throws IOException, ParseException{
-		SqlSession session = RequestTimerTask.getSession();
+		SqlSession session = getSession();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //		String date = d1.format(now);
 //		String date = "2017-11-13";
@@ -316,7 +329,7 @@ public class WorkloadTimerTask extends TimerTask {
 				double timelen = (sdf.parse(workrec.getExitdred()).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60;
 				System.out.println("挖泥时间："+timelen);
 				if(timelen>240)//unit is min
-					workrec.setState(1);
+					workrec.setState(1);//挖泥时间过长
 				session.insert("addworkrecord",workrec);
 				System.out.println(workrec);
 				List<String> recorddate = session.selectList("listMmsiRecorddate",Integer.valueOf(mmsi));
@@ -368,19 +381,6 @@ public class WorkloadTimerTask extends TimerTask {
 	
 	public static void main(String[] args) throws IOException, ParseException {
 
-//		workrecord();
-//		SqlSession session = RequestTimerTask.getSession();
-//		List<String> mmsi_str = session.selectList("getallmmsilist");
-//		List<String> all_mmsi = new ArrayList<String>();
-//		for(String str:mmsi_str){
-//			String[] mm = str.split(";");
-//			for(int i=0;i<mm.length;i++){
-//				if(!all_mmsi.contains(mm[i]))
-//					all_mmsi.add(mm[i]);
-//			}
-//		}
-//		for(String mmsi:all_mmsi)
-//			System.out.println(mmsi);
 		workrecord();
 	}
 		

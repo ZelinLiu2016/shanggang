@@ -3,7 +3,11 @@ package com.sg.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -57,6 +61,7 @@ public class ProjectController {
 		project.setConstruction_company(json.getString("construction_company"));
 		project.setDesign_company(json.getString("design_company"));
 		project.setSupervision_company(json.getString("supervision_company"));
+		project.setIsworking(json.getInt("isworking"));
 		SqlSession session = this.getSession();
 		session.insert("addProject",project);
 		session.commit();
@@ -86,6 +91,7 @@ public class ProjectController {
 		project.setConstruction_company(json.getString("construction_company"));
 		project.setDesign_company(json.getString("design_company"));
 		project.setSupervision_company(json.getString("supervision_company"));
+		project.setIsworking(json.getInt("isworking"));
 		SqlSession session = this.getSession();
 		session.update("updateProject",project);
 		session.commit();
@@ -137,9 +143,29 @@ public class ProjectController {
 	@ResponseBody
 	public ResponseEntity<List<Project>> listbyharbor(@RequestBody String pro) throws IOException{
 		JSONObject json = JSONObject.fromObject(pro);
+		List<Project> project = new ArrayList<Project>();
 		String harbor = json.getString("harbor_name");
 		SqlSession session = this.getSession();
-		List<Project> project = session.selectList("listbyharbor",harbor);
-		return new ResponseEntity<List<Project>>(project,HttpStatus.OK);
+		System.out.println(harbor);
+		if(harbor.equals("洋山")){
+			project.addAll(session.selectList("listbyharbor","%1%"));
+			project.addAll(session.selectList("listbyharbor","%2%"));
+		}
+		if(harbor.equals("黄浦江")){
+			project.addAll(session.selectList("listbyharbor","%5%"));
+			project.addAll(session.selectList("listbyharbor","%6%"));
+			project.addAll(session.selectList("listbyharbor","%7%"));
+			project.addAll(session.selectList("listbyharbor","%8%"));
+		}
+		List<Project> temp = new ArrayList<Project>();
+		List<String> pid = new ArrayList<String>();
+		for(Iterator iter = project.iterator(); iter.hasNext();){
+			Project proj = (Project)iter.next();
+			if(!pid.contains(proj.getProjectId())){
+				pid.add(proj.getProjectId());
+				temp.add(proj);
+			}
+		} 
+		return new ResponseEntity<List<Project>>(temp,HttpStatus.OK);
 	}
 }

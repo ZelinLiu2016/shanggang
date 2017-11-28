@@ -22,8 +22,17 @@ public class Project {
 		private String construction_company;
 		private String design_company;
 		private String supervision_company;
+		private int isworking;
 		
-		
+
+
+		public int getIsworking() {
+			return isworking;
+		}
+
+		public void setIsworking(int isworking) {
+			this.isworking = isworking;
+		}
 
 		public String getConstruction_company() {
 			return construction_company;
@@ -194,9 +203,9 @@ public class Project {
 					+ ", squareVolume=" + squareVolume + ", beginDate=" + beginDate + ", endDate=" + endDate
 					+ ", boatNum=" + boatNum + ", harborName=" + harborName + ", mud_ratio=" + mud_ratio + ", route_id="
 					+ route_id + ", mmsilist=" + mmsilist + ", construction_company=" + construction_company
-					+ ", design_company=" + design_company + ", supervision_company=" + supervision_company + "]";
+					+ ", design_company=" + design_company + ", supervision_company=" + supervision_company
+					+ ", isworking=" + isworking + "]";
 		}
-	
 
 				
 	}

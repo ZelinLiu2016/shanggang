@@ -165,7 +165,7 @@ public class RequestTimerTask extends TimerTask {
 		for(int num:mmsi){
 			System.out.println("获取"+num+"的最新坐标");
 			Project project = map.get(String.valueOf(num));
-			System.out.println(num);
+//			System.out.println(num);
 			String route_id = session.selectOne("getShipRoute_id",num);
 			String area = session.selectOne("getDumpingAreabyid",route_id);
 			String dredging = session.selectOne("getdredgingareabyid",route_id);
@@ -187,13 +187,13 @@ public class RequestTimerTask extends TimerTask {
 			/********************add record into shipinfo*******************************************/
 			boolean exist = false;
 			if(ti.contains(shipinfo.getTi()+".0")){
-				System.out.println("this record is exist!");
+//				System.out.println("this record is exist!");
 				exist = true;
 			}
 			else if(shipinfo.mmsi!=null&&shipinfo.mmsi!=""){
 				session.insert("addShipInfo",shipinfo);
 				session.commit();
-				System.out.println("INSERT SUCCESSFULLY!");
+//				System.out.println("INSERT SUCCESSFULLY!");
 			}
 			
 		}		

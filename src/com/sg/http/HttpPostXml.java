@@ -43,8 +43,8 @@ public class HttpPostXml {
 			URL url = new URL(urlStr);
 			URLConnection con = url.openConnection();
 			con.setDoOutput(true);
-			con.setReadTimeout(3 * 1000);
-            con.setConnectTimeout(3 * 1000);
+			con.setReadTimeout(3 * 10000);
+            con.setConnectTimeout(2 * 10000);
 			//con.setRequestProperty("Pragma:", "no-cache");
 			con.setRequestProperty("Cache-Control", "no-cache");
 			con.setRequestProperty("Content-Type", "text/xml");
@@ -75,7 +75,7 @@ public class HttpPostXml {
 	public static void main(String[] args) throws DocumentException, IOException {
 //		Map<String, String> mapParam = new HashMap<String, String>();
 ////		mapParam.put("MMSI", "412370603");
-		String xmlInfo = "<?xml version='1.0' encoding='gb2312'?><sendparament><MMSI>413465060</MMSI><starttime>2017-11-15 23:59:05</starttime><endtime>2017-11-20 23:59:56</endtime></sendparament>";
+		String xmlInfo = "<?xml version='1.0' encoding='gb2312'?><sendparament><MMSI>413379690</MMSI><starttime>2017-11-28 00:00:05</starttime><endtime>2017-11-28 23:59:56</endtime></sendparament>";
 		String pathUrl = "http://112.126.75.47/xmlr/getzjshiptrajectory.do";
 //		String xmlInfo = "<?xml version='1.0' encoding='gb2312' ?>"+"<sendparament>"+"<MMSI>413044840</MMSI>"+"<starttime>2017-06-25 00:00:00</starttime>"+"<endtime>2017-06-26 00:00:00</endtime>"+"</sendparament>";
 //		String pathUrl = "http://112.126.75.47/xmlr/getzjshiptrajectory.do";

@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
@@ -115,41 +116,48 @@ public class WorkloadTimerTask extends TimerTask {
 //		System.out.println(location_list);
 //		System.out.println(location_list.get(0).ti);
 		int len = location_list.size();
-		System.out.println("the length of the sequence:"+len);
+//		System.out.println("the length of the sequence:"+len);
 		int[] state = new int[len];
 		int i=0;
 		for(Shipinfo it:location_list){
 			LatLng point = new LatLng(Double.valueOf(it.lat),Double.valueOf(it.lon));
 			if(dumping.isContainsPoint(point))
 				state[i]=2; //in dumping area
-			else if(rectangdis(dumping_str, point)<300)
+			else if(rectangdis(dumping_str, point)<200)
 				state[i]=4;
 			else
 				state[i]=3;// neither in  dumping area nor near
 //			if(state[i]!=3)
-				System.out.print(state[i]+",");
+//				System.out.print(state[i]+",");
 			i=i+1;
 		}
-		System.out.println("the length of state:"+state.length);
+//		System.out.println("the length of state:"+state.length);
 		
 		boolean wait2 = true;
 		
 		Workrecord workrec = new Workrecord();
 		workrec.setMmsi(mmsi);
 		
-		workrec.setIndred("1977-00-00 00:00:00");
-		workrec.setExitdred("1977-00-00 00:00:00");
+		workrec.setIndred("");
+		workrec.setExitdred("");
 		workrec.setIndump("");
 		workrec.setExitdump("");
 		workrec.setState(0);
 		for(int j=0;j<state.length;j++){
 			if(state[j]==2&&wait2){
 				workrec.setIndump(location_list.get(j).ti);
+				workrec.setExitdred(location_list.get(j).ti);
+				Calendar ca = Calendar.getInstance();
+				ca.setTime(sdf.parse(location_list.get(j).ti));
+				ca.add(Calendar.HOUR, -2);				
+				workrec.setIndred(sdf.format(ca.getTime()));
+				ca.add(Calendar.HOUR, 4);	
+				workrec.setExitdump(sdf.format(ca.getTime()));
 				wait2 = false;
-				System.out.println("进入抛泥区域！！"+location_list.get(j).ti);
+//				System.out.println("进入抛泥区域！！"+location_list.get(j).ti);
 			}
 			else if(state[j]==3&&!wait2){
-				System.out.println("出抛泥区域！！"+location_list.get(j).ti);
+//				System.out.println("出抛泥区域！！"+location_list.get(j).ti);
 				workrec.setExitdump(location_list.get(j).ti);
 				wait2 = true;
 				String date = location_list.get(j).ti.substring(0, 10);
@@ -157,8 +165,8 @@ public class WorkloadTimerTask extends TimerTask {
 				workrec.setState(0);
 				Workrecord lastrec = session.selectOne("getlastrecord01",mmsi);
 				if(lastrec==null||(sdf.parse(workrec.exitdump).getTime()-sdf.parse(lastrec.exitdump).getTime())/1000/60>180){
-					session.insert("addworkrecord",workrec);
 					System.out.println(workrec);
+					session.insert("addworkrecord",workrec);					
 					List<String> recorddate = session.selectList("listMmsiRecorddate",Integer.valueOf(mmsi));
 					Workload_day workload = new Workload_day();
 					workload.setMmsi(Integer.valueOf(mmsi));
@@ -170,6 +178,8 @@ public class WorkloadTimerTask extends TimerTask {
 					else
 						session.update("workloadincrease",workload);
 				}				
+				workrec.setIndred("");
+				workrec.setExitdred("");
 				workrec.setIndump("");
 				workrec.setExitdump("");
 				workrec.setState(0);
@@ -193,19 +203,25 @@ public class WorkloadTimerTask extends TimerTask {
 					k++;
 				}
 				if(abnormal==true){
-					System.out.println("未进入抛泥区域抛泥！！！");
+//					System.out.println("未进入抛泥区域抛泥！！！");
 					String date = location_list.get(j).ti.substring(0, 10);
 					workrec.setDate(date);
+					workrec.setExitdred(location_list.get(j).ti);
 					workrec.setIndump(location_list.get(j).ti);
-					workrec.setExitdump(location_list.get(j).ti);
+					Calendar ca = Calendar.getInstance();
+					ca.setTime(sdf.parse(location_list.get(j).ti));
+					ca.add(Calendar.HOUR, -2);				
+					workrec.setIndred(sdf.format(ca.getTime()));
+					ca.add(Calendar.HOUR, 6);	
+					workrec.setExitdump(sdf.format(ca.getTime()));
 					workrec.setState(2);//dumping area abnormal-- don,t dump in indicating area
 					Workrecord lastrec = session.selectOne("getlastrecord01",mmsi);
-					System.out.println("上一个?记录："+lastrec);
-					System.out.println("这条记录："+workrec);
+//					System.out.println("上一个?记录："+lastrec);
+//					System.out.println("这条记录："+workrec);
 					if(lastrec==null||(sdf.parse(workrec.exitdump).getTime()-sdf.parse(lastrec.exitdump).getTime())/1000/60>480){		
 						//more than 8h between two records
-						session.insert("addworkrecord",workrec);
 						System.out.println(workrec);
+						session.insert("addworkrecord",workrec);						
 						List<String> recorddate = session.selectList("listMmsiRecorddate",Integer.valueOf(mmsi));
 						Workload_day workload = new Workload_day();
 						workload.setMmsi(Integer.valueOf(mmsi));
@@ -217,6 +233,8 @@ public class WorkloadTimerTask extends TimerTask {
 						else
 							session.update("workloadincrease",workload);						
 					}
+					workrec.setIndred("");
+					workrec.setExitdred("");
 					workrec.setIndump("");
 					workrec.setExitdump("");
 					workrec.setState(0);					
@@ -257,7 +275,7 @@ public class WorkloadTimerTask extends TimerTask {
 //		System.out.println(location_list);
 //		System.out.println(location_list.get(0).ti);
 		int len = location_list.size();
-		System.out.println("the length of the sequence:"+len);
+//		System.out.println("the length of the sequence:"+len);
 		int[] state = new int[len];
 		int i=0;
 		for(Shipinfo it:location_list){
@@ -269,11 +287,11 @@ public class WorkloadTimerTask extends TimerTask {
 			else
 				state[i]=3;// neither in harbor nor in dumping area
 //			if(state[i]!=3)
-				System.out.print(state[i]+",");
+//				System.out.print(state[i]+",");
 			i=i+1;
 			
 		}
-		System.out.println("the length of state:"+state.length);
+//		System.out.println("the length of state:"+state.length);
 		boolean wait1 = true;
 		boolean wait2 = false;
 		
@@ -288,7 +306,7 @@ public class WorkloadTimerTask extends TimerTask {
 //		System.out.println("上一条记录："+lastrec.exitdump);
 		if(lastrec!=null&&(lastrec.exitdump.equals("1976-11-30 00:00:00.0"))){
 			//the situation that a record is done among two days
-			System.out.println("又跨天任务！！！");
+//			System.out.println("又跨天任务！！！");
 			session.delete("deletework",lastrec);
 			lastrec.setDate(date);
 			workrec = lastrec;
@@ -306,32 +324,32 @@ public class WorkloadTimerTask extends TimerTask {
 				workrec.setIndred(location_list.get(j).ti);
 				wait1 = false;
 				wait2 = true;
-				System.out.println("进入工作区域！！"+location_list.get(j).ti);
+//				System.out.println("进入工作区域！！"+location_list.get(j).ti);
 			}
 			else if(state[j]==2&&wait2){
-				System.out.println("进入抛泥区域！！"+location_list.get(j).ti);
+//				System.out.println("进入抛泥区域！！"+location_list.get(j).ti);
 				workrec.setIndump(location_list.get(j).ti);
 				wait1 = false;
 				wait2 = false;
 				for(int k=j-1;k>0;k--){//back to find time of exit dred
 					if(state[k]==3&&state[k-1]==1){
 						workrec.setExitdred(location_list.get(k).ti);//time of exit dred
-						System.out.println("出工作区域！！"+location_list.get(k).ti);
+//						System.out.println("出工作区域！！"+location_list.get(k).ti);
 						break;
 					}
 				}
 			}
 			else if(state[j]==3&&!wait1&&!wait2){
-				System.out.println("出抛泥区域！！！"+location_list.get(j).ti);
+//				System.out.println("出抛泥区域！！！"+location_list.get(j).ti);
 				workrec.setExitdump(location_list.get(j).ti); 
 				wait1 = true;
 				wait2 = false;
 				double timelen = (sdf.parse(workrec.getExitdred()).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60;
-				System.out.println("挖泥时间："+timelen);
+//				System.out.println("挖泥时间："+timelen);
 				if(timelen>240)//unit is min
 					workrec.setState(1);//挖泥时间过长
 				session.insert("addworkrecord",workrec);
-				System.out.println(workrec);
+//				System.out.println(workrec);
 				List<String> recorddate = session.selectList("listMmsiRecorddate",Integer.valueOf(mmsi));
 				Workload_day workload = new Workload_day();
 				workload.setMmsi(Integer.valueOf(mmsi));
@@ -351,7 +369,7 @@ public class WorkloadTimerTask extends TimerTask {
 		}
 		if(workrec.indred!=""){
 			//a record is unfinishied in this day
-			System.out.println("有未完成的任务！Q！！");
+//			System.out.println("有未完成的任务！Q！！");
 			if(workrec.exitdred=="")
 				workrec.exitdred = "1976-11-30 00:00:00";
 			if(workrec.indump=="")
@@ -380,8 +398,7 @@ public class WorkloadTimerTask extends TimerTask {
 	}
 	
 	public static void main(String[] args) throws IOException, ParseException {
-
-		workrecord();
+		huangpu("413379690","2017-11-28");
 	}
 		
 }

@@ -73,13 +73,13 @@ function Test_AddShip(mmsi) {
 
         API_AddOneShip(curShipInfo); //添加船舶
     }
-    //API_ReDrawShips(); //添加完之后就重绘，这样就立刻显示出来，否则只能等拖动或者缩放激发绘制
+    API_ReDrawShips(); //添加完之后就重绘，这样就立刻显示出来，否则只能等拖动或者缩放激发绘制
     //API_SetMapViewCenter(123.5, 31.5, 640000); //切换到有船舶的区域,调用了这个接口，可以不再调用API_ReDrawShips
     API_SetMapViewCenter(arrselections[0].lon, arrselections[0].lat, 80000); //切换到有船舶的区域,调用了这个接口，可以不再调用API_ReDrawShips
 	rtinfo["lon"] = arrselections[0].lon;
 	rtinfo["lat"] = arrselections[0].lat;
 	rtinfo["co"] = arrselections[0].co;
-    var timerId = setInterval(Test_UpdateShipInfo,3000);//3秒更新一次船舶信息
+    //var timerId = setInterval(Test_UpdateShipInfo,3000);//3秒更新一次船舶信息
 }
 
 function fillRTData(data)

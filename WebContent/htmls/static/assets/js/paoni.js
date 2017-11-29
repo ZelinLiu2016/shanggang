@@ -25,6 +25,7 @@ function SetPaoniTable() {
 	$("#project_progress").hide();
 	
 	delete_object();
+	API_DelAllShips();
 	ClearPlayShipInfo();
     $.ajax({
             type: "GET",

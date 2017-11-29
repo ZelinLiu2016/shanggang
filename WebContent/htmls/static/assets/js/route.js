@@ -29,6 +29,7 @@ function SetRouteTable() {
 	$("#project_progress").hide();
 	
 	delete_object();
+	API_DelAllShips();
 	ClearPlayShipInfo();
     $.ajax({
             method: "GET",

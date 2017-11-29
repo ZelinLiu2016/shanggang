@@ -34,6 +34,7 @@ function RTMonInit()
 	allMonitor = [];
 	historyData = [];
 	delete_object();
+	console.log(API_DelAllShips());
 	ClearPlayShipInfo();
 	$("#toolbar").hide();
 	//document.getElementById("btn_delete").setAttribute("disabled", true)
@@ -41,6 +42,7 @@ function RTMonInit()
 	$("#monitor_show").off('click');
 	$("#monitor_show").click(function(){
 		delete_object();
+		API_DelAllShips();
 		ClearPlayShipInfo();
 		var arrselections = $("#table").bootstrapTable('getSelections');
         if (arrselections.length > 1) {
@@ -211,6 +213,7 @@ function HSMonInit()
 	allMonitor = [];
 	historyData = [];
 	delete_object();
+	API_DelAllShips();
 	ClearPlayShipInfo();
 	$("#toolbar").hide();
 	$("#btn_backup").hide();
@@ -221,6 +224,7 @@ function HSMonInit()
 	$("#monitor_show").off('click');
 	$("#monitor_show").click(function(){
 		delete_object();
+		API_DelAllShips();
 		ClearPlayShipInfo();
 		var arrselections = $("#table").bootstrapTable('getSelections');
 		$('html, body').animate({
@@ -347,6 +351,7 @@ function DTMonInit()
     });
 	allDetect = [];
 	delete_object();
+	API_DelAllShips();
 	ClearPlayShipInfo();
 	$("#toolbar").hide();
 	$("#btn_backup").hide();
@@ -357,6 +362,7 @@ function DTMonInit()
 	$("#monitor_show").off('click');
 	$("#monitor_show").click(function(){
 		delete_object();
+		API_DelAllShips();
 		ClearPlayShipInfo();
 		var arrselections = $("#table").bootstrapTable('getSelections');
 		postData["mmsi"] = arrselections[0].mmsi;

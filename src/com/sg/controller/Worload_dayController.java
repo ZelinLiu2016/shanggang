@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ibatis.io.Resources;
@@ -103,6 +104,58 @@ public class Worload_dayController {
 		return new ResponseEntity<List<String>>(res,HttpStatus.OK);
 	}
 	
+	@RequestMapping(value="/projectworkload",method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<List<String>> projectworkload() throws IOException{
+		//查询所有船当天目前的工作量
+		List<String> res = new ArrayList<String>();
+		SimpleDateFormat sj = new SimpleDateFormat("yyyy-MM-dd");
+		Date now = new Date();
+		DateFormat d1 = DateFormat.getDateInstance();		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(now);
+		cal.add(Calendar.DATE, -1);
+		String today = sj.format(cal.getTime()).toString();
+//		System.out.println("昨天日期："+today);
+		cal.setTime(now);
+		String month = sj.format(cal.getTime()).toString().substring(0, 8).concat("01");
+		int w = cal.get(Calendar.DAY_OF_WEEK) - 2;
+		cal.add(Calendar.DATE, -w);
+		String week = sj.format(cal.getTime()).toString();
+		SqlSession session = getSession();
+		List<Project> working_pro = session.selectList("listworkingproject");
+		for(Iterator iter = working_pro.iterator(); iter.hasNext();){
+			Project proj = (Project)iter.next();
+			String temp = proj.getProjectName();
+			String mmsi_str = proj.getMmsilist();
+			List<String> all_mmsi = new ArrayList<String>();
+			String[] mm = mmsi_str.split(";");
+			for(int i=0;i<mm.length;i++){
+				if(!all_mmsi.contains(mm[i]))
+					all_mmsi.add(mm[i]);
+			}
+			int day_workload = 0;
+			int week_workload = 0;
+			int month_workload = 0;
+			for(String mmsi:all_mmsi){
+				Workload_day wd = new Workload_day();
+				wd.setMmsi(Integer.valueOf(mmsi));
+				wd.setRecorddate(today);
+				int per_day = session.selectOne("getcountafter",wd);
+				wd.setRecorddate(week);
+				int per_week = session.selectOne("getcountafter",wd);
+				wd.setRecorddate(month);
+				int per_month = session.selectOne("getcountafter",wd);
+				day_workload += per_day;
+				week_workload += per_week;
+				month_workload += per_month;
+			}
+			temp = temp+ ",day:" + day_workload +",week:" +week_workload +",month:" + month_workload;
+			res.add(temp);
+		}		
+		return new ResponseEntity<List<String>>(res,HttpStatus.OK);
+	}
+	
 	@RequestMapping(value="/getworkloadbymmsi",method=RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Double> getworkloadbymmsi(@RequestBody String pro) throws IOException{
@@ -121,17 +174,6 @@ public class Worload_dayController {
 		}
 		else
 			return new ResponseEntity<Double>(0.0,HttpStatus.OK);
-//		List<String> recorddate = session.selectList("listMmsiRecorddate",json.getInt("mmsi"));
-//		if(recorddate.contains(workload.getRecorddate())){
-//			double capacity = session.selectOne("getCapacity",workload.getMmsi());
-//			int num = session.selectOne("getworkload",workload);
-//			double result = capacity*num;
-//			return new ResponseEntity<String>(String.valueOf(result), HttpStatus.OK);
-//		}
-//		else
-//		{
-//			return new ResponseEntity<String>("This record is not exist！！！",HttpStatus.OK);
-//		}
 	}
 	
 	
@@ -153,7 +195,7 @@ public class Worload_dayController {
 			workload.setMmsi(Integer.valueOf(num));
 			workload.setRecorddate(begindate);
 			if(session.selectOne("getsumworkload",workload)!=null){
-				int temp = session.selectOne("getsumworkload",workload);
+				int temp = session.selectOne("getcountafter",workload);
 				double capacity = session.selectOne("getCapacity",workload.getMmsi());
 				res.put(num,(double) capacity*temp);
 				total = total+capacity*temp;

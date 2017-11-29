@@ -50,7 +50,9 @@
 	    <select id="listProject" resultMap="ProjectMap">
 	        select * from   project    
 	    </select>	    
-		
+		<select id="listworkingproject" resultMap="ProjectMap">
+			select * from project where ISWORKING=1
+		</select>
 		<select id="getMmsilist" parameterType="int" resultType="String">
 			select MMSILIST from project where PROJECT_ID=#{project_id}
 		</select> 

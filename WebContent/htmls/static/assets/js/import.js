@@ -133,18 +133,24 @@ function InitImportTable() {
 			data: JSON.stringify(postData),
 			contentType:"application/json",
 			success: function (data) {
-				var info = {"capacity":allMmsi[data[i]].capacity,
-				"fleetid":allMmsi[data[i]].fleetid,"imo":allMmsi[data[i]].IMO,"length":allMmsi[data[i]].length,
-				"width":allMmsi[data[i]].width,"mmsi":data[i],"shipname":allMmsi[data[i]].shipname,
-				"shiptype":allMmsi[data[i]].shiptype,"contact":allMmsi[data[i]].contact,"cellphone":allMmsi[data[i]].cellphone};
-				if(info.fleetid in allCompany)
+				console.log(data);
+				allBoat = [];
+				for(var i = 0;i<data.length;++i)
 				{
-					info.fleetname = allCompany[info.fleet_id].name;
+					var info = {"capacity":allMmsi[data[i]].capacity,
+					"fleetid":allMmsi[data[i]].fleetid,"imo":allMmsi[data[i]].IMO,"length":allMmsi[data[i]].length,
+					"width":allMmsi[data[i]].width,"mmsi":data[i],"shipname":allMmsi[data[i]].shipname,
+					"shiptype":allMmsi[data[i]].shiptype,"contact":allMmsi[data[i]].contact,"cellphone":allMmsi[data[i]].cellphone};
+					if(info.fleetid in allCompany)
+					{
+						info.fleetname = allCompany[info.fleetid].name;
+					}
+					else{
+						info.fleetname = "-";
+					}
+					console.log(info);
+					allBoat.push(info);
 				}
-				else{
-					info.fleetname = "-";
-				}
-				allBoat.push(info);
 				RefreshImportTable();
 			},       
 			error: function () {       

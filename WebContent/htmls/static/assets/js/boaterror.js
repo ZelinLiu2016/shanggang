@@ -459,7 +459,7 @@ function SpeedError()
 	$("#L2L3L3").attr("class", "LeftTextSelect");
 	
 	abtype = "Exceed the speed limit Abnormal";
-	$("#toolbar").show();
+	$("#toolbar").hide();
 	$("#btn_backup").hide();
 	$("#btn_add").hide();
 	$("#btn_edit").hide();

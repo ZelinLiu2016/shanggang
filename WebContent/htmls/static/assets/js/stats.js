@@ -1,4 +1,4 @@
-﻿allPort = [{"port":"2017洋山港前航道疏浚","day":10,"week":60,"month":200}];
+﻿var allPort = [];
 
 function BoatStatsInit()
 {	
@@ -222,7 +222,17 @@ function PortStatsInit()
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#project_progress").hide();
-	InitPortStatsTable();
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/workload/projectworkload",
+        success: function (data) {
+        	fillProjectWork(data);
+			InitPortStatsTable();
+            },
+		error: function () {       
+            alert("获取数据失败");
+        }  
+	});	
 }
 
 function InitPortStatsTable()
@@ -243,17 +253,29 @@ function InitPortStatsTable()
 			$("#project_progress").hide();
 			return;
 		}
-		if(arrselections.length==1)
-		{
-			$("#project_progress").show();
-			real = 46;
-			plan = 50;
-			var real_span = document.getElementById("real_progress");
-			var plan_span = document.getElementById("plan_progress");
-			real_span.style.width=real+"%";
-			plan_span.style.width=plan+"%";
-			real_span.innerHTML=real+"%";
-			plan_span.innerHTML=plan+"%";
+		if(arrselections.length==1){
+			postData = {"project_id":12};
+			$.ajax({
+				type: "POST",
+				url: "/shanggang/workload/getprojectprocess",
+				data: JSON.stringify(postData),
+				contentType:"application/json",
+				success: function (data) {
+					console.log(data);
+					$("#project_progress").show();
+					real = parseInt(100*data["percent"]);
+					plan = real;
+					var real_span = document.getElementById("real_progress");
+					var plan_span = document.getElementById("plan_progress");
+					real_span.style.width=real+"%";
+					plan_span.style.width=plan+"%";
+					real_span.innerHTML=real+"%";
+					plan_span.innerHTML=plan+"%";
+               },       
+				error: function () {
+					alert("删除数据失败！");   
+				}       
+			});
 		}
     },
 	onUncheck: function (row, $element) {
@@ -262,7 +284,7 @@ function InitPortStatsTable()
     columns: [
 	{checkbox: true},
 	{
-        field: 'port',
+        field: 'project',
         title: '工程名称'
     }, 
 	{
@@ -279,4 +301,21 @@ function InitPortStatsTable()
     }
 	]});
     $('#datatable').show();
+}
+
+function fillProjectWork(data)
+{
+	allPort = [];
+	for(var i = 0;i<data.length;++i)
+	{
+		var s = data[i].substr(0,data[i].length);
+		var c = s.split(",");
+		var p = c[0];
+		var d = parseInt(c[1].split(":")[1]);
+		var w = parseInt(c[2].split(":")[1]);
+		var m = parseInt(c[3].split(":")[1]);
+		data[i] = {"project":p,"day":d,"week":w,"month":m};
+		console.log(data[i]);
+		allPort.push(data[i]);
+	}
 }

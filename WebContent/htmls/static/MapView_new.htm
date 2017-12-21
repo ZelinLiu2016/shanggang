@@ -36,7 +36,6 @@
     <script src="assets/js/sha-1.js"></script>
     <script src="assets/js/form.js"></script>
     <script src="assets/js/earthwork(2).js"></script>
-    <script src="assets/js/authority.js"></script>
 
     <script type="text/javascript" src="assets/js/preloader.js"></script>
     <!-- // <script type="text/javascript" src="assets/js/app.js"></script> -->
@@ -126,14 +125,125 @@
         <a id="toggle" onclick = "setMouse()">
             <span class="entypo-menu"></span>
         </a>
-        </div>								
+        </div>	
+		<h3 id="project_label" class="text-center"></h3>
         <div class="skin-part ">
             <div id="tree-wrap">
 			<div class="side-bar">
 			
 			<ul class="topnav menu-left-nest" >
+				<li >
+					<a id = "project_info" href="#" title="工程基本信息" onclick = "InitLoadParam_Project()">
+						<img src = "image/i_3.png">
+						<span id="L4" class="LeftText">工程基本信息</span>
+					</a>
+				</li>
+				
+				<li>
+					<a href="#" title="" onclick="l2l1()">
+						<img src = "image/i_3.png">
+						<span id="L2L1" class="LeftText">工程进度统计</span>
+					</a>
+					<ul>
+						<!--li >
+						<a id = "boat-stats" class="tooltip-tip ajax-load" href="#" title="船舶数据统计" onclick = "BoatStatsInit()">
+							<img src = "image/i_1.png">
+							<span class="LeftText">船舶数据统计</span>
+						</a>
+						</li-->
+						<li >
+						<a id = "fleet-stats" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="船队数据统计" onclick = "FleetStatsInit()">
+							<span id="L2L1L1" class="LeftText">单位数据统计</span>
+						</a>
+						</li>
+						<li >
+						<a id = "port-stats" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="工程数据统计" onclick = "PortStatsInit()">
+							<span id="L2L1L2" class="LeftText">工程数据统计</span>
+						</a>
+						</li>
+					</ul>
+				</li>
+				
+				<li >
+					<a href="#" title="" onclick="l2l2()">
+						<img src = "image/i_12.png">
+						<span id="L2L2" class="LeftText">船舶监控</span>
+					</a>
+					<ul>
+						<li >
+						<a id = "rt-monitor" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="实时监控" onclick = "RTMonInit()">
+							<span id="L2L2L1" class="LeftText">实时监控</span>
+						</a>
+						</li>
+						<li >
+						<a id = "hs-monitor" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="轨迹回放" onclick = "HSMonInit()">
+							<span id="L2L2L2" class="LeftText">轨迹回放</span>
+						</a>
+						</li>
+						<li >
+						<a id = "detect" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="轨迹检测" onclick = "DTMonInit()">
+							<span id="L2L2L3" class="LeftText">轨迹检测</span>
+						</a>
+						</li>
+					</ul>
+				</li>
+				
+				<li>
+					<a href="#" title="" onclick="l2l3()">
+						<img src = "image/i_7.png">
+						<span id="L2L3" class="LeftText">异常检测</span>
+						<!--span class="label label-warning pull-right" style="height:20px;width:35px;">1002</span-->
+					</a>
+					<ul>		
+						<li >
+							<a id = "dirt-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError()">
+							<span id="L2L3L1" class="LeftText">抛泥异常</span>
+							</a>
+						</li>
+						<li >
+							<a id = "run-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="航行异常" onclick = "RunError()">
+							<span id="L2L3L2" class="LeftText">航行异常</span>
+							</a>
+						</li>
+						<li >
+							<a id = "speed-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="速度异常" onclick = "SpeedError()">
+							<span id="L2L3L3" class="LeftText">速度异常</span>
+							</a>
+						</li>
+						<li >
+							<a id = "weather-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="天气异常" onclick = "WeatherError()">
+							<span id="L2L3L4" class="LeftText">天气异常</span>
+							</a>
+						</li>
+						<li >
+							<a id = "process-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="进度异常" onclick = "ProjectErrorInit()">
+							<span id="L2L3L5" class="LeftText">进度异常</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+				
+				<!--li>
+                    <a href="#" onclick="l2_menu()">
+                    <img src = "image/i_6.png">
+					<span id="L2" class="LeftText">动态数据管理</span>
+					</a>
+                    <ul>
+						
+						
+						
+						<li>
+						<a id = "blacklist" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="黑名单" onclick = "InitBlackList()">
+                            <img src = "image/i_10.png">
+                            <span id="L2L4" class="LeftText">黑名单</span>
+                        </a>
+						</li>
+                        
+                    </ul>
+                </li-->
+				
                 <li class="menu1">
-                    <a href="#" onclick="l1_menu()">
+                    <a href="#" onclick="l1_menu();reset_select();">
                     <img src = "image/i_4.png">
 					<span id="L1" class="LeftText">静态数据管理</span>
 					</a>
@@ -141,7 +251,7 @@
                         <li >
                         <a id = "set-project-param" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="工程基本信息" onclick = "InitLoadParam()">
                             <img src = "image/i_1.png">
-                            <span id="L1L1" class="LeftText">工程基本信息</span>
+                            <span id="L1L1" class="LeftText">修改工程信息</span>
                         </a>
 						</li>
                         <li >
@@ -177,102 +287,7 @@
                     </ul>
                 </li>
                 
-                <li>
-                    <a href="#" onclick="l2_menu()">
-                    <img src = "image/i_6.png">
-					<span id="L2" class="LeftText">动态数据管理</span>
-					</a>
-                    <ul>
-						<li>
-						<a href="#" title="" style="border-radius:0px;padding-left:40px;" onclick="l2l1()">
-                            <img src = "image/i_3.png">
-                            <span id="L2L1" class="LeftText">工程进度统计</span>
-                        </a>
-						<ul>
-							<!--li >
-							<a id = "boat-stats" class="tooltip-tip ajax-load" href="#" title="船舶数据统计" onclick = "BoatStatsInit()">
-								<img src = "image/i_1.png">
-								<span class="LeftText">船舶数据统计</span>
-							</a>
-							</li-->
-							<li >
-							<a id = "fleet-stats" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="船队数据统计" onclick = "FleetStatsInit()">
-								<span id="L2L1L1" class="LeftText">单位数据统计</span>
-							</a>
-							</li>
-							<li >
-							<a id = "port-stats" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="工程数据统计" onclick = "PortStatsInit()">
-								<span id="L2L1L2" class="LeftText">工程数据统计</span>
-							</a>
-							</li>
-						</ul>
-					    </li>
-						<li >
-                        <a href="#" style="border-radius:0px;padding-left:40px;" title="" onclick="l2l2()">
-                            <img src = "image/i_12.png">
-                            <span id="L2L2" class="LeftText">船舶监控</span>
-                        </a>
-                        <ul>
-                            <li >
-                            <a id = "rt-monitor" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="实时监控" onclick = "RTMonInit()">
-                                <span id="L2L2L1" class="LeftText">实时监控</span>
-                            </a>
-                            </li>
-                            <li >
-                            <a id = "hs-monitor" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="轨迹回放" onclick = "HSMonInit()">
-                                <span id="L2L2L2" class="LeftText">轨迹回放</span>
-                            </a>
-                            </li>
-							<li >
-                            <a id = "detect" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="轨迹检测" onclick = "DTMonInit()">
-                                <span id="L2L2L3" class="LeftText">轨迹检测</span>
-                            </a>
-                            </li>
-                        </ul>
-						</li>
-						<li>
-						<a href="#" style="border-radius:0px;padding-left:40px;" title="" onclick="l2l3()">
-                            <img src = "image/i_7.png">
-                            <span id="L2L3" class="LeftText">异常检测</span>
-							<!--span class="label label-warning pull-right" style="height:20px;width:35px;">1002</span-->
-                        </a>
-						<ul>		
-							<li >
-								<a id = "dirt-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError()">
-								<span id="L2L3L1" class="LeftText">抛泥异常</span>
-								</a>
-							</li>
-							<li >
-								<a id = "run-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="航行异常" onclick = "RunError()">
-								<span id="L2L3L2" class="LeftText">航行异常</span>
-								</a>
-							</li>
-							<li >
-								<a id = "speed-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="速度异常" onclick = "SpeedError()">
-								<span id="L2L3L3" class="LeftText">速度异常</span>
-								</a>
-							</li>
-							<li >
-								<a id = "weather-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="天气异常" onclick = "WeatherError()">
-								<span id="L2L3L4" class="LeftText">天气异常</span>
-								</a>
-							</li>
-							<li >
-								<a id = "process-error" style="border-radius:0px;padding-left:80px;" class="tooltip-tip ajax-load" href="#" title="进度异常" onclick = "ProjectErrorInit()">
-								<span id="L2L3L5" class="LeftText">进度异常</span>
-								</a>
-							</li>
-						</ul>
-					    </li>
-						<li>
-						<a id = "blacklist" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="黑名单" onclick = "InitBlackList()">
-                            <img src = "image/i_10.png">
-                            <span id="L2L4" class="LeftText">黑名单</span>
-                        </a>
-						</li>
-                        
-                    </ul>
-                </li>
+                
 				<li >
                     <a href="#" onclick="l3_menu()">
                     <img src = "image/i_9.png">
@@ -302,30 +317,39 @@
             <ul style="margin-right:;" class="nav navbar-nav">
                 <div class=""> 
                     <div class="RightTop">
-                        <ul>
-						    <ul style="margin-right:0px;" class="nav navbar-nav">
+						    <!--ul style="margin-right:0px;" class="nav navbar-nav">
 								<li class="First cover"><a href="#" class="Current change" id="quanjing" onclick = "pfullView()">全 部</a></li>
-							</ul>
+							</ul-->
 						<ul style="margin-right:0px;" class="nav navbar-nav">
-							<li class = 'cover'><a href="#"  class="Current change" id="waigaoqiao1"  onclick="pchooseWaigaoqiao(1)"><img id = "waigaoqiao_waring1" src = "img/green.png" height="15" width="15">&#160;&#160;外高桥 1-3</a></li>
+							<li class = 'cover'><a href="#" id="waigaoqiao1" data-toggle="dropdown" class="dropdown-toggle Current change" onclick="pchooseWaigaoqiao(1)"><img id = "waigaoqiao_waring1" src = "img/green.png" height="15" width="15">&#160;&#160;外高桥 1-3</a>
+							<ul class="dropdown-menu dropdown-setting" style="min-width:150px;" id="waigaoqiao1_dropdown"></ul>
+							</li>
 						</ul>
 						<ul style="margin-right:0px;" class="nav navbar-nav">
-							<li class = 'cover'><a href="#" id="waigaoqiao2"  class="Current change" onclick="pchooseWaigaoqiao(2)"><img id = "waigaoqiao_waring2" src = "img/green.png" height="15" width="15">&#160;&#160;外高桥 4-6</a></li>
+							<li class = 'cover'><a href="#" id="waigaoqiao2" data-toggle="dropdown" class="dropdown-toggle Current change" onclick="pchooseWaigaoqiao(2)"><img id = "waigaoqiao_waring2" src = "img/green.png" height="15" width="15">&#160;&#160;外高桥 4-6</a>
+							<ul class="dropdown-menu dropdown-setting" style="min-width:150px;" id="waigaoqiao2_dropdown"></ul>
+							</li>
 						</ul>
 						<ul style="margin-right:0px;" class="nav navbar-nav">
-							<li class = 'cover'><a href="#" id="yangshan1"  class="Current change" onclick="pchooseYangshan(1)"><img id = "yangshan_waring1" src = "img/green.png" height="15" width="15">&#160;&#160;洋山进港航道</a></li>
+							<li class = 'cover'><a href="#" id="yangshan1" data-toggle="dropdown" class="dropdown-toggle Current change" onclick="pchooseYangshan(1)"><img id = "yangshan_waring1" src = "img/green.png" height="15" width="15">&#160;&#160;洋山进港航道</a>
+							<ul class="dropdown-menu dropdown-setting" style="min-width:150px;" id="yangshan1_dropdown"></ul>
+							</li>
 						</ul>
 						<ul style="margin-right:0px;" class="nav navbar-nav">
-							<li class = 'cover'><a href="#" id="yangshan2"  class="Current change" onclick="pchooseYangshan(2)"><img id = "yangshan_waring2" src = "img/green.png" height="15" width="15">&#160;&#160;洋山港前水域</a></li>
+							<li class = 'cover'><a href="#" id="yangshan2" data-toggle="dropdown" class="dropdown-toggle Current change" onclick="pchooseYangshan(2)"><img id = "yangshan_waring2" src = "img/green.png" height="15" width="15">&#160;&#160;洋山港前水域</a>
+							<ul class="dropdown-menu dropdown-setting" style="min-width:150px;" id="yangshan2_dropdown"></ul>
+							</li>
 						</ul>
 						<ul style="margin-right:0px;" class="nav navbar-nav">
-							<li class = 'cover'><a href="#" id="luojing"  class="Current change" onclick="pchooseLuojing()"><img id = "luojing_waring" src = "img/green.png" height="15" width="15">&#160;&#160;罗 泾</a></li>
+							<li class = 'cover'><a href="#" id="luojing" data-toggle="dropdown" class="dropdown-toggle Current change" onclick="pchooseLuojing()"><img id = "luojing_waring" src = "img/green.png" height="15" width="15">&#160;&#160;罗 泾</a>
+							<ul class="dropdown-menu dropdown-setting" style="min-width:150px;" id="luojing_dropdown"></ul>
+							</li>
 						</ul>
-                        <ul style="margin-right:0px;" class="nav navbar-nav" id = "huangpujiangU">
-							<li class = 'cover'> <a href="#"  id = "huangpujiangI" data-toggle="dropdown" class="dropdown-toggle Current change"><img id = "huangpujiang_waring" src = "img/green.png" height="15" width="15">
+                        <ul style="margin-right:0px;" class="nav navbar-nav">
+							<li class = 'cover'> <a href="#" id = "huangpujiangI" data-toggle="dropdown" class="dropdown-toggle Current change" onclick="pchooseHuangpujiang()"><img id = "huangpujiang_waring" src = "img/green.png" height="15" width="15">
                             &#160;&#160;黄浦江</a>          
-                                <ul class="dropdown-menu dropdown-setting" >
-									<li class="Last"><a href="#" onclick = "pchooseHuangpujiang(1)">黄浦江 1</a></li>
+                                <ul class="dropdown-menu dropdown-setting" style="min-width:150px;" id="huangpujiangI_dropdown">
+									<!--li class="Last"><a href="#" onclick = "pchooseHuangpujiang(1)">黄浦江 1</a></li>
 									<li class="Last "><a href="#" onclick = "pchooseHuangpujiang(2)">黄浦江 2</a></li>
 									<li class="Last"><a href="#" onclick = "pchooseHuangpujiang(3)">黄浦江 3</a></li>
 									<li class="Last"><a href="#" onclick = "pchooseHuangpujiang(4)">黄浦江 4</a></li>
@@ -334,17 +358,17 @@
 									<li class="Last"><a href="#" onclick = "pchooseHuangpujiang(7)">黄浦江 7</a></li>
 									<li class="Last"><a href="#" onclick = "pchooseHuangpujiang(8)">黄浦江 8</a></li>
 									<li class="Last"><a href="#" onclick = "pchooseHuangpujiang(9)">黄浦江 9</a></li>
-									<li class="Last"><a href="#" onclick = "pchooseHuangpujiang(10)">黄浦江 10</a></li>
+									<li class="Last"><a href="#" onclick = "pchooseHuangpujiang(10)">黄浦江 10</a></li-->
 								</ul>
 							</li>
 						</ul>
-						<ul style="margin-right:0px;" class="nav navbar-nav">
+						<!--ul style="margin-right:0px;" class="nav navbar-nav">
 							<li class="cover">
 								<a id="show-time" href="#">
                                 请选择查看港口
 								</a>
 							</li>
-						</ul>
+						</ul-->
 						<ul style="margin-right:0px;" class="nav navbar-nav navbar-right" id = "welcome">
 
 							<li> 

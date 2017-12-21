@@ -79,6 +79,16 @@ function InitBoatErrorTable() {
 
 function DirtError()
 {
+	if(project_selected<0)
+	{
+		alert("请在页面顶部选择需要查看的工程！ ");
+		return;
+	}
+	if(!(project_selected in detailed))
+	{
+		alert("选中数据异常！");
+		return;
+	}
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L3").attr("class", "LeftTextSelect");
@@ -207,29 +217,32 @@ function DirtError()
 function fillDirtError(data)
 {
 	allError = [];
-	console.log(mmsi_project);
+	mmsi_project_selected = get_mmsi_selected();
 	for(var i = 0;i<data.length;++i){
-		var info = {"mmsi":data[i].mmsi,"date":data[i].date,"indred":data[i].indred,
+		if(data[i].mmsi in mmsi_project_selected)
+		{
+			var info = {"mmsi":data[i].mmsi,"date":data[i].date,"indred":data[i].indred,
 					"exitdred":data[i].exitdred,"indump":data[i].indump,"exitdump":data[i].exitdump,
 					"state":data[i].state,"dredging":"-","dumping":"-","route":"-","handle":"-"};
 				
-		if(data[i].mmsi in allMmsi)
-		{
-			info.name = allMmsi[data[i].mmsi].shipname;
-			if(allMmsi[data[i].mmsi].fleetid in allCompany)
+			if(data[i].mmsi in allMmsi)
 			{
-				info.company=allCompany[allMmsi[data[i].mmsi].fleetid].name;
+				info.name = allMmsi[data[i].mmsi].shipname;
+				if(allMmsi[data[i].mmsi].fleetid in allCompany)
+				{
+					info.company=allCompany[allMmsi[data[i].mmsi].fleetid].name;
+				}
+				else{
+					info.company="-";
+				}
 			}
 			else{
+				info.name = "-";
 				info.company="-";
 			}
+			info.type = dirt_abnormal_type[data[i].state];
+			allError.push(info);
 		}
-		else{
-			info.name = "-";
-			info.company="-";
-		}
-		info.type = dirt_abnormal_type[data[i].state];
-		allError.push(info);
 	}
 }
 

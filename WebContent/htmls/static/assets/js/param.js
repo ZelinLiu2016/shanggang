@@ -11,6 +11,61 @@ var coorDict = {};
 var sj_coorDict = {};
 postData = {};
 
+function InitLoadParam_Project()
+{
+	if(project_selected<0)
+	{
+		alert("请在页面顶部选择需要查看的工程！ ");
+		return;
+	}
+	CleanAll();
+	$("#L4").attr("class", "LeftTextSelect");
+	$("#toolbar").hide();
+	$("#toolbar_search").hide();
+	$("#btn_search").hide();
+	
+	$("#mapBody").hide();
+	$("#data_clean").hide();
+	$("#datatable").show();
+	$("#detailtable").hide();
+	$("#detail_information").show();
+	$("#info_div").hide();
+	$("#monitor_search_modal").hide();
+	$("#project_progress").hide();
+	//document.getElementById("btn_show").removeAttribute("disabled");
+
+	var tbody = document.getElementById("company-tbody");
+	while(tbody.hasChildNodes())
+	{
+		tbody.removeChild(tbody.firstChild);
+	}
+	for(var i = 0;i<4;++i)
+	{
+		$("#company-tbody").append('<tr><td></td><td></td><td></td><td></td></tr>');
+	}
+	tbody = document.getElementById("mmsi-tbody");
+	while(tbody.hasChildNodes())
+	{
+		tbody.removeChild(tbody.firstChild);
+	}
+	for(var i = 0;i<4;++i)
+	{
+		$("#mmsi-tbody").append('<tr><td></td><td></td><td></td><td></td></tr>');
+	}
+	
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/project/list",
+        success: function (data) {
+        	fillParamDataProject(data, project_selected);
+			InitParamTable();
+            },
+		error: function () {       
+            alert("获取数据失败！");
+        }  
+	});
+}
+
 function InitLoadParam()
 {
 	CleanAll();
@@ -54,6 +109,7 @@ function InitLoadParam()
 		$("#mmsi-tbody").append('<tr><td></td><td></td><td></td><td></td></tr>');
 	}
 	
+	dredging_area = "";
 	if (dredging_area == "")
 	{
 		$.ajax({
@@ -434,6 +490,30 @@ function RefreshParamTable() {
 	$('#datatable').hide();
 	$('#table').bootstrapTable('load', allParam); 
 	$('#datatable').show();
+	set_port_menu();
+}
+
+function fillParamDataProject(data, p_s)
+{
+	allParam = [];
+	for(var i = 0;i<data.length;++i)
+	{
+		if (data[i].projectId==p_s)
+		{
+			var info = {"projectid":data[i].projectId,"projectname":data[i].projectName,
+			"area":data[i].dumpingArea,"capacity":data[i].squareVolume,"startdate":data[i].beginDate,
+			"enddate":data[i].endDate,"shipnum":data[i].boatNum,"harborname":data[i].harborName,
+			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id,"isworking":data[i].isworking};
+			if(data[i].isworking == 0)
+			{
+				info.inprogress = "否";
+			}
+			else{
+				info.inprogress = "是";
+			}
+			allParam.push(info);
+		}
+	}
 }
 
 function fillParamData(data)

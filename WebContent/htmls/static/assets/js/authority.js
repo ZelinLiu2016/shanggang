@@ -51,12 +51,12 @@ $(document).ready(function() {
     // $("#hud").hide();
     // $("#plotForTransection1").hide();
     // $("#plotForTransection2").hide();
-	//authority();
-	//preWarning();
+	authority();
+	preWarning();
 	AddBorder();
 	// getDepthLevel();
-	//$("#quanjing").click();
-	fullView();
+	$("#quanjing").click();
+	//fullView();
 	$("#mapBody").show();
 	$("#setbuttom").hide();
 	// $("#ranklevel").hide();
@@ -78,135 +78,8 @@ $(document).ready(function() {
 	$("#detail_information").hide();
 	$("#project_progress").hide();
 	// waigaoqiao4Defult()
-	$.ajax({
-        method: "GET",
-        url: "/shanggang/project/list",
-        success: function (data) {
-			fillParamData(data);
-			fillMmsiProjectData(data);
-            },
-		error: function () {       
-            alert("fail");
-        }  
-    });
-	$.ajax({
-        method: "GET",
-        url: "/shanggang/company/listall",
-        success: function (data) {
-        	fillCompanyData(data);
-            },
-		error: function () {       
-            alert("fail");
-        }  
-    });
-	$.ajax({
-        method: "GET",
-        url: "/shanggang/ship/list",
-        success: function (data) {
-        	fillMmsiData(data);
-            },
-		error: function () {       
-            alert("fail");
-        }  
-    });
-	$.ajax({
-        method: "GET",
-        url: "/shanggang/dredging_area/listall",
-        success: function (data) {
-        	fillDredgingData(data);
-            },
-		error: function () {       
-            alert("fail");
-        }  
-    });
-	$.ajax({
-        method: "GET",
-        url: "/shanggang/dumping_area/list",
-        success: function (data) {
-        	fillDumpingData(data);
-            },
-		error: function () {       
-            alert("fail");
-        }  
-    });
-	/*$.ajax({
-        method: "GET",
-        url: "/shanggang/abnormalinfo/exceedspeedfre",
-        success: function (data) {
-			data=[];
-        	fillSpeedfre(data);
-            },
-		error: function () {       
-            alert("fail");
-        }  
-    });*/
-	$.ajax({
-        method: "GET",
-        url: "/shanggang/workrecord/abnormal",
-        success: function (data) {
-        	fillAreafre(data);
-            },
-		error: function () {       
-            alert("获取数据失败");
-        }  
-    });
-	/*$.ajax({
-        method: "GET",
-        url: "/shanggang/abnormalinfo/routefre",
-        success: function (data) {
-			data=[];
-        	fillRoutefre(data);
-            },
-		error: function () {       
-            alert("fail");
-        }  
-    });*/
 });
 
-function fillMmsiProjectData(data)
-{
-	mmsi_project = {};
-	for(var i = 0;i<data.length;++i)
-	{
-		ships = data[i].mmsilist.split(';');
-		for(var j = 0;j<ships.length;++j)
-		{
-			mmsi_project[ships[j]] = {"dredging":data[i].harborName.split(';')[0],
-			"dumping":data[i].dumpingArea.split(';')[0]};
-		}
-	}
-}
-
-function fillSpeedfre(data)
-{
-	speedfre = {};
-	for(var i = 0;i<data.length;++i)
-	{
-		speedfre[data[i].mmsi] = data[i].frequency;
-	}
-}
-
-function fillAreafre(data)
-{
-	areafre = {};
-	for(var i = 0;i<data.length;++i)
-	{
-		if(!(data[i].mmsi in areafre))
-		{
-			areafre[data[i].mmsi] = 0;
-		}
-		areafre[data[i].mmsi] += 1;
-	}
-}
-
-function fillRoutefre(data)
-{
-	routefre = {};
-	for(var i = 0;i<data.length;++i)
-	{
-		routefre[data[i].mmsi] = data[i].frequency;
-	}
-}
 
 function authority(){
 

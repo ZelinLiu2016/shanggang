@@ -49,6 +49,11 @@ function InitBoatStatsTable()
 
 function FleetStatsInit()
 {
+	if(project_selected<0)
+	{
+		alert("请在页面顶部选择需要查看的工程！ ");
+		return;
+	}
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L1").attr("class", "LeftTextSelect");
@@ -67,6 +72,7 @@ function FleetStatsInit()
         method: "GET",
         url: "/shanggang/workload/getallnewworkload",
         success: function (data) {
+			console.log(data);
         	fillBoatWork(data);
 			InitFleetStatsTable();
             },
@@ -78,47 +84,64 @@ function FleetStatsInit()
 
 function fillBoatWork(data)
 {
-	allBoatWork = [];
-	allFleet = [];
-	allFleetDict = {};
-	for(var i = 0;i<data.length;++i)
+	var mmsi_project_selected = {};
+	if(project_selected in detailed)
 	{
-		var s = data[i].substr(0,data[i].length);
-		var c = s.split(",");
-		console.log(c);
-		var mm = c[0].split(":")[1];
-		var d = parseInt(c[1].split(":")[1]);
-		var w = parseInt(c[2].split(":")[1]);
-		var m = parseInt(c[3].split(":")[1]);
-		data[i] = {"mmsi":mm,"day":d,"week":w,"month":m};
-		console.log(data[i]);
-		if(data[i].mmsi in allMmsi)
+		if(detailed[project_selected].mmsi.length>0)
 		{
-			var ship = allMmsi[data[i].mmsi];
-			var info = {"mmsi":data[i].mmsi,"day":data[i].day,"week":data[i].week,"month":data[i].month,
-						"shipname":ship.shipname,"companyid":ship.fleetid};
-			if(ship.fleetid in allCompany)
+			var tmp = detailed[project_selected].mmsi.split(";");
+			for (var i = 0;i <tmp.length;++i)
 			{
-				info.companyname = allCompany[ship.fleetid].name;
+				mmsi_project_selected[tmp[i]] = 0;
 			}
-			else{
-				info.companyname = "其他公司";
-			}
-			allBoatWork.push(info);
-			console.log(allFleetDict);
-			if(!(ship.fleetid in allFleetDict))
+		}
+		console.log(mmsi_project_selected);
+		allBoatWork = [];
+		allFleet = [];
+		allFleetDict = {};
+		for(var i = 0;i<data.length;++i)
+		{
+			var s = data[i].substr(0,data[i].length);
+			var c = s.split(",");
+			var mm = c[0].split(":")[1];
+			var d = parseInt(c[1].split(":")[1]);
+			var w = parseInt(c[2].split(":")[1]);
+			var m = parseInt(c[3].split(":")[1]);
+			if(mm in mmsi_project_selected)
 			{
-				allFleetDict[ship.fleetid] = {"day":0,"week":0,"month":0,"name":info.companyname};
+				data[i] = {"mmsi":mm,"day":d,"week":w,"month":m};
+				if(data[i].mmsi in allMmsi)
+				{
+					var ship = allMmsi[data[i].mmsi];
+					var info = {"mmsi":data[i].mmsi,"day":data[i].day,"week":data[i].week,"month":data[i].month,
+								"shipname":ship.shipname,"companyid":ship.fleetid};
+					if(ship.fleetid in allCompany)
+					{
+						info.companyname = allCompany[ship.fleetid].name;
+					}
+					else{
+						info.companyname = "其他公司";
+					}
+					allBoatWork.push(info);
+					if(!(ship.fleetid in allFleetDict))
+					{
+						allFleetDict[ship.fleetid] = {"day":0,"week":0,"month":0,"name":info.companyname};
+					}
+					allFleetDict[ship.fleetid].day+=data[i].day;
+					allFleetDict[ship.fleetid].week+=data[i].week;
+					allFleetDict[ship.fleetid].month+=data[i].month;
+				}
 			}
-			console.log(allFleetDict);
-			allFleetDict[ship.fleetid].day+=data[i].day;
-			allFleetDict[ship.fleetid].week+=data[i].week;
-			allFleetDict[ship.fleetid].month+=data[i].month;
-		}	
-	}
-	for(var f in allFleetDict)
-	{
-		allFleet.push({"fleetid":f,"fleetname":allFleetDict[f].name,"day":allFleetDict[f].day,"week":allFleetDict[f].week,"month":allFleetDict[f].month});
+			
+		}
+		for(var f in allFleetDict)
+		{
+			allFleet.push({"fleetid":f,"fleetname":allFleetDict[f].name,"day":allFleetDict[f].day,"week":allFleetDict[f].week,"month":allFleetDict[f].month});
+		}
+			
+		}
+	else{
+		alert("选中工程数据异常！ ");
 	}
 }
 
@@ -208,6 +231,11 @@ function InitFleetStatsTable()
 }
 function PortStatsInit()
 {
+	if(project_selected<0)
+	{
+		alert("请在页面顶部选择需要查看的工程！ ");
+		return;
+	}
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L1").attr("class", "LeftTextSelect");
@@ -226,7 +254,7 @@ function PortStatsInit()
         method: "GET",
         url: "/shanggang/workload/projectworkload",
         success: function (data) {
-        	fillProjectWork(data);
+        	fillProjectWork(data, project_selected);
 			InitPortStatsTable();
             },
 		error: function () {       
@@ -254,7 +282,16 @@ function InitPortStatsTable()
 			return;
 		}
 		if(arrselections.length==1){
-			postData = {"project_id":12};
+			var id =-1;
+			for(var i in detailed)
+			{
+				if(detailed[i].projectname == arrselections[0].project)
+				{
+					id = i;
+					break;
+				}
+			}
+			postData = {"project_id":id};
 			$.ajax({
 				type: "POST",
 				url: "/shanggang/workload/getprojectprocess",
@@ -303,19 +340,30 @@ function InitPortStatsTable()
     $('#datatable').show();
 }
 
-function fillProjectWork(data)
+function fillProjectWork(data, p_s)
 {
-	allPort = [];
-	for(var i = 0;i<data.length;++i)
+	console.log(data);
+	if(p_s in detailed)
 	{
-		var s = data[i].substr(0,data[i].length);
-		var c = s.split(",");
-		var p = c[0];
-		var d = parseInt(c[1].split(":")[1]);
-		var w = parseInt(c[2].split(":")[1]);
-		var m = parseInt(c[3].split(":")[1]);
-		data[i] = {"project":p,"day":d,"week":w,"month":m};
-		console.log(data[i]);
-		allPort.push(data[i]);
+		var pname = detailed[p_s].projectname;
+		allPort = [];
+		for(var i = 0;i<data.length;++i)
+		{
+			var s = data[i].substr(0,data[i].length);
+			var c = s.split(",");
+			var p = c[0];
+			if(p==pname)
+			{
+				var d = parseInt(c[1].split(":")[1]);
+				var w = parseInt(c[2].split(":")[1]);
+				var m = parseInt(c[3].split(":")[1]);
+				data[i] = {"project":p,"day":d,"week":w,"month":m};
+				allPort.push(data[i]);
+			}	
+		}
 	}
+	else{
+		alert("选中工程数据异常！ ");
+	}
+	
 }

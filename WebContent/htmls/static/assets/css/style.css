@@ -413,7 +413,7 @@ input:-webkit-autofill, textarea:-webkit-autofill {
     display: block;
     font-weight: normal;
     line-height: 1.42857;
-    padding: 3px 30px!important;
+    padding: 3px 30px;
     white-space: nowrap;
 }
 .dropdown-menu > li > a:hover {

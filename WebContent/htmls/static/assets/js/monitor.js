@@ -1,14 +1,43 @@
 var allMonitor = [];
 var allDetect = [];
+var x_left = convertToLatitu("118:42:00");
+var x_right = convertToLatitu("124:18:00");
+var y_up = convertToLatitu("33:45:00");
+var y_down = convertToLatitu("29:21:00");
 postData = {};
 historyData = [];
 
+function get_mmsi_selected()
+{
+	var ret = {};
+	if(detailed[project_selected].mmsi.length>0)
+	{
+		var tmp = detailed[project_selected].mmsi.split(";");
+		for (var i = 0;i <tmp.length;++i)
+		{
+			ret[tmp[i]] = 0;
+		}
+	}
+	return ret;
+}
+
 function RTMonInit()
 {
+	if(project_selected<0)
+	{
+		alert("请在页面顶部选择需要查看的工程！ ");
+		return;
+	}
+	if(!(project_selected in detailed))
+	{
+		alert("选中数据异常！");
+		return;
+	}
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L2").attr("class", "LeftTextSelect");
 	$("#L2L2L1").attr("class", "LeftTextSelect");
+	mmsi_project_selected = get_mmsi_selected();
 	
 	$.ajax({
         method: "GET",
@@ -22,7 +51,9 @@ function RTMonInit()
 			}
 			var entry = "";
 			for (var m in allMmsi) {
-				entry += '<option value="'+m+'">'+ m+'---'+allMmsi[m].shipname +'</option>';
+				if(m in mmsi_project_selected){
+					entry += '<option value="'+m+'">'+ m+'---'+allMmsi[m].shipname +'</option>';
+				}
 			}
 			$("#monitor_search").append(entry);
 			$("#monitor_search").val("");
@@ -184,10 +215,21 @@ function MonitorSearch()
 function HSMonInit()
 {
 	//API_SetMapViewCenter(121.668, 31.338, 160000);
+	if(project_selected<0)
+	{
+		alert("请在页面顶部选择需要查看的工程！ ");
+		return;
+	}
+	if(!(project_selected in detailed))
+	{
+		alert("选中数据异常！");
+		return;
+	}
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L2").attr("class", "LeftTextSelect");
 	$("#L2L2L2").attr("class", "LeftTextSelect");
+	mmsi_project_selected = get_mmsi_selected();
 	
 	$.ajax({
         method: "GET",
@@ -201,7 +243,9 @@ function HSMonInit()
 			}
 			var entry = "";
 			for (var m in allMmsi) {
-				entry += '<option value="'+m+'">'+ m+'---'+allMmsi[m].shipname +'</option>';
+				if(m in mmsi_project_selected){
+					entry += '<option value="'+m+'">'+ m+'---'+allMmsi[m].shipname +'</option>';
+				}
 			}
 			$("#monitor_search").append(entry);
 			$("#monitor_search").val("");
@@ -227,13 +271,20 @@ function HSMonInit()
 		API_DelAllShips();
 		ClearPlayShipInfo();
 		var arrselections = $("#table").bootstrapTable('getSelections');
-		$('html, body').animate({
-        scrollTop: $("#mapBody").offset().top
-		}, 100);
-		if (historyData.length>0)
-		{
-			PlayShipHistoryTracks('ship', historyData);
-			return false;
+		
+		if (historyData.length>0){
+			if(is_data_valid(historyData))
+			{
+				$('html, body').animate({
+				scrollTop: $("#mapBody").offset().top
+				}, 100);
+				PlayShipHistoryTracks('ship', historyData);
+				return false;
+			}
+			else{
+				alert("船舶位置数据出错！ ");
+				return false;
+			}
 		}
 	})
 	
@@ -323,10 +374,21 @@ function HSMonitorSearch()
 
 function DTMonInit()
 {
+	if(project_selected<0)
+	{
+		alert("请在页面顶部选择需要查看的工程！ ");
+		return;
+	}
+	if(!(project_selected in detailed))
+	{
+		alert("选中数据异常！");
+		return;
+	}
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L2").attr("class", "LeftTextSelect");
 	$("#L2L2L3").attr("class", "LeftTextSelect");
+	mmsi_project_selected = get_mmsi_selected();
 	
 	$.ajax({
         method: "GET",
@@ -340,13 +402,15 @@ function DTMonInit()
 			}
 			var entry = "";
 			for (var m in allMmsi) {
-				entry += '<option value="'+m+'">'+ m+'---'+allMmsi[m].shipname +'</option>';
+				if(m in mmsi_project_selected){
+					entry += '<option value="'+m+'">'+ m+'---'+allMmsi[m].shipname +'</option>';
+				}
 			}
 			$("#monitor_search").append(entry);
 			$("#monitor_search").val("");
             },
 		error: function () {       
-            alert("fail");
+            alert("查询失败！");
         }  
     });
 	allDetect = [];
@@ -376,15 +440,23 @@ function DTMonInit()
 			data: JSON.stringify(postData),
 			contentType:"application/json",
 			success: function (data) {
-				console.log(data);
 				fillMonitorData(data);
-				$('html, body').animate({
-					scrollTop: $("#mapBody").offset().top
-				}, 100);
+				console.log(historyData);
 				if (historyData.length>0)
 				{
-					PlayShipHistoryTracks('ship', historyData);
-					return false;
+					if(is_data_valid(historyData))
+					{
+						$('html, body').animate({
+						scrollTop: $("#mapBody").offset().top
+						}, 100);
+						PlayShipHistoryTracks('ship', historyData);
+						return false;
+					}
+					else{
+						alert("船舶位置数据出错！ ");
+						return false;
+					}
+					
 				}
 			},
 			error: function () {       
@@ -513,4 +585,25 @@ function RefreshDetectTable()
 	$('#datatable').hide();
 	$('#table').bootstrapTable('load', allDetect); 
 	$('#datatable').show();
+}
+
+function is_point_valid(x,y)
+{
+	var tmp_x = x*10000000;
+	var tmp_y = y*10000000;
+	
+	return tmp_x>x_left && tmp_x<x_right && tmp_y>y_down && tmp_y<y_up;
+}
+
+function is_data_valid(data)
+{
+	for(var i = 0;i<data.length;++i)
+	{
+		if(!is_point_valid(parseFloat(data[i].lon), parseFloat(data[i].lat)))
+		{
+			console.log(data[i]);
+			return false; 
+		}
+	}
+	return true;
 }

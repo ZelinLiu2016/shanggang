@@ -1,4 +1,274 @@
-﻿function pfullView() {
+﻿var switchView = 0;
+var chooseHarbor = 0;
+var caculateEarthWork = 0;
+var harborTitle = ["全景",  "外高桥1-3","外高桥4-6" , "洋山进港航道" ,"洋山港前水域", "罗泾","黄浦江" ];
+var level = [12,4,20];
+var leveltmp = [0,0,0,0,0,0,0,0,0,0]
+var levels = [[12,3,20],[9,3,14],[14,3,20],[12,4,20],[11,3,15],[6,3,14]];
+var warnlevel = [8, 9, 20000000, 1000000];
+var warnlevels = [[12, 13, 14],[9, 10, 11],[14, 15, 16],[12, 13, 14],[11, 12, 13],[6, 7, 8]];
+var hpjpositon = [[121.511050931509,31.37903832946622,20000]
+,[121.53504942432423,31.34965284513733,20000],
+[121.56891591053557, 31.315144962153127,20000],
+[121.57002532991142, 31.283507593720937, 20000],
+[121.53569171975244, 31.247720791190773, 40000],
+[121.50334338637123, 31.214680394667507,20000],
+[121.48857059152388, 31.189661754882742, 40000],
+[121.47216286285945,31.14816467149127,20000],
+[121.47181251989863,31.116822609231114, 20000],
+[121.46863023800468, 31.09349756237542, 10000]];
+var mouse = 1;
+var allPorts = ["外高桥1-3", "外高桥4-6" , "洋山进港航道" , "洋山港前水域", "罗泾", "黄浦江"];
+var allPortsID = ["waigaoqiao1_dropdown", "waigaoqiao2_dropdown", "yangshan1_dropdown", "yangshan2_dropdown", "luojing_dropdown", "huangpujiangI_dropdown"];
+var project_selected = -1;
+var port_project = {};
+
+$(document).ready(function() {
+	// init();
+    // $("#webgl3d").hide();
+    // $("#hud").hide();
+    // $("#plotForTransection1").hide();
+    // $("#plotForTransection2").hide();
+	//authority();
+	//preWarning();
+	AddBorder();
+	// getDepthLevel();
+	//$("#quanjing").click();
+	pfullView();
+	$("#mapBody").show();
+	$("#setbuttom").hide();
+	// $("#ranklevel").hide();
+	// $("#earthwork-form").hide();
+	//AddLayers(15);
+	//waigaoqiao4Defult();
+	//waigaoqiao1Defult();
+	//yangshan1Defult()
+	//yangshan2Defult()
+	//LuojingDefult()
+	//HuangpujiangDefult()
+	setButtom();
+	//dashDefult();
+	$("#setbuttommodule").hide();
+	$("#earthwork-form").hide();
+	$("#dirt-form").hide();
+	$("#monitor_search_modal").hide();
+	$("#data_clean").hide();
+	$("#detail_information").hide();
+	$("#project_progress").hide();
+	$("#datatable").hide();
+	$("#detailtable").hide();
+	// waigaoqiao4Defult()
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/project/list",
+        success: function (data) {
+			fillParamData(data);
+			fillPortProjectData(data);
+			fillMmsiProjectData(data);
+			set_port_menu();
+            },
+		error: function () {       
+            alert("fail");
+        }  
+    });
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/company/listall",
+        success: function (data) {
+        	fillCompanyData(data);
+            },
+		error: function () {       
+            alert("fail");
+        }  
+    });
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/ship/list",
+        success: function (data) {
+        	fillMmsiData(data);
+            },
+		error: function () {       
+            alert("fail");
+        }  
+    });
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/dredging_area/listall",
+        success: function (data) {
+        	fillDredgingData(data);
+            },
+		error: function () {       
+            alert("fail");
+        }  
+    });
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/dumping_area/list",
+        success: function (data) {
+        	fillDumpingData(data);
+            },
+		error: function () {       
+            alert("fail");
+        }  
+    });
+	/*$.ajax({
+        method: "GET",
+        url: "/shanggang/abnormalinfo/exceedspeedfre",
+        success: function (data) {
+			data=[];
+        	fillSpeedfre(data);
+            },
+		error: function () {       
+            alert("fail");
+        }  
+    });*/
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/workrecord/abnormal",
+        success: function (data) {
+        	fillAreafre(data);
+            },
+		error: function () {       
+            alert("获取数据失败");
+        }  
+    });
+	/*$.ajax({
+        method: "GET",
+        url: "/shanggang/abnormalinfo/routefre",
+        success: function (data) {
+			data=[];
+        	fillRoutefre(data);
+            },
+		error: function () {       
+            alert("fail");
+        }  
+    });*/
+});
+
+function fillMmsiProjectData(data)
+{
+	mmsi_project = {};
+	for(var i = 0;i<data.length;++i)
+	{
+		ships = data[i].mmsilist.split(';');
+		for(var j = 0;j<ships.length;++j)
+		{
+			mmsi_project[ships[j]] = {"dredging":data[i].harborName.split(';')[0],
+			"dumping":data[i].dumpingArea.split(';')[0]};
+		}
+	}
+}
+
+function fillPortProjectData(data)
+{
+	port_project = {};
+	for(var i = 0;i<allPorts.length;++i)
+	{
+		port_project[allPorts[i]] = [];
+	}
+	for(var i = 0;i<data.length;++i)
+	{
+		
+	}
+	port_project[allPorts[2]] = [10];
+	port_project[allPorts[3]] = [11];
+	port_project[allPorts[5]] = [12];
+}
+
+function fillSpeedfre(data)
+{
+	speedfre = {};
+	for(var i = 0;i<data.length;++i)
+	{
+		speedfre[data[i].mmsi] = data[i].frequency;
+	}
+}
+
+function fillAreafre(data)
+{
+	areafre = {};
+	for(var i = 0;i<data.length;++i)
+	{
+		if(!(data[i].mmsi in areafre))
+		{
+			areafre[data[i].mmsi] = 0;
+		}
+		areafre[data[i].mmsi] += 1;
+	}
+}
+
+function fillRoutefre(data)
+{
+	routefre = {};
+	for(var i = 0;i<data.length;++i)
+	{
+		routefre[data[i].mmsi] = data[i].frequency;
+	}
+}
+
+function setMouse() {
+	if(mouse == 0) {
+		API_SetMousePoInfoDivPosition(true, 70, 30);
+		mouse = 1;
+	}
+	else {
+		API_SetMousePoInfoDivPosition(true, 270, 30);
+		mouse = 0;
+	}
+	
+}
+
+function authority(){
+
+	// for(var i = 0; i < 5; i++) {
+	// 	warningStatusNow.push(sessionStorage.warningStatus[i]);
+	// }
+	$("#dataInput").hide();
+	$("#dataOutput").hide();
+	$("#fourD-show").hide();
+	$("#bar-contain").hide();
+	$("#time-contain").hide();
+	$("#fourD-view").hide();
+	$("#rank14").hide();
+	$("#rank15").hide();
+	$("#rank16").hide();
+	$("#all-show").hide();
+
+
+	if(sessionStorage.privilege!="admin"){
+		$("#user-control").hide();
+		$("#user-add").hide();
+		$("#system-backup").hide();
+	}
+	if(sessionStorage.privilege[0]=="N"){
+		$("#yangshan1").hide();
+		$("#yangshan2").hide();
+	}
+	if(sessionStorage.privilege[7]=="N"){
+		$("#luojing").hide();
+	}
+	if(sessionStorage.privilege[14]=="N"){
+		$("#waigaoqiao1").hide();
+		$("#waigaoqiao2").hide();
+	}
+	if(sessionStorage.privilege[21]=="N"){
+		$("#huangpujiang").hide();
+	}
+	if(sessionStorage.privilege !="admin"){
+		$("#data-delete").hide();
+	}
+	for(var i = 0; i < 4; ++i) {
+		if(sessionStorage.privilege[3 + i*7]=="Y" || sessionStorage.privilege == "admin") {
+			$("#dataInput").show();
+		}
+		if(sessionStorage.privilege[4 + i*7]=="Y" || sessionStorage.privilege == "admin") {
+			$("#dataOutput").show();
+		}
+	}
+	
+}
+
+function pfullView() {
 	dredging_area = "";
 	dashLineOn = 0;
 	$("#ranklevel").hide();
@@ -25,7 +295,7 @@
 	// }
 
 	chooseHarbor=0;
-	$("#harbor-title").text(harborTitle[0]);
+	//$("#harbor-title").text(harborTitle[0]);
 	API_SetMapViewCenter(121.668, 31.338, 160000);
 	$("#switch-show").hide();
 	$("#history-data").hide();
@@ -36,7 +306,6 @@
 	$("#set-warn-level").hide();
 	$("#set-view-level").hide();
 	$("#part-warn-level").hide();
-	InitLoadParam();
 }
 
 function pchooseWaigaoqiao(n){
@@ -144,7 +413,6 @@ function pchooseWaigaoqiao(n){
 	 $("#rank20").hide();
     $("#rank21").hide();
     $("#xianshi").click();
-	InitLoadParam();
 }
 
 function pchooseYangshan(n){
@@ -181,7 +449,7 @@ function pchooseYangshan(n){
 	// }
 	$(".change").removeClass('Current');
 	
-	deleteFaces();
+	//deleteFaces();
 	switch (n) {
 		case 1:
 			dredging_area="洋山进港航道";
@@ -194,7 +462,7 @@ function pchooseYangshan(n){
 			warnlevel = warnlevels[2];
 			// console.log('1');
 			chooseHarbor=3;
-			API_SetMapViewCenter(122.24250827924453, 30.556957174180525, 40000);
+			API_SetMapViewCenter(122.24250827924453, 30.556957174180525, 160000);
 			//getWarningLevel();
 			//getDepthLevel();
 			//getRecentDate();
@@ -209,7 +477,7 @@ function pchooseYangshan(n){
 			// }
 			$("#yangshan2").addClass('Current');
 			chooseHarbor=4;
-			API_SetMapViewCenter(122.0806550090706, 30.614947206150408, 40000);
+			API_SetMapViewCenter(122.0806550090706, 30.614947206150408, 160000);
 			//getWarningLevel();
 			// $("#harbor-title").text(harborTitle[1]);
 			//getDepthLevel();
@@ -245,9 +513,6 @@ function pchooseYangshan(n){
  $("#rank20").hide();
     $("#rank21").hide();
     $("#xianshi").click();
-	InitLoadParam();
-
-
 }
 
 
@@ -322,10 +587,9 @@ function pchooseLuojing(){
  $("#rank20").hide();
     $("#rank21").hide();
     $("#xianshi").click();
-	InitLoadParam();
 }
 
-function pchooseHuangpujiang(n) {
+function pchooseHuangpujiang() {
 	dredging_area = "黄浦江";
 	dashLineOn = 0;
 	$("#set-view-level").show();
@@ -363,12 +627,12 @@ function pchooseHuangpujiang(n) {
 	$("#huangpujiangI").addClass('Current');
 	level = levels[5];
 	warnlevel = warnlevels[5];
-	deleteFaces();
+	//deleteFaces();
 	chooseHarbor=6;
-	API_SetMapViewCenter(hpjpositon[n - 1][0],hpjpositon[n - 1][1],hpjpositon[n - 1][2]);
+	API_SetMapViewCenter(hpjpositon[0][0],hpjpositon[0][1],hpjpositon[0][2]);
 	// $("#harbor-title").text(harborTitle[2]);
 	//getDepthLevel();
-	switch (n) {
+	/*switch (n) {
 		case n:
 			hpjn = n;
 			$("#huangpujiangI").html("<img id = 'huangpujiang_waring' src = 'img/green.png' height='15' width='15'>&#160;&#160;黄浦江"+n+"&#160;&#160;");
@@ -378,7 +642,7 @@ function pchooseHuangpujiang(n) {
 			break;
 		default:
 
-	}
+	}*/
 	$("#show-time").show();
 	$("#switch-show").show();
 	$("#history-data").show();
@@ -397,5 +661,43 @@ function pchooseHuangpujiang(n) {
 	$("#rank20").hide();
     $("#rank21").hide();
         $("#xianshi").click();
-		InitLoadParam();
+}
+
+function set_port_menu()
+{
+	for(var i = 1;i<allPorts.length;++i)
+	{
+		var tbody = document.getElementById(allPortsID[i]);
+		while(tbody.hasChildNodes())
+		{
+			tbody.removeChild(tbody.firstChild);
+		}
+		var entry = "";
+		for(var j = 0;j<port_project[allPorts[i]].length;++j)
+		{
+			var pid = port_project[allPorts[i]][j];
+			if(pid in detailed)
+			{
+				var pname = detailed[pid].projectname;
+				entry+='<li class="Last"><a style="padding:0px;" href="#" onclick = '+ 'choose_menu_project('+pid+')>' + pname + '</a></li>';
+			}
+		}
+		$("#"+allPortsID[i]).append(entry);
+	}
+}
+
+function choose_menu_project(i)
+{
+	project_selected = i;
+	if(project_selected in detailed)
+	{
+		var pname = detailed[project_selected].projectname;
+		$("#project_label").text(pname);
+	}
+}
+
+function reset_select()
+{
+	project_selected = -1;
+	$("#project_label").text("");
 }

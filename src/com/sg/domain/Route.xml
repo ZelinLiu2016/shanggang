@@ -29,6 +29,9 @@
 	    <select id="getRouteByid" parameterType="String" resultType="String">
 	    	select location from route where route_id=#{route_id}
 	    </select>
+	    <select id="getRouteinfoByid" parameterType="String" resultMap="RouteMap">
+	    	select * from route where route_id=#{route_id}
+	    </select>
 	    <select id="getDumpingAreabyid" parameterType="String" resultType="String">
 	    	select dumping_area from route where route_id=#{route_id}
 	    </select>

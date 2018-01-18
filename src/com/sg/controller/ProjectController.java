@@ -62,6 +62,7 @@ public class ProjectController {
 		project.setDesign_company(json.getString("design_company"));
 		project.setSupervision_company(json.getString("supervision_company"));
 		project.setIsworking(json.getInt("isworking"));
+		project.setToparea(json.getString("top_area"));
 		SqlSession session = this.getSession();
 		session.insert("addProject",project);
 		session.commit();
@@ -92,6 +93,7 @@ public class ProjectController {
 		project.setDesign_company(json.getString("design_company"));
 		project.setSupervision_company(json.getString("supervision_company"));
 		project.setIsworking(json.getInt("isworking"));
+		project.setToparea(json.getString("top_area"));
 		SqlSession session = this.getSession();
 		session.update("updateProject",project);
 		session.commit();

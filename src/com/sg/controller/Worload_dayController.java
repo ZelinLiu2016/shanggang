@@ -88,16 +88,21 @@ public class Worload_dayController {
 //		System.out.println("本周初日期："+week);
 		List<String> res = new ArrayList<String>();
 		for(String mmsi:all_mmsi){
+			double capacity = session.selectOne("getCapacity",Integer.valueOf(mmsi));
 			String temp = "mmsi:"+ mmsi +",";
+			int number = 0;
 			Workload_day wd = new Workload_day();
 			wd.setMmsi(Integer.valueOf(mmsi));
 			wd.setRecorddate(today);
-			temp+=("day:"+session.selectOne("getcountafter",wd)+",");
+			number = session.selectOne("getcountafter",wd);
+			temp+=("day:"+number+","+"day_volumn:"+number*capacity+",");
 //			System.out.println(temp);
 			wd.setRecorddate(week);
-			temp+=("week:"+session.selectOne("getcountafter",wd)+",");
+			number = session.selectOne("getcountafter",wd);
+			temp+=("week:"+number+","+"week_volumn:"+number*capacity+",");
 			wd.setRecorddate(month);
-			temp+=("month:"+session.selectOne("getcountafter",wd));
+			number = session.selectOne("getcountafter",wd);
+			temp+=("month:"+number+","+"month_volumn:"+number*capacity);
 //			System.out.println(temp);
 			res.add(temp);
 		}
@@ -135,22 +140,29 @@ public class Worload_dayController {
 					all_mmsi.add(mm[i]);
 			}
 			int day_workload = 0;
+			int day_volumn = 0;
 			int week_workload = 0;
+			int week_volumn = 0;
 			int month_workload = 0;
+			int month_volumn = 0;
 			for(String mmsi:all_mmsi){
 				Workload_day wd = new Workload_day();
 				wd.setMmsi(Integer.valueOf(mmsi));
 				wd.setRecorddate(today);
+				double capacity = session.selectOne("getCapacity",Integer.valueOf(mmsi));
 				int per_day = session.selectOne("getcountafter",wd);
 				wd.setRecorddate(week);
 				int per_week = session.selectOne("getcountafter",wd);
 				wd.setRecorddate(month);
 				int per_month = session.selectOne("getcountafter",wd);
 				day_workload += per_day;
+				day_volumn += per_day*capacity;
 				week_workload += per_week;
+				week_volumn += per_week*capacity;
 				month_workload += per_month;
+				month_volumn += per_month*capacity;
 			}
-			temp = temp+ ",day:" + day_workload +",week:" +week_workload +",month:" + month_workload;
+			temp = temp+ ",day:" + day_workload + ",day_volumn:" + day_volumn +",week:" +week_workload + ",week_volumn:" + week_volumn+",month:" + month_workload+ ",month_volumn:" + month_volumn;
 			res.add(temp);
 		}		
 		return new ResponseEntity<List<String>>(res,HttpStatus.OK);

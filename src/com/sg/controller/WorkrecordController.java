@@ -5,6 +5,8 @@ package com.sg.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ibatis.io.Resources;
@@ -19,8 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sg.domain.Abnormal_info;
-import com.sg.domain.Company;
+import com.sg.domain.Route;
 import com.sg.domain.Workrecord;
 
 import net.sf.json.JSONObject;
@@ -58,10 +59,19 @@ public class WorkrecordController {
 	
 	@RequestMapping(value="/abnormal",method=RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<List<Workrecord>> abnormal() throws IOException{
+	public ResponseEntity<List<String>> abnormal() throws IOException{
 		System.out.println("获得船只异常工作记录");
 		SqlSession session = this.getSession();
+		List<String> res_str = new ArrayList<String>();
 		List<Workrecord> res = session.selectList("getabnormal");
-		return new ResponseEntity<List<Workrecord>>(res,HttpStatus.OK);
+		for(Iterator<Workrecord> iter = res.iterator();iter.hasNext();){
+			Workrecord rec = (Workrecord)iter.next();
+			String temp = rec.toString();
+			String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(rec.mmsi));
+			Route route = session.selectOne("getRouteinfoByid",route_id);
+			temp = temp + "dumping_area:" + route.getDumping_area() +","+"work_area:"+route.getHarbor()+","+"route_location:"+route.getLocation();
+			res_str.add(temp);
+		}
+		return new ResponseEntity<List<String>>(res_str,HttpStatus.OK);
 	}
 }

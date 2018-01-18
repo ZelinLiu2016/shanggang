@@ -29,7 +29,7 @@ public class DeleteTimerTask extends TimerTask {
 	/* (non-Javadoc)
 	 * @see java.util.TimerTask#run()
 	 */
-	static int days = 15;
+	static int days = 365;
 	
 	
 	public int getDays() {

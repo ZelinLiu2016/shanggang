@@ -66,6 +66,27 @@ function InitPaoniTable()
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
+	onCheck: function (row, $element)
+	{
+		var arrselections = $("#table").bootstrapTable('getSelections');
+		if (arrselections.length > 1) {
+			return;
+		}
+		if (arrselections.length <= 0) {
+			return;
+		}
+		area_id = arrselections[0].areaid;
+		var arrObjPo = [];
+		for(var i = 0;i<coorDict[area_id].length;++i)
+		{
+			arrObjPo.push({x:convertToLatitu(coorDict[area_id][i].x),y:convertToLatitu(coorDict[area_id][i].y)})
+		}
+		delete_object();
+		draw_area(arrObjPo);
+		$('html, body').animate({
+        scrollTop: $("#mapBody").offset().top
+		}, 100);
+	},
 
     columns: [
 	{checkbox: true},

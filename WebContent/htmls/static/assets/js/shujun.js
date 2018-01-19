@@ -26,6 +26,7 @@ function SetShujunTable() {
 	delete_object();
 	API_DelAllShips();
 	ClearPlayShipInfo();
+	API_ReDrawLayer();
     $.ajax({
 		type: "GET",
 		url: "/shanggang/dredging_area/listall",
@@ -65,7 +66,27 @@ function InitShujunTable()
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
-
+	onCheck: function (row, $element) {
+		var arrselections = $("#table").bootstrapTable('getSelections');
+		if (arrselections.length > 1) {
+			return;
+		}
+		if (arrselections.length <= 0) {
+			return;
+		}
+		dredging_id = arrselections[0].dredgingid;
+		delete_object();
+		var arrObjPo = [];
+		for(var i = 0;i<sj_coorDict[dredging_id].length;++i)
+		{
+			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
+		}
+		draw_area(arrObjPo);
+		$('html, body').animate({
+        scrollTop: $("#mapBody").offset().top
+		}, 100);
+    },
+	
     columns: [
 	{checkbox: true},
 	{
@@ -313,7 +334,7 @@ function shujun_edit()
                },       
          error: function () {       
                 alert("修改数据失败！");
-           }       
+           }
      });
 }
 

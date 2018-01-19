@@ -353,7 +353,7 @@ function InitParamTable() {
         title: '抛泥区域'
     },
 	{
-        field: 'route_id',
+        field: 'routeid',
         title: '抛泥航线'
     },
 	{
@@ -386,6 +386,11 @@ function InitParamTable() {
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
 			document.getElementById("param_update_label").className = "modal-title glyphicon glyphicon-plus";
+			tmp_pngq_id_str = "";
+			tmp_sjgq_id_str = "";
+			tmp_sgdw_id_str = "";
+			tmp_sjdw_id_str = "";
+			tmp_jldw_id_str = "";
             $("#param_update_label").text("新增");
 			$("#param_projectid").val("");
 			$("#param_projectname").val("");
@@ -402,6 +407,7 @@ function InitParamTable() {
 			$("#param_mudratio").val("");
 			$("#param_route").val("");
 			$("#param_inprogress").val(1);
+			$('#param_port').val("");
 			$('#param_update').modal('show');
 			$('#param_add_button').show();
 			$('#param_edit_button').hide();
@@ -440,6 +446,7 @@ function InitParamTable() {
 			$("#jl_input").val(GetCompanyNameStrByID(tmp_jldw_id_str));
 			$("#mmsi_input").val(detailed[project_id].mmsi);
 			$("#param_inprogress").val(arrselections[0].isworking);
+			$("#param_port").val(arrselections[0].toparea);
 			
 			$('#param_update').modal('show');
 			$('#param_add_button').hide();
@@ -500,7 +507,7 @@ function fillParamDataProject(data, p_s)
 			var info = {"projectid":data[i].projectId,"projectname":data[i].projectName,
 			"area":data[i].dumpingArea,"capacity":data[i].squareVolume,"startdate":data[i].beginDate,
 			"enddate":data[i].endDate,"shipnum":data[i].boatNum,"harborname":data[i].harborName,
-			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id,"isworking":data[i].isworking};
+			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id,"isworking":data[i].isworking,"toparea":data[i].toparea};
 			if(data[i].isworking == 0)
 			{
 				info.inprogress = "否";
@@ -525,7 +532,7 @@ function fillParamData(data)
 			var info = {"projectid":data[i].projectId,"projectname":data[i].projectName,
 			"area":data[i].dumpingArea,"capacity":data[i].squareVolume,"startdate":data[i].beginDate,
 			"enddate":data[i].endDate,"shipnum":data[i].boatNum,"harborname":data[i].harborName,
-			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id,"isworking":data[i].isworking};
+			"mudratio":data[i].mud_ratio, "routeid":data[i].route_id,"isworking":data[i].isworking,"toparea":data[i].toparea};
 			if(data[i].isworking == 0)
 			{
 				info.inprogress = "否";
@@ -583,20 +590,20 @@ function param_add()
 {
 	postData["project_id"] = $("#param_projectid").val();
 	postData["projectname"] = $("#param_projectname").val();
-	postData["harborname"] = $("#param_harborname").val();
-	postData["dumpingarea"] = $("#param_area").val();
+	postData["harborname"] = tmp_sjgq_id_str;
+	postData["dumpingarea"] = tmp_pngq_id_str;
 	postData["squarevolume"] = $("#param_capacity").val();
 	postData["boatnum"] = $("#param_shipnum").val();
 	postData["begindate"] =	$("#param_startdate").val();
 	postData["enddate"] = $("#param_enddate").val();
-	postData["harborname"] = $("#param_harborname").val();
 	postData["mud_ratio"] = $("#param_mudratio").val();
 	postData["route_id"] = $("#param_route").val();
 	postData["mmsilist"] = $("#mmsi_input").val();
-	postData["construction_company"] = $("#sg_input").val();
-	postData["design_company"] = $("#sj_input").val();
-	postData["supervision_company"] = $("#jl_input").val();
+	postData["construction_company"] = tmp_sgdw_id_str;
+	postData["design_company"] = tmp_sjdw_id_str;
+	postData["supervision_company"] = tmp_jldw_id_str;
 	postData["isworking"] = $("#param_inprogress").val();
+	postData["top_area"] = $("param_port").val();
 	$.ajax({
          type: "POST",
          url: "/shanggang/project/add",
@@ -617,7 +624,6 @@ function param_edit()
 {
 	postData["project_id"] = $("#param_projectid").val();
 	postData["projectname"] = $("#param_projectname").val();
-	postData["harborname"] = $("#param_harborname").val();
 	postData["dumpingarea"] = tmp_pngq_id_str;
 	postData["squarevolume"] = $("#param_capacity").val();
 	postData["boatnum"] = $("#param_shipnum").val();
@@ -631,6 +637,7 @@ function param_edit()
 	postData["design_company"] = tmp_sjdw_id_str;
 	postData["supervision_company"] = tmp_jldw_id_str;
 	postData["isworking"] = $("#param_inprogress").val();
+	postData["top_area"] = $("#param_port").val();
 	$.ajax({
          type: "POST",
          url: "/shanggang/project/update",

@@ -33,7 +33,7 @@ import net.sf.json.JSONObject;
 
 /**
  * @author yuchang xu
- *
+ *  workrecord.state: 0:正常 1：作业区时间异常 2：未进入指定区域抛泥 3：抛泥区内时间异常
  * 2017-11-03
  */
 public class WorkloadTimerTask extends TimerTask {
@@ -173,10 +173,15 @@ public class WorkloadTimerTask extends TimerTask {
 					workload.setRecorddate(date);
 					if(!recorddate.contains(date)){
 						workload.setWorkload(1);
+						if(workrec.state!=0&&((sdf.parse(workrec.exitdump).getTime() - sdf.parse(workrec.indump).getTime())/1000/60>60))
+							workrec.setState(3);
 						session.insert("addWorkload",workload);
 					}
-					else
+					else{
+						if(workrec.state!=0&&((sdf.parse(workrec.exitdump).getTime() - sdf.parse(workrec.indump).getTime())/1000/60>60))
+							workrec.setState(3);
 						session.update("workloadincrease",workload);
+					}
 				}				
 				workrec.setIndred("");
 				workrec.setExitdred("");
@@ -228,10 +233,15 @@ public class WorkloadTimerTask extends TimerTask {
 						workload.setRecorddate(date);
 						if(!recorddate.contains(date)){
 							workload.setWorkload(1);
+							if(workrec.state!=0&&((sdf.parse(workrec.exitdump).getTime() - sdf.parse(workrec.indump).getTime())/1000/60>60))
+								workrec.setState(3);
 							session.insert("addWorkload",workload);
 						}
-						else
-							session.update("workloadincrease",workload);						
+						else{
+							if(workrec.state!=0&&((sdf.parse(workrec.exitdump).getTime() - sdf.parse(workrec.indump).getTime())/1000/60>60))
+								workrec.setState(3);
+							session.update("workloadincrease",workload);
+						}
 					}
 					workrec.setIndred("");
 					workrec.setExitdred("");
@@ -275,7 +285,7 @@ public class WorkloadTimerTask extends TimerTask {
 //		System.out.println(location_list);
 //		System.out.println(location_list.get(0).ti);
 		int len = location_list.size();
-//		System.out.println("the length of the sequence:"+len);
+		System.out.println("the length of the sequence:"+len);
 		int[] state = new int[len];
 		int i=0;
 		for(Shipinfo it:location_list){
@@ -346,7 +356,7 @@ public class WorkloadTimerTask extends TimerTask {
 				wait2 = false;
 				double timelen = (sdf.parse(workrec.getExitdred()).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60;
 //				System.out.println("挖泥时间："+timelen);
-				if(timelen>240)//unit is min
+				if(timelen>600)//unit is min
 					workrec.setState(1);//挖泥时间过长
 				session.insert("addworkrecord",workrec);
 //				System.out.println(workrec);
@@ -398,7 +408,7 @@ public class WorkloadTimerTask extends TimerTask {
 	}
 	
 	public static void main(String[] args) throws IOException, ParseException {
-		huangpu("413379690","2017-11-28");
+		others("413465060","2017-11-29");
 	}
 		
 }

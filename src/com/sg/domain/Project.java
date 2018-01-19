@@ -22,9 +22,18 @@ public class Project {
 		private String construction_company;
 		private String design_company;
 		private String supervision_company;
+		private String toparea;
 		private int isworking;
 		
 
+
+		public String getToparea() {
+			return toparea;
+		}
+
+		public void setToparea(String toparea) {
+			this.toparea = toparea;
+		}
 
 		public int getIsworking() {
 			return isworking;
@@ -204,7 +213,7 @@ public class Project {
 					+ ", boatNum=" + boatNum + ", harborName=" + harborName + ", mud_ratio=" + mud_ratio + ", route_id="
 					+ route_id + ", mmsilist=" + mmsilist + ", construction_company=" + construction_company
 					+ ", design_company=" + design_company + ", supervision_company=" + supervision_company
-					+ ", isworking=" + isworking + "]";
+					+ ", toparea=" + toparea + ", isworking=" + isworking + "]";
 		}
 
 				

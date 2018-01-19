@@ -46,7 +46,7 @@ function SetRouteTable() {
         method: "GET",
         url: "/shanggang/dredging_area/listall",
         success: function (data) {
-        	fillDredgingData(data);
+        	fillAllShujun(data);
             },
 		error: function () {       
             alert("获取数据失败！");
@@ -56,7 +56,7 @@ function SetRouteTable() {
         method: "GET",
         url: "/shanggang/dumping_area/list",
         success: function (data) {
-        	fillDumpingData(data);
+        	fillAllPaoni(data);
             },
 		error: function () {       
             alert("获取数据失败！");
@@ -318,8 +318,10 @@ function RefreshRouteTable() {
 
 function fillAllRoute(data) {
 	allRoute = [];
+	allHangxian = {};
 	for(var i = 0;i<data.length;++i)
 	{
+		allHangxian[data[i].route_id] = {"dredgingid":data[i].harbor,"dumpingid":data[i].dumping_area};
 		allRoute.push({"routeid":data[i].route_id,"harbor":allDredging[data[i].harbor].dredgingname,
 		"dumping": allDumping[data[i].dumping_area].areaname, "speed": data[i].speedlimit,"dredgingid":data[i].harbor,"dumpingid":data[i].dumping_area});
 		var locationstr = data[i].location;

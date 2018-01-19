@@ -241,10 +241,10 @@ function RefreshPaoniTable() {
 
 function fillAllPaoni(data) {
 	allPaoni = [];
+	allDumping = {};
 	for(var i = 0;i<data.length;++i)
 	{
-		if (data[i].area_id == "4_1" ||data[i].area_id == "5_1")
-			continue;
+		allDumping[data[i].area_id] = {"areaname":data[i].areaname};
 		allPaoni.push({"areaid":data[i].area_id,"port":data[i].areaname});
 		var locationstr = data[i].location;
 		coor = [];

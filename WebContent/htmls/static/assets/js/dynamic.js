@@ -16,8 +16,8 @@ function Test_AddShip(mmsi) {
         return;
     }
 	rtmmsi = mmsi;
-    API_SetShowShipInfoStyle("13px", "#FF0000", 80); //设置显示船舶信息的样式
-    API_SetShowShipInfo(true,1280000,false,true);//设置显示船舶信息
+    //API_SetShowShipInfoStyle("13px", "#FF0000", 80); //设置显示船舶信息的样式
+    //API_SetShowShipInfo(true,1280000,false,true);//设置显示船舶信息
     
     //添加船舶
     var strShipInfos = "";

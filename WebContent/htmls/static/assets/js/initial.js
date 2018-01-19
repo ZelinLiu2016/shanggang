@@ -23,6 +23,22 @@ var allPortsID = ["waigaoqiao1_dropdown", "waigaoqiao2_dropdown", "yangshan1_dro
 var project_selected = -1;
 var port_project = {};
 
+
+var allParam = [];
+var detailed = {};
+var allSgdw = {};
+var allSjdw = {};
+var allJldw = {};
+var allCompany = {};
+var allMmsi = {};
+var allDredging = {};
+var allDumping = {};
+var allHangxian = {};
+var coorDict = {};
+var sj_coorDict = {};
+var allDumping = {};
+postData = {};
+
 $(document).ready(function() {
 	// init();
     // $("#webgl3d").hide();
@@ -68,7 +84,7 @@ $(document).ready(function() {
 			set_port_menu();
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -78,7 +94,7 @@ $(document).ready(function() {
         	fillCompanyData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
@@ -88,27 +104,27 @@ $(document).ready(function() {
         	fillMmsiData(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
         method: "GET",
         url: "/shanggang/dredging_area/listall",
         success: function (data) {
-        	fillDredgingData(data);
+        	fillAllShujun(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	$.ajax({
         method: "GET",
         url: "/shanggang/dumping_area/list",
         success: function (data) {
-        	fillDumpingData(data);
+        	fillAllPaoni(data);
             },
 		error: function () {       
-            alert("fail");
+            alert("获取数据失败！");
         }  
     });
 	/*$.ajax({
@@ -170,8 +186,8 @@ function fillPortProjectData(data)
 	{
 		
 	}
-	port_project[allPorts[2]] = [10];
-	port_project[allPorts[3]] = [11];
+	port_project[allPorts[2]] = [11];
+	port_project[allPorts[3]] = [10];
 	port_project[allPorts[5]] = [12];
 }
 
@@ -700,4 +716,115 @@ function reset_select()
 {
 	project_selected = -1;
 	$("#project_label").text("");
+}
+
+function RefreshOrNot()
+{
+	if(confirm("确定要回到初始界面吗？")){
+				window.location.reload();
+	}
+}
+
+function GetShujunNameByID(id)
+{
+	if(id in allDredging)
+	{
+		return allDredging[id].dredgingname;
+	}
+	else
+	{
+		return "-";
+	}
+}
+function GetPaoniNameByID(id)
+{
+	if(id in allDumping)
+	{
+		return allDumping[id].areaname;
+	}
+	else
+	{
+		return "-";
+	}
+}
+
+function GetRouteNameByID(id)
+{
+	if(id in allDumping)
+	{
+		return allDumping[id].areaname;
+	}
+	else
+	{
+		return "-";
+	}
+}
+
+function GetCompanyNameByID(id)
+{
+	if(id in allCompany)
+	{
+		return allCompany[id].name;
+	}
+	else
+	{
+		return "-";
+	}
+}
+
+function GetShujunNameStrByID(id_str)
+{
+	var sj_name = "";
+	if(id_str != "")
+	{
+		var id_tmp = id_str.split(";");
+		if(id_tmp.length != 0)
+		{
+			sj_name = GetShujunNameByID(id_tmp[0]);
+			for(var j = 1;j<id_tmp.length;++j)
+			{
+				sj_name += ";";
+				sj_name += GetShujunNameByID(id_tmp[j]);
+			}
+		}
+	}
+	return sj_name;
+}
+
+function GetPaoniNameStrByID(id_str)
+{
+	var pn_name = "";
+	if(id_str != "")
+	{
+		var id_tmp = id_str.split(";");
+		if(id_tmp.length != 0)
+		{
+			pn_name = GetPaoniNameByID(id_tmp[0]);
+			for(var j = 1;j<id_tmp.length;++j)
+			{
+				pn_name += ";";
+				pn_name += GetPaoniNameByID(id_tmp[j]);
+			}
+		}
+	}
+	return pn_name;
+}
+
+function GetCompanyNameStrByID(id_str)
+{
+	var company_name = "";
+	if(id_str != "")
+	{
+		var id_tmp = id_str.split(";");
+		if(id_tmp.length != 0)
+		{
+			company_name = GetCompanyNameByID(id_tmp[0]);
+			for(var j = 1;j<id_tmp.length;++j)
+			{
+				company_name += ";";
+				company_name += GetCompanyNameByID(id_tmp[j]);
+			}
+		}
+	}
+	return company_name;
 }

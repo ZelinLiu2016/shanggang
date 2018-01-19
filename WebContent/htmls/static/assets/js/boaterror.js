@@ -2,7 +2,8 @@
 var allError = [];
 var postData = {};
 var abtype = "";
-var dirt_abnormal_type = {1:"未进入抛泥区域抛泥",2:"施工区域停留太久"};
+var dirt_abnormal_type = {1:"未驶入抛泥区",2:"抛泥区错误", 3:"船舶位置异常", 4:"抛泥区内时间异常", 5:"作业区内时间异常"};
+
 function BoatErrorInit()
 {
 	$('#data_clean').hide();
@@ -285,7 +286,8 @@ function InitDirtTable()
     }, 	
 	{
         field: 'type',
-        title: '异常类型'
+        title: '异常类型',
+		sortable : true,
     },
 	{
         field: 'date',

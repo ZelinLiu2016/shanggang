@@ -1,15 +1,8 @@
-var allParam = [];
-var detailed = {};
-var allSgdw = {};
-var allSjdw = {};
-var allJldw = {};
-var allCompany = {};
-var allMmsi = {};
-var allDredging = {};
-var allDumping = {};
-var coorDict = {};
-var sj_coorDict = {};
-postData = {};
+var tmp_pngq_id_str = "";
+var tmp_sjgq_id_str = "";
+var tmp_sgdw_id_str = "";
+var tmp_sjdw_id_str = "";
+var tmp_jldw_id_str = "";
 
 function InitLoadParam_Project()
 {
@@ -164,7 +157,7 @@ function InitLoadParam()
         method: "GET",
         url: "/shanggang/dredging_area/listall",
         success: function (data) {
-        	fillDredgingData(data);
+        	fillAllShujun(data);
             },
 		error: function () {       
             alert("获取数据失败！");
@@ -174,7 +167,7 @@ function InitLoadParam()
         method: "GET",
         url: "/shanggang/dumping_area/list",
         success: function (data) {
-        	fillDumpingData(data);
+        	fillAllPaoni(data);
             },
 		error: function () {       
             alert("获取数据失败！");
@@ -247,7 +240,7 @@ function RefreshLoadParam()
         method: "GET",
         url: "/shanggang/dredging_area/listall",
         success: function (data) {
-        	fillDredgingData(data);
+        	fillAllShujun(data);
             },
 		error: function () {       
             alert("获取数据失败！");
@@ -257,7 +250,7 @@ function RefreshLoadParam()
         method: "GET",
         url: "/shanggang/dumping_area/list",
         success: function (data) {
-        	fillDumpingData(data);
+        	fillAllPaoni(data);
             },
 		error: function () {       
             alert("获取数据失败！");
@@ -280,7 +273,6 @@ function InitParamTable() {
 	onClickRow: function (row, $element) {
 		var tbody = document.getElementById("company-tbody");
 		var selected = detailed[row.projectid];
-		console.log()
 		while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
 		{
 			tbody.removeChild(tbody.firstChild);
@@ -353,15 +345,15 @@ function InitParamTable() {
         title: '工程名称'
     }, 
 	{
-        field: 'harborname',
+        field: 'harbor_name',
         title: '施工区域'
     },
 	{
-        field: 'area',
+        field: 'area_name',
         title: '抛泥区域'
     },
 	{
-        field: 'routeid',
+        field: 'route_id',
         title: '抛泥航线'
     },
 	{
@@ -426,21 +418,26 @@ function InitParamTable() {
                 return;
             }
 			project_id = arrselections[0].projectid;
+			tmp_pngq_id_str = arrselections[0].area;
+			tmp_sjgq_id_str = arrselections[0].harborname;
 			document.getElementById("param_update_label").className = "modal-title glyphicon glyphicon-pencil";
             $("#param_update_label").text("编辑");
 			$("#param_projectid").val(project_id);
 			$("#param_projectname").val(arrselections[0].projectname);
-			$("#param_harborname").val(arrselections[0].harborname);
-			$("#param_area").val(arrselections[0].area);
+			$("#param_harborname").val(arrselections[0].harbor_name);
+			$("#param_area").val(arrselections[0].area_name);
 			$("#param_capacity").val(arrselections[0].capacity);
 			$("#param_shipnum").val(arrselections[0].shipnum);
 			$("#param_startdate").val(arrselections[0].startdate);
 			$("#param_enddate").val(arrselections[0].enddate);
 			$("#param_mudratio").val(arrselections[0].mudratio);
 			$("#param_route").val(arrselections[0].routeid);
-			$("#sg_input").val(detailed[project_id].sggs);
-			$("#sj_input").val(detailed[project_id].sjgs);
-			$("#jl_input").val(detailed[project_id].jlgs);
+			tmp_sgdw_id_str = detailed[project_id].sggs;
+			tmp_sjdw_id_str = detailed[project_id].sjgs;
+			tmp_jldw_id_str = detailed[project_id].jlgs;
+			$("#sg_input").val(GetCompanyNameStrByID(tmp_sgdw_id_str));
+			$("#sj_input").val(GetCompanyNameStrByID(tmp_sjdw_id_str));
+			$("#jl_input").val(GetCompanyNameStrByID(tmp_jldw_id_str));
 			$("#mmsi_input").val(detailed[project_id].mmsi);
 			$("#param_inprogress").val(arrselections[0].isworking);
 			
@@ -511,6 +508,8 @@ function fillParamDataProject(data, p_s)
 			else{
 				info.inprogress = "是";
 			}
+			info["area_name"] = GetPaoniNameStrByID(info["area"]);
+			info["harbor_name"] = GetShujunNameStrByID(info["harborname"]);
 			allParam.push(info);
 		}
 	}
@@ -534,10 +533,12 @@ function fillParamData(data)
 			else{
 				info.inprogress = "是";
 			}
+			info["area_name"] = GetPaoniNameStrByID(info["area"]);
+			info["harbor_name"] = GetShujunNameStrByID(info["harborname"]);
 			allParam.push(info);
-		detailed[data[i].projectId] = {"sggs":data[i].construction_company,"sjgs":data[i].design_company,
-		"jlgs":data[i].supervision_company,"mmsi":data[i].mmsilist,"projectname":data[i].projectName,
-		"startdate":data[i].beginDate, "enddate":data[i].endDate,"isworking":data[i].isworking};
+			detailed[data[i].projectId] = {"sggs":data[i].construction_company,"sjgs":data[i].design_company,
+			"jlgs":data[i].supervision_company,"mmsi":data[i].mmsilist,"projectname":data[i].projectName,
+			"startdate":data[i].beginDate, "enddate":data[i].endDate,"isworking":data[i].isworking};
 		}
 }
 
@@ -578,49 +579,6 @@ function fillMmsiData(data)
 	}
 }
 
-function fillDumpingData(data)
-{
-	allDumping = {};
-	for(var i = 0;i<data.length;++i)
-	{
-		allDumping[data[i].area_id] = {"areaname":data[i].areaname};
-		var locationstr = data[i].location;
-		coor = [];
-		if(locationstr != "")
-		{
-			var point = locationstr.split("-");
-			for (var j = 0;j<point.length;++j)
-			{	
-				var p = point[j].split(",");
-				coor.push({x:p[1],y:p[0]});
-			}
-		}
-		coorDict[data[i].area_id] = coor;
-	}
-}
-
-function fillDredgingData(data)
-{
-	allDredging = {};
-	for(var i = 0;i<data.length;++i)
-	{
-		allDredging[data[i].dredging_id] = {"dredgingname":data[i].dredging_name};
-		var locationstr = data[i].location;	
-		coor = [];
-		if(locationstr != "")
-		{
-			var point = locationstr.split("-");
-			for (var j = 0;j<point.length;++j)
-			{	
-				var p = point[j].split(",");
-				coor.push({x:p[1],y:p[0]});
-			}
-		}
-		sj_coorDict[data[i].dredging_id] = coor;
-	}
-}
-
-
 function param_add()
 {
 	postData["project_id"] = $("#param_projectid").val();
@@ -660,18 +618,18 @@ function param_edit()
 	postData["project_id"] = $("#param_projectid").val();
 	postData["projectname"] = $("#param_projectname").val();
 	postData["harborname"] = $("#param_harborname").val();
-	postData["dumpingarea"] = $("#param_area").val();
+	postData["dumpingarea"] = tmp_pngq_id_str;
 	postData["squarevolume"] = $("#param_capacity").val();
 	postData["boatnum"] = $("#param_shipnum").val();
 	postData["begindate"] =	$("#param_startdate").val();
 	postData["enddate"] = $("#param_enddate").val();
-	postData["harborname"] = $("#param_harborname").val();
+	postData["harborname"] = tmp_sjgq_id_str;
 	postData["mud_ratio"] = $("#param_mudratio").val();
 	postData["route_id"] = $("#param_route").val();
 	postData["mmsilist"] = $("#mmsi_input").val();
-	postData["construction_company"] = $("#sg_input").val();
-	postData["design_company"] = $("#sj_input").val();
-	postData["supervision_company"] = $("#jl_input").val();
+	postData["construction_company"] = tmp_sgdw_id_str;
+	postData["design_company"] = tmp_sjdw_id_str;
+	postData["supervision_company"] = tmp_jldw_id_str;
 	postData["isworking"] = $("#param_inprogress").val();
 	$.ajax({
          type: "POST",
@@ -721,7 +679,8 @@ function sgdw_multiselected()
 		}
 		result+=childs[childs.length-1].innerHTML.split("---")[0];
 	}
-	$("#sg_input").val(result);
+	tmp_sgdw_id_str = result;
+	$("#sg_input").val(GetCompanyNameStrByID(result));
 	$("#multiselect_modal").modal('hide');
 	$("#mmsi_input").val("");
 }
@@ -742,8 +701,8 @@ function choose_sgdw()
 	}
 	var s = {};
 	var selected = [];
-	if($("#sg_input").val()!="")
-		selected = $("#sg_input").val().split(";");
+	if(tmp_sgdw_id_str!="")
+		selected = tmp_sgdw_id_str.split(";");
 	for(var i=0;i<selected.length;++i)
 	{
 		s[selected[i]] = {};
@@ -775,7 +734,8 @@ function sjdw_multiselected()
 		}
 		result+=childs[childs.length-1].innerHTML.split("---")[0];
 	}
-	$("#sj_input").val(result);
+	tmp_sjdw_id_str = result;
+	$("#sj_input").val(GetCompanyNameStrByID(result));
 	$("#multiselect_modal").modal('hide');
 }
 
@@ -795,8 +755,8 @@ function choose_sjdw()
 	}
 	var s = {};
 	var selected = [];
-	if($("#sj_input").val()!="")
-		selected = $("#sj_input").val().split(";");
+	if(tmp_sjdw_id_str!="")
+		selected = tmp_sjdw_id_str.split(";");
 	for(var i=0;i<selected.length;++i)
 	{
 		s[selected[i]] = {};
@@ -831,7 +791,8 @@ function jldw_multiselected()
 		}
 		result+=childs[childs.length-1].innerHTML.split("---")[0];
 	}
-	$("#jl_input").val(result);
+	tmp_jldw_id_str = result;
+	$("#jl_input").val(GetCompanyNameStrByID(result));
 	$("#multiselect_modal").modal('hide');
 }
 
@@ -851,8 +812,8 @@ function choose_jldw()
 	}
 	var s = {};
 	var selected = [];
-	if($("#jl_input").val()!="")
-		selected = $("#jl_input").val().split(";");
+	if(tmp_jldw_id_str!="")
+		selected = tmp_jldw_id_str.split(";");
 	for(var i=0;i<selected.length;++i)
 	{
 		s[selected[i]] = {};
@@ -944,7 +905,8 @@ function gq_multiselected()
 		}
 		result+=childs[childs.length-1].innerHTML.split("---")[0];
 	}
-	$("#param_harborname").val(result);
+	tmp_sjgq_id_str = result;
+	$("#param_harborname").val(GetShujunNameStrByID(result));
 	$("#multiselect_modal").modal('hide');
 }
 
@@ -964,8 +926,8 @@ function choose_gq()
 	}
 	var s = {};
 	var selected = [];
-	if($("#param_harborname").val()!="")
-		selected = $("#param_harborname").val().split(";");
+	if(tmp_sjgq_id_str!="")
+		selected = tmp_sjgq_id_str.split(";");
 	for(var i=0;i<selected.length;++i)
 	{
 		s[selected[i]] = {};
@@ -997,7 +959,8 @@ function pnqy_multiselected()
 		}
 		result+=childs[childs.length-1].innerHTML.split("---")[0];
 	}
-	$("#param_area").val(result);
+	tmp_pngq_id_str = result;
+	$("#param_area").val(GetPaoniNameStrByID(tmp_pngq_id_str));
 	$("#multiselect_modal").modal('hide');
 }
 
@@ -1017,8 +980,8 @@ function choose_pnqy()
 	}
 	var s = {};
 	var selected = [];
-	if($("#param_area").val()!="")
-		selected = $("#param_area").val().split(";");
+	if(tmp_pngq_id_str!="")
+		selected = tmp_pngq_id_str.split(";");
 	for(var i=0;i<selected.length;++i)
 	{
 		s[selected[i]] = {};

@@ -1,4 +1,5 @@
 ﻿var allPort = [];
+var timespan = "2017-12-11~2017-12-17";
 
 function BoatStatsInit()
 {	
@@ -175,23 +176,51 @@ function InitFleetStatsTable()
     },
 
     columns: [
-	{checkbox: true},
-	{
-        field: 'fleetname',
-        title: '单位'
-    }, 
-	{
-        field: 'day',
-        title: '日工程量'
-    }, 
-	{
-        field: 'week',
-        title: '周工程量'
-    }, 
-	{
-        field: 'month',
-        title: '月工程量'
-    }
+	[
+		{checkbox:true,
+			colspan: 1,
+			rowspan: 3
+		},
+		{
+			field: 'fleetname',
+			title: '单位',
+			valign:"middle",
+			align:"center",
+			colspan:1,
+			rowspan:3
+		}, 
+		{
+			title: '进度统计',
+			valign:"middle",
+			align:"center",
+			colspan:3,
+			rowspan:1
+		}
+	],
+	[
+		{
+			title: '起始时间'
+		}, 
+		{
+			title: timespan,
+			align:"center",
+			valign:"middle"
+		}
+	],
+	[
+		{
+			field: 'day',
+			title: '日工程量'
+		}, 
+		{
+			field: 'week',
+			title: '周工程量'
+		}, 
+		{
+			field: 'month',
+			title: '月工程量'
+		}
+	]
 	]});
 	$('#datatable').show();
 	
@@ -205,27 +234,56 @@ function InitFleetStatsTable()
 	singleSelect:true,
 
     columns: [
-	{checkbox: true},
-	{
-        field: 'mmsi',
-        title: 'MMSI'
-    }, 
-	{
-        field: 'shipname',
-        title: '船名'
-    }, 
-	{
-        field: 'day',
-        title: '日工程量（次）'
-    }, 
-	{
-        field: 'week',
-        title: '周工程量（次）'
-    }, 
-	{
-        field: 'month',
-        title: '月工程量（次）'
-    }
+	//{checkbox: true},
+	[
+		{
+			field: 'mmsi',
+			title: 'MMSI',
+			valign:"middle",
+			align:"center",
+			colspan:1,
+			rowspan:3
+		}, 
+		{
+			field: 'shipname',
+			title: '船名',
+			valign:"middle",
+			align:"center",
+			colspan:1,
+			rowspan:3
+		}, 
+		{
+			title: '进度统计',
+			valign:"middle",
+			align:"center",
+			colspan:3,
+			rowspan:1
+		}
+	],
+	[
+		{
+			title: '起始时间'
+		}, 
+		{
+			title: timespan,
+			align:"center",
+			valign:"middle"
+		}
+	],
+	[
+		{
+			field: 'day',
+			title: '日工程量（次）'
+		}, 
+		{
+			field: 'week',
+			title: '周工程量（次）'
+		}, 
+		{
+			field: 'month',
+			title: '月工程量（次）'
+		}
+	]
 	]});
     $('#detailtable').show();
 }
@@ -319,23 +377,52 @@ function InitPortStatsTable()
 		$("#project_progress").hide();
     },
     columns: [
-	{checkbox: true},
-	{
-        field: 'project',
-        title: '工程名称'
-    }, 
-	{
-        field: 'day',
-        title: '日工程量'
-    }, 
-	{
-        field: 'week',
-        title: '周工程量'
-    }, 
-	{
-        field: 'month',
-        title: '月工程量'
-    }
+	[
+		{checkbox:true,
+			colspan: 1,
+			rowspan: 3
+		},
+		{
+			field: 'project',
+			title: '工程名称',
+			valign:"middle",
+			align:"center",
+			colspan:1,
+			rowspan:3
+		}, 
+		{
+			title: '进度统计',
+			valign:"middle",
+			align:"center",
+			colspan:3,
+			rowspan:1
+		}
+	],
+	[
+		{
+			title: '起始时间'
+		}, 
+		{
+			title: timespan,
+			valign:"middle",
+			align:"center",
+			valign:"middle"
+		}
+	],
+	[
+		{
+			field: 'day',
+			title: '日工程量'
+		}, 
+		{
+			field: 'week',
+			title: '周工程量'
+		}, 
+		{
+			field: 'month',
+			title: '月工程量'
+		}
+	]
 	]});
     $('#datatable').show();
 }

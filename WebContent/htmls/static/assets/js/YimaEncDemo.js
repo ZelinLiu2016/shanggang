@@ -32,6 +32,8 @@ function init() {
 
     Test_AddLayer(); //添加图层
     Test_AddShipStyle(); //添加船舶样式
+	API_SetShowShipInfoStyle("25px 宋体", "#FF0000",100);
+	API_SetShowShipInfo(true, 100000, true, false);
 
     API_SetShowToolBarOrNot(true, 80, 50); //显示工具条
 

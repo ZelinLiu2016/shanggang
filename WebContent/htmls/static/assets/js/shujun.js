@@ -243,6 +243,7 @@ function RefreshShujunTable() {
 
 function fillAllShujun(data) {
 	allShujun = [];
+	allDredging = {};
 	for(var i = 0;i<data.length;++i)
 	{
 		allShujun.push({"dredgingid":data[i].dredging_id,"dredgingname":data[i].dredging_name,"harbor":data[i].harbor});
@@ -257,6 +258,7 @@ function fillAllShujun(data) {
 				coor.push({x:p[1],y:p[0]});
 			}
 		}
+		allDredging[data[i].dredging_id] = {"dredgingname":data[i].dredging_name};
 		sj_coorDict[data[i].dredging_id] = coor;
 	}
 }

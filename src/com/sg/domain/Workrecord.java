@@ -60,8 +60,8 @@ public class Workrecord {
 	}
 	@Override
 	public String toString() {
-		return "Workrecord [mmsi=" + mmsi + ", date=" + date + ", indred=" + indred + ", exitdred=" + exitdred
-				+ ", indump=" + indump + ", exitdump=" + exitdump + ", state=" + state + "]";
+		return "{\"mmsi\":\"" + mmsi + "\", \"date\":\"" + date + "\", \"indred\":\"" + indred + "\", \"exitdred\":\"" + exitdred
+				+ "\", \"indump\":\"" + indump + "\", \"exitdump\":\"" + exitdump + "\", \"state\":\"" + state +"\"";
 	}
 	
 	

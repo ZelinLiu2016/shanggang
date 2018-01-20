@@ -59,19 +59,20 @@ public class WorkrecordController {
 	
 	@RequestMapping(value="/abnormal",method=RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<List<String>> abnormal() throws IOException{
+	public ResponseEntity<List<JSONObject>> abnormal() throws IOException{
 		System.out.println("获得船只异常工作记录");
 		SqlSession session = this.getSession();
-		List<String> res_str = new ArrayList<String>();
+		List<JSONObject> res_str = new ArrayList<JSONObject>();
 		List<Workrecord> res = session.selectList("getabnormal");
 		for(Iterator<Workrecord> iter = res.iterator();iter.hasNext();){
 			Workrecord rec = (Workrecord)iter.next();
 			String temp = rec.toString();
 			String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(rec.mmsi));
 			Route route = session.selectOne("getRouteinfoByid",route_id);
-			temp = temp + "dumping_area:" + route.getDumping_area() +","+"work_area:"+route.getHarbor()+","+"route_location:"+route.getLocation();
-			res_str.add(temp);
+			temp = temp + ", \"route_id\":\""+route_id+"\", \"dumping_area\":\"" + route.getDumping_area() +"\","+" \"work_area\":\""+route.getHarbor()+"\","+" \"route_location\":\""+route.getLocation()+"\"}";
+			JSONObject string_to_json = JSONObject.fromObject(temp);
+			res_str.add(string_to_json);
 		}
-		return new ResponseEntity<List<String>>(res_str,HttpStatus.OK);
+		return new ResponseEntity<List<JSONObject>>(res_str,HttpStatus.OK);
 	}
 }

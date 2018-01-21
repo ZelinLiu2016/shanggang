@@ -114,7 +114,15 @@ function InitRouteTable()
 		}
 		draw_area(arrObjPo);
 		
-		AddNewLine();
+		routeid = arrselections[0].routeid;
+		var buttomPoint = routeCoorDict[routeid];
+		var coorNum = buttomPoint.length;
+		API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
+		var arrObjPo = [];
+		for (var i = 0; i < coorNum; i++) {
+			arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
+		}
+		AddNewLine(arrObjPo);
 		
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
@@ -332,8 +340,16 @@ function InitRouteTable()
 			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
 		}
 		draw_area(arrObjPo);
-		
-		AddNewLine();
+	
+		routeid = arrselections[0].routeid;
+		var buttomPoint = routeCoorDict[routeid];
+		var coorNum = buttomPoint.length;
+		API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
+		var arrObjPo = [];
+		for (var i = 0; i < coorNum; i++) {
+			arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
+		}
+		AddNewLine(arrObjPo);
 		
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
@@ -470,20 +486,12 @@ function route_delete_button()
 	}	
 }
 
-function AddNewLine()
+function AddNewLine(arrObjPo)
 {
 	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawLine);
 	var objType = DynamicSymbolType.drawLine;
     var objName = "";
-	var arrselections = $("#table").bootstrapTable('getSelections');
-	routeid = arrselections[0].routeid;
-	var buttomPoint = routeCoorDict[routeid];
-	var coorNum = buttomPoint.length;
-	API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
-	var arrObjPo = [];
-	for (var i = 0; i < coorNum; i++) {
-		arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
-	}
+	
     //var arrObjPo = [{ x: 1222647000, y: 305556000 },{ x: 1222922000, y: 305956000 },{ x: 1223219000, y: 305556000 }];
 	//API_SetMapViewCenter(122.2647, 30.5556, 160000);
     var drawObjPoNum = arrObjPo.length;

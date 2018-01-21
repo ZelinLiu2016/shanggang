@@ -120,26 +120,9 @@ function DirtError()
             if (arrselections.length <= 0) {
                 return;
             }
-        /*postData = {"mmsi":arrselections[0].mmsi,"time":arrselections[0].time};
-		$.ajax({
-         type: "POST",
-         url: "/shanggang/abnormalinfo/locationplayback",
-         data: JSON.stringify(postData),
-         contentType:"application/json",
-         success: function (data) {
-         	console.log(data);
-			//AddRedNode();
-			PlayAbnormalShipHistoryTracks(data);
-			return false;
-               },       
-         error: function () {       
-                alert("fail");       
-           }       
-		});*/
 		delete_object();
 		ClearPlayShipInfo();
-		var dredgingid = arrselections[0].dredging;
-		dredgingid = "2";
+		var dredgingid = arrselections[0].dredging_id;
 		if(dredgingid in allDredging)
 		{
 			var arrObjPo = [];
@@ -150,8 +133,7 @@ function DirtError()
 			draw_area(arrObjPo);
 		}
 		
-		var dumpingid = arrselections[0].dumping;
-		dumpingid = "2_1";
+		var dumpingid = arrselections[0].dumping_id;
 		if(dumpingid in allDumping)
 		{
 			var arrObjPo = [];
@@ -161,6 +143,16 @@ function DirtError()
 			}
 			draw_area(arrObjPo);
 		}
+		
+		routeid = arrselections[0].route_id;
+		var buttomPoint = routeCoorDict[routeid];
+		var coorNum = buttomPoint.length;
+		API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
+		var arrObjPo = [];
+		for (var i = 0; i < coorNum; i++) {
+			arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
+		}
+		AddNewLine(arrObjPo);
 		
 		postData["starttime"] = arrselections[0].indred;
 		postData["endtime"] = arrselections[0].exitdump;
@@ -200,12 +192,13 @@ function DirtError()
 	$("#monitor_button").hide();
 	$("#history_time").hide();
 	$("#monitor_show").show();
-	$("#error_mark").show();
+	$("#error_mark").hide();
 	$("#error_handle").show();
 	$.ajax({
         method: "GET",
         url: "/shanggang/workrecord/abnormal",
         success: function (data) {
+			console.log(data);
         	fillDirtError(data);
 			InitDirtTable();
             },
@@ -224,7 +217,8 @@ function fillDirtError(data)
 		{
 			var info = {"mmsi":data[i].mmsi,"date":data[i].date,"indred":data[i].indred,
 					"exitdred":data[i].exitdred,"indump":data[i].indump,"exitdump":data[i].exitdump,
-					"state":data[i].state,"dredging":"-","dumping":"-","route":"-","handle":"-"};
+					"state":data[i].state,"dredging_id":data[i].work_area,"dumping_id":data[i].dumping_area,
+					"route_id":data[i].route_id,"handle":"-"};
 				
 			if(data[i].mmsi in allMmsi)
 			{
@@ -242,6 +236,8 @@ function fillDirtError(data)
 				info.company="-";
 			}
 			info.type = dirt_abnormal_type[data[i].state];
+			info.dredging_name = GetShujunNameByID(info.dredging_id);
+			info.dumping_name = GetPaoniNameByID(info.dumping_id);
 			allError.push(info);
 		}
 	}
@@ -273,15 +269,15 @@ function InitDirtTable()
         title: '施工单位'
     }, 
 	{
-        field: 'dredging',
+        field: 'dredging_name',
         title: '施工区域'
     }, 
 	{
-        field: 'dumping',
+        field: 'dumping_name',
         title: '抛泥区域'
     },
 	{
-        field: 'route',
+        field: 'route_id',
         title: '抛泥航线'
     }, 	
 	{
@@ -309,10 +305,10 @@ function InitDirtTable()
         field: 'exitdump',
         title: '离开抛泥区域'
     },
-	{
+	/*{
         field: 'handle',
         title: '处理意见'
-    }
+    }*/
 	]});
     $('#datatable').show();	
 }

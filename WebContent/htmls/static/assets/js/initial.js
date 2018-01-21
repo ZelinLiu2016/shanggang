@@ -750,14 +750,7 @@ function GetPaoniNameByID(id)
 
 function GetRouteNameByID(id)
 {
-	if(id in allDumping)
-	{
-		return allDumping[id].areaname;
-	}
-	else
-	{
-		return "-";
-	}
+	return "-";
 }
 
 function GetCompanyNameByID(id)

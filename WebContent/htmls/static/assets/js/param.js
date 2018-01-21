@@ -110,6 +110,7 @@ function InitLoadParam()
         url: "/shanggang/project/list",
         success: function (data) {
         	fillParamData(data);
+			set_port_menu();
 			InitParamTable();
             },
 		error: function () {       
@@ -125,6 +126,7 @@ function InitLoadParam()
 		contentType:"application/json",
         success: function (data) {
 			fillParamData(data);
+			set_port_menu();
 			InitParamTable();
             },
 		error: function () {       
@@ -194,6 +196,7 @@ function RefreshLoadParam()
         url: "/shanggang/project/list",
         success: function (data) {
         	fillParamData(data);
+			set_port_menu();
 			RefreshParamTable();
             },
 		error: function () {       
@@ -209,6 +212,7 @@ function RefreshLoadParam()
 		contentType:"application/json",
         success: function (data) {
 			fillParamData(data);
+			set_port_menu();
 			RefreshParamTable();
             },
 		error: function () {       
@@ -527,6 +531,11 @@ function fillParamData(data)
 	console.log(data);
 	allParam = [];
 	detailed = {};
+	port_project = {};
+	for(var i = 0;i<allPorts.length;++i)
+	{
+		port_project[allPorts[i]] = [];
+	}
 	for(var i = 0;i<data.length;++i)
 		{
 			var info = {"projectid":data[i].projectId,"projectname":data[i].projectName,
@@ -546,6 +555,7 @@ function fillParamData(data)
 			detailed[data[i].projectId] = {"sggs":data[i].construction_company,"sjgs":data[i].design_company,
 			"jlgs":data[i].supervision_company,"mmsi":data[i].mmsilist,"projectname":data[i].projectName,
 			"startdate":data[i].beginDate, "enddate":data[i].endDate,"isworking":data[i].isworking};
+			port_project[data[i].toparea].push(data[i].projectId);
 		}
 }
 
@@ -603,7 +613,7 @@ function param_add()
 	postData["design_company"] = tmp_sjdw_id_str;
 	postData["supervision_company"] = tmp_jldw_id_str;
 	postData["isworking"] = $("#param_inprogress").val();
-	postData["top_area"] = $("param_port").val();
+	postData["top_area"] = $("#param_port").val();
 	$.ajax({
          type: "POST",
          url: "/shanggang/project/add",

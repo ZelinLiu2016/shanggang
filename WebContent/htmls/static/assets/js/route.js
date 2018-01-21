@@ -31,17 +31,6 @@ function SetRouteTable() {
 	delete_object();
 	API_DelAllShips();
 	ClearPlayShipInfo();
-    $.ajax({
-            method: "GET",
-            url: "/shanggang/route/listall",
-            success: function (data) {    
-            	    fillAllRoute(data);
-            	    InitRouteTable();
-                  },       
-            error: function () {       
-                   alert("获取数据失败！");       
-              }       
-        });
 	$.ajax({
         method: "GET",
         url: "/shanggang/dredging_area/listall",
@@ -62,6 +51,17 @@ function SetRouteTable() {
             alert("获取数据失败！");
         }  
     });
+	$.ajax({
+            method: "GET",
+            url: "/shanggang/route/listall",
+            success: function (data) {    
+            	    fillAllRoute(data);
+            	    InitRouteTable();
+                  },       
+            error: function () {       
+                   alert("获取数据失败！");       
+              }       
+        });
 }
 
 function RefreshLoadRoute()
@@ -488,18 +488,17 @@ function route_delete_button()
 
 function AddNewLine(arrObjPo)
 {
+	var drawObjPoNum = arrObjPo.length;
+	if (drawObjPoNum < parseInt(2)) {
+        alert("绘制的点数量不够组成一个线物标，请再添加绘制点。");
+        return;
+    }
 	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawLine);
 	var objType = DynamicSymbolType.drawLine;
     var objName = "";
 	
     //var arrObjPo = [{ x: 1222647000, y: 305556000 },{ x: 1222922000, y: 305956000 },{ x: 1223219000, y: 305556000 }];
 	//API_SetMapViewCenter(122.2647, 30.5556, 160000);
-    var drawObjPoNum = arrObjPo.length;
-    if (objType == "2" && drawObjPoNum < parseInt(2)) {
-        alert("绘制的点数量不够组成一个线物标，请再添加绘制点。");
-        return;
-    }
-
     var layerStylePos = 0;
     var layerPos = -1;
 

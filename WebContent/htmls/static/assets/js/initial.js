@@ -18,7 +18,7 @@ var hpjpositon = [[121.511050931509,31.37903832946622,20000]
 [121.47181251989863,31.116822609231114, 20000],
 [121.46863023800468, 31.09349756237542, 10000]];
 var mouse = 1;
-var allPorts = ["外高桥1-3", "外高桥4-6" , "洋山进港航道" , "洋山港前水域", "罗泾", "黄浦江"];
+var allPorts = ["外高桥1-3", "外高桥4-6" , "洋山进港航道" , "洋山港内水域", "罗泾", "黄浦江"];
 var allPortsID = ["waigaoqiao1_dropdown", "waigaoqiao2_dropdown", "yangshan1_dropdown", "yangshan2_dropdown", "luojing_dropdown", "huangpujiangI_dropdown"];
 var project_selected = -1;
 var port_project = {};
@@ -79,7 +79,6 @@ $(document).ready(function() {
         url: "/shanggang/project/list",
         success: function (data) {
 			fillParamData(data);
-			fillPortProjectData(data);
 			fillMmsiProjectData(data);
 			set_port_menu();
             },
@@ -173,22 +172,6 @@ function fillMmsiProjectData(data)
 			"dumping":data[i].dumpingArea.split(';')[0]};
 		}
 	}
-}
-
-function fillPortProjectData(data)
-{
-	port_project = {};
-	for(var i = 0;i<allPorts.length;++i)
-	{
-		port_project[allPorts[i]] = [];
-	}
-	for(var i = 0;i<data.length;++i)
-	{
-		
-	}
-	port_project[allPorts[2]] = [11];
-	port_project[allPorts[3]] = [10];
-	port_project[allPorts[5]] = [12];
 }
 
 function fillSpeedfre(data)
@@ -681,7 +664,7 @@ function pchooseHuangpujiang() {
 
 function set_port_menu()
 {
-	for(var i = 1;i<allPorts.length;++i)
+	for(var i = 0;i<allPorts.length;++i)
 	{
 		var tbody = document.getElementById(allPortsID[i]);
 		while(tbody.hasChildNodes())

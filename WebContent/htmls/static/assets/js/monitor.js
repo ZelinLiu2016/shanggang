@@ -286,6 +286,9 @@ function HSMonInit()
 				return false;
 			}
 		}
+		else{
+			alert("数据库中没有这段时间关于该船的记录！ ");
+		}
 	})
 	
 	$("#mapBody").show();
@@ -457,6 +460,9 @@ function DTMonInit()
 						return false;
 					}
 					
+				}
+				else{
+					alert("数据库中没有这段时间关于该船的记录！ ");
 				}
 			},
 			error: function () {       

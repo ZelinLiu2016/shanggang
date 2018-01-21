@@ -106,15 +106,19 @@ function fillBoatWork(data)
 			var c = s.split(",");
 			var mm = c[0].split(":")[1];
 			var d = parseInt(c[1].split(":")[1]);
-			var w = parseInt(c[2].split(":")[1]);
-			var m = parseInt(c[3].split(":")[1]);
+			var w = parseInt(c[3].split(":")[1]);
+			var m = parseInt(c[5].split(":")[1]);
+			var d_vol = parseFloat(c[2].split(":")[1]);
+			var w_vol = parseFloat(c[4].split(":")[1]);
+			var m_vol = parseFloat(c[6].split(":")[1]);
 			if(mm in mmsi_project_selected)
 			{
-				data[i] = {"mmsi":mm,"day":d,"week":w,"month":m};
+				data[i] = {"mmsi":mm,"day":d,"week":w,"month":m, "day_vol":d_vol, "week_vol":w_vol, "month_vol":m_vol,};
 				if(data[i].mmsi in allMmsi)
 				{
 					var ship = allMmsi[data[i].mmsi];
 					var info = {"mmsi":data[i].mmsi,"day":data[i].day,"week":data[i].week,"month":data[i].month,
+								"day_vol":data[i].day_vol, "week_vol":data[i].week_vol, "month_vol":data[i].month_vol,
 								"shipname":ship.shipname,"companyid":ship.fleetid};
 					if(ship.fleetid in allCompany)
 					{
@@ -126,18 +130,22 @@ function fillBoatWork(data)
 					allBoatWork.push(info);
 					if(!(ship.fleetid in allFleetDict))
 					{
-						allFleetDict[ship.fleetid] = {"day":0,"week":0,"month":0,"name":info.companyname};
+						allFleetDict[ship.fleetid] = {"day":0,"week":0,"month":0,"day_vol":0,"week_vol":0,"month_vol":0,"name":info.companyname};
 					}
 					allFleetDict[ship.fleetid].day+=data[i].day;
 					allFleetDict[ship.fleetid].week+=data[i].week;
 					allFleetDict[ship.fleetid].month+=data[i].month;
+					allFleetDict[ship.fleetid].day_vol+=data[i].day_vol;
+					allFleetDict[ship.fleetid].week_vol+=data[i].week_vol;
+					allFleetDict[ship.fleetid].month_vol+=data[i].month_vol;
 				}
 			}
 			
 		}
 		for(var f in allFleetDict)
 		{
-			allFleet.push({"fleetid":f,"fleetname":allFleetDict[f].name,"day":allFleetDict[f].day,"week":allFleetDict[f].week,"month":allFleetDict[f].month});
+			allFleet.push({"fleetid":f,"fleetname":allFleetDict[f].name,"day":allFleetDict[f].day,"week":allFleetDict[f].week,"month":allFleetDict[f].month,
+							"day_vol":allFleetDict[f].day_vol, "week_vol":allFleetDict[f].week_vol,"month_vol":allFleetDict[f].week_vol});
 		}
 			
 		}
@@ -193,7 +201,7 @@ function InitFleetStatsTable()
 			title: '进度统计',
 			valign:"middle",
 			align:"center",
-			colspan:3,
+			colspan:6,
 			rowspan:1
 		}
 	],
@@ -202,7 +210,7 @@ function InitFleetStatsTable()
 			title: '起始时间'
 		}, 
 		{
-			title: timespan,
+			title: "-",
 			align:"center",
 			valign:"middle"
 		}
@@ -210,15 +218,27 @@ function InitFleetStatsTable()
 	[
 		{
 			field: 'day',
-			title: '日工程量'
+			title: '日船舶往返（次）'
+		}, 
+		{
+			field: 'day_vol',
+			title: '日疏浚方量（方）'
 		}, 
 		{
 			field: 'week',
-			title: '周工程量'
+			title: '周船舶往返（次）'
+		}, 
+		{
+			field: 'week_vol',
+			title: '周疏浚方量（方）'
 		}, 
 		{
 			field: 'month',
-			title: '月工程量'
+			title: '月船舶往返（次）'
+		},
+		{
+			field: 'month_vol',
+			title: '月疏浚方量（方）'
 		}
 	]
 	]});
@@ -265,7 +285,7 @@ function InitFleetStatsTable()
 			title: '起始时间'
 		}, 
 		{
-			title: timespan,
+			title: "-",
 			align:"center",
 			valign:"middle"
 		}
@@ -273,15 +293,27 @@ function InitFleetStatsTable()
 	[
 		{
 			field: 'day',
-			title: '日工程量（次）'
+			title: '日船舶往返（次）'
+		}, 
+		{
+			field: 'day_vol',
+			title: '日疏浚方量（方）'
 		}, 
 		{
 			field: 'week',
-			title: '周工程量（次）'
+			title: '周船舶往返（次）'
+		}, 
+		{
+			field: 'week_vol',
+			title: '周疏浚方量（方）'
 		}, 
 		{
 			field: 'month',
-			title: '月工程量（次）'
+			title: '月船舶往返（次）'
+		},
+		{
+			field: 'month_vol',
+			title: '月疏浚方量（方）'
 		}
 	]
 	]});
@@ -394,7 +426,7 @@ function InitPortStatsTable()
 			title: '进度统计',
 			valign:"middle",
 			align:"center",
-			colspan:3,
+			colspan:6,
 			rowspan:1
 		}
 	],
@@ -403,7 +435,7 @@ function InitPortStatsTable()
 			title: '起始时间'
 		}, 
 		{
-			title: timespan,
+			title: "-",
 			valign:"middle",
 			align:"center",
 			valign:"middle"
@@ -412,15 +444,27 @@ function InitPortStatsTable()
 	[
 		{
 			field: 'day',
-			title: '日工程量'
+			title: '日船舶往返（次）'
+		}, 
+		{
+			field: 'day_vol',
+			title: '日疏浚方量（方）'
 		}, 
 		{
 			field: 'week',
-			title: '周工程量'
+			title: '周船舶往返（次）'
+		}, 
+		{
+			field: 'week_vol',
+			title: '周疏浚方量（方）'
 		}, 
 		{
 			field: 'month',
-			title: '月工程量'
+			title: '月船舶往返（次）'
+		},
+		{
+			field: 'month_vol',
+			title: '月疏浚方量（方）'
 		}
 	]
 	]});
@@ -442,9 +486,12 @@ function fillProjectWork(data, p_s)
 			if(p==pname)
 			{
 				var d = parseInt(c[1].split(":")[1]);
-				var w = parseInt(c[2].split(":")[1]);
-				var m = parseInt(c[3].split(":")[1]);
-				data[i] = {"project":p,"day":d,"week":w,"month":m};
+				var w = parseInt(c[3].split(":")[1]);
+				var m = parseInt(c[5].split(":")[1]);
+				var d_vol = parseFloat(c[2].split(":")[1]);
+				var w_vol = parseFloat(c[4].split(":")[1]);
+				var m_vol = parseFloat(c[6].split(":")[1]);
+				data[i] = {"project":p,"day":d,"week":w,"month":m,"day_vol":d_vol,"week_vol":w_vol,"month_vol":m_vol,};
 				allPort.push(data[i]);
 			}	
 		}

@@ -122,6 +122,33 @@ function DirtError()
             }
 		delete_object();
 		ClearPlayShipInfo();
+		postData["starttime"] = arrselections[0].indred;
+		postData["endtime"] = arrselections[0].exitdump;
+		postData["mmsi"]=arrselections[0].mmsi;
+		$.ajax({
+			method: "POST",
+			url: "/shanggang/shipinfo/listinfoduring",
+			data: JSON.stringify(postData),
+			contentType:"application/json",
+			success: function (data) {
+				console.log(data);
+				fillMonitorData(data);
+				$('html, body').animate({
+					scrollTop: $("#mapBody").offset().top
+				}, 100);
+				if (historyData.length>0)
+				{
+					PlayShipHistoryTracks('ship', historyData);
+					return false;
+				}
+				else{
+					alert("数据库中没有这段时间关于该船的记录！ ");
+				}
+			},
+			error: function () {       
+				alert("查询失败！");
+			}  
+		});
 		var dredgingid = arrselections[0].dredging_id;
 		if(dredgingid in allDredging)
 		{
@@ -153,31 +180,7 @@ function DirtError()
 			arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
 		}
 		AddNewLine(arrObjPo);
-		
-		postData["starttime"] = arrselections[0].indred;
-		postData["endtime"] = arrselections[0].exitdump;
-		postData["mmsi"]=arrselections[0].mmsi;
-		$.ajax({
-			method: "POST",
-			url: "/shanggang/shipinfo/listinfoduring",
-			data: JSON.stringify(postData),
-			contentType:"application/json",
-			success: function (data) {
-				console.log(data);
-				fillMonitorData(data);
-				$('html, body').animate({
-					scrollTop: $("#mapBody").offset().top
-				}, 100);
-				if (historyData.length>0)
-				{
-					PlayShipHistoryTracks('ship', historyData);
-					return false;
-				}
-			},
-			error: function () {       
-				alert("查询失败！");
-			}  
-		});
+
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
 		}, 100);
@@ -193,7 +196,38 @@ function DirtError()
 	$("#history_time").hide();
 	$("#monitor_show").show();
 	$("#error_mark").hide();
-	$("#error_handle").show();
+	$("#error_handle").hide();
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/dredging_area/listall",
+        success: function (data) {
+        	fillAllShujun(data);
+            },
+		error: function () {       
+            alert("获取数据失败！");
+        }  
+    });
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/dumping_area/list",
+        success: function (data) {
+        	fillAllPaoni(data);
+            },
+		error: function () {       
+            alert("获取数据失败！");
+        }  
+    });
+	$.ajax({
+            method: "GET",
+            url: "/shanggang/route/listall",
+            success: function (data) {    
+            	    fillAllRoute(data);
+            	    InitRouteTable();
+                  },       
+            error: function () {       
+                   alert("获取数据失败！");       
+              }       
+        });
 	$.ajax({
         method: "GET",
         url: "/shanggang/workrecord/abnormal",

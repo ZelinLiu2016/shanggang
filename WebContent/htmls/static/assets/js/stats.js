@@ -276,7 +276,7 @@ function InitFleetStatsTable()
 			title: '进度统计',
 			valign:"middle",
 			align:"center",
-			colspan:3,
+			colspan:6,
 			rowspan:1
 		}
 	],

@@ -24,6 +24,7 @@ function InitLoadParam_Project()
 	$("#detail_information").show();
 	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
+	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	//document.getElementById("btn_show").removeAttribute("disabled");
 
@@ -78,6 +79,7 @@ function InitLoadParam()
 	$("#datatable").show();
 	$("#detailtable").hide();
 	$("#detail_information").show();
+	$("#stat_start_end_time").hide();
 	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
 	$("#project_progress").hide();
@@ -356,10 +358,10 @@ function InitParamTable() {
         field: 'area_name',
         title: '抛泥区域'
     },
-	{
+	/*{
         field: 'routeid',
         title: '抛泥航线'
-    },
+    },*/
 	{
         field: 'capacity',
         title: '抛泥方量'
@@ -555,7 +557,10 @@ function fillParamData(data)
 			detailed[data[i].projectId] = {"sggs":data[i].construction_company,"sjgs":data[i].design_company,
 			"jlgs":data[i].supervision_company,"mmsi":data[i].mmsilist,"projectname":data[i].projectName,
 			"startdate":data[i].beginDate, "enddate":data[i].endDate,"isworking":data[i].isworking};
-			port_project[data[i].toparea].push(data[i].projectId);
+			if(data[i].toparea in port_project)
+			{
+				port_project[data[i].toparea].push(data[i].projectId);		
+			}
 		}
 }
 

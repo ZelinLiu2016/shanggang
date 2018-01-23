@@ -73,6 +73,7 @@ $(document).ready(function() {
 	$("#project_progress").hide();
 	$("#datatable").hide();
 	$("#detailtable").hide();
+	$("#stat_start_end_time").hide();
 	// waigaoqiao4Defult()
 	$.ajax({
         method: "GET",
@@ -659,7 +660,7 @@ function pchooseHuangpujiang() {
 	}*/
 	$("#rank20").hide();
     $("#rank21").hide();
-        $("#xianshi").click();
+    $("#xianshi").click();
 }
 
 function set_port_menu()

@@ -26,6 +26,7 @@ function SetRouteTable() {
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
+	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	
 	delete_object();
@@ -104,26 +105,38 @@ function InitRouteTable()
 		{
 			arrObjPo.push({x:convertToLatitu(coorDict[area_id][i].x),y:convertToLatitu(coorDict[area_id][i].y)})
 		}
-		draw_area(arrObjPo);
-		
+		if(arrObjPo.length == 0){
+			alert("抛泥区域位置数据缺失！ ")
+		}
+		else{
+			draw_area(arrObjPo);
+		}
 		dredging_id = arrselections[0].dredgingid;
 		var arrObjPo = [];
 		for(var i = 0;i<sj_coorDict[dredging_id].length;++i)
 		{
 			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
 		}
-		draw_area(arrObjPo);
-		
+		if(arrObjPo.length == 0){
+			alert("疏浚区域位置数据缺失！ ")
+		}
+		else{
+			draw_area(arrObjPo);
+		}
 		routeid = arrselections[0].routeid;
 		var buttomPoint = routeCoorDict[routeid];
 		var coorNum = buttomPoint.length;
-		API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
-		var arrObjPo = [];
-		for (var i = 0; i < coorNum; i++) {
-			arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
+		if(coorNum > 0 ){
+			API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
+			var arrObjPo = [];
+			for (var i = 0; i < coorNum; i++) {
+				arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
+			}
+			AddNewLine(arrObjPo);		
 		}
-		AddNewLine(arrObjPo);
-		
+		else{
+			alert("航线坐标点数据缺失！")
+		}
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
 		}, 100);
@@ -331,26 +344,38 @@ function InitRouteTable()
 		{
 			arrObjPo.push({x:convertToLatitu(coorDict[area_id][i].x),y:convertToLatitu(coorDict[area_id][i].y)})
 		}
-		draw_area(arrObjPo);
-		
+		if(arrObjPo.length == 0){
+			alert("抛泥区域位置数据缺失！ ")
+		}
+		else{
+			draw_area(arrObjPo);
+		}
 		dredging_id = arrselections[0].dredgingid;
 		var arrObjPo = [];
 		for(var i = 0;i<sj_coorDict[dredging_id].length;++i)
 		{
 			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
 		}
-		draw_area(arrObjPo);
-	
+		if(arrObjPo.length == 0){
+			alert("疏浚区域位置数据缺失！ ")
+		}
+		else{
+			draw_area(arrObjPo);	
+		}
 		routeid = arrselections[0].routeid;
 		var buttomPoint = routeCoorDict[routeid];
 		var coorNum = buttomPoint.length;
-		API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
-		var arrObjPo = [];
-		for (var i = 0; i < coorNum; i++) {
-			arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
+		if(coorNum > 0 ){
+			API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
+			var arrObjPo = [];
+			for (var i = 0; i < coorNum; i++) {
+				arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
+			}
+			AddNewLine(arrObjPo);		
 		}
-		AddNewLine(arrObjPo);
-		
+		else{
+			alert("航线坐标点数据缺失！")
+		}
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
 		}, 100);
@@ -372,12 +397,15 @@ function fillAllRoute(data) {
 		allRoute.push({"routeid":data[i].route_id,"harbor":allDredging[data[i].harbor].dredgingname,
 		"dumping": allDumping[data[i].dumping_area].areaname, "speed": data[i].speedlimit,"dredgingid":data[i].harbor,"dumpingid":data[i].dumping_area});
 		var locationstr = data[i].location;
-		var point = locationstr.split("-");
 		coor = [];
-		for (var j = 0;j<point.length;++j)
-		{	
-		    var p = point[j].split(",");
-		    coor.push({x:p[1],y:p[0]});
+		if(locationstr.length >1)
+		{
+			var point = locationstr.split("-");
+			for (var j = 0;j<point.length;++j)
+			{	
+				var p = point[j].split(",");
+				coor.push({x:p[1],y:p[0]});
+			}
 		}
 		routeCoorDict[data[i].route_id] = coor;
 		routeDict[data[i].route_id] = {"harbor":data[i].harbor,"dumping":data[i].dumping_area,"speed":data[i].speedlimit};
@@ -490,7 +518,7 @@ function AddNewLine(arrObjPo)
 {
 	var drawObjPoNum = arrObjPo.length;
 	if (drawObjPoNum < parseInt(2)) {
-        alert("绘制的点数量不够组成一个线物标，请再添加绘制点。");
+        alert("航线坐标点数据缺失！ ");
         return;
     }
 	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawLine);

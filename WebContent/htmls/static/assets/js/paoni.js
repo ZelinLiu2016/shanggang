@@ -22,6 +22,7 @@ function SetPaoniTable() {
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
+	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	
 	delete_object();
@@ -82,7 +83,12 @@ function InitPaoniTable()
 			arrObjPo.push({x:convertToLatitu(coorDict[area_id][i].x),y:convertToLatitu(coorDict[area_id][i].y)})
 		}
 		delete_object();
-		draw_area(arrObjPo);
+		if(arrObjPo.length == 0){
+			alert("抛泥区域位置数据缺失！ ")
+		}
+		else{
+			draw_area(arrObjPo);
+		}
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
 		}, 100);
@@ -230,7 +236,12 @@ function InitPaoniTable()
 			arrObjPo.push({x:convertToLatitu(coorDict[area_id][i].x),y:convertToLatitu(coorDict[area_id][i].y)})
 		}
 		delete_object();
-		draw_area(arrObjPo);
+		if(arrObjPo.length == 0){
+			alert("抛泥区域位置数据缺失！ ")
+		}
+		else{
+			draw_area(arrObjPo);
+		}
 		/*deleteButtomFace()
 		labelInfo = [];
 		AddButtomLayer();

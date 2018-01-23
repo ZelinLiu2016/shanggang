@@ -96,6 +96,7 @@ function RTMonInit()
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#monitor_search_modal").show();
+	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	$("#history_time").hide();
 	$("#monitor_button").show();
@@ -297,6 +298,7 @@ function HSMonInit()
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#monitor_search_modal").show();
+	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	$("#history_time").show();
 	$("#monitor_start").attr('type','datetime-local');
@@ -477,6 +479,7 @@ function DTMonInit()
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#monitor_search_modal").show();
+	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	$("#history_time").show();
 	$("#monitor_start").attr('type','date');

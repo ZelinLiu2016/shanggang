@@ -21,6 +21,7 @@ function SetShujunTable() {
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#monitor_search_modal").hide();
+	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	
 	delete_object();
@@ -81,7 +82,13 @@ function InitShujunTable()
 		{
 			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
 		}
-		draw_area(arrObjPo);
+		if(arrObjPo.length == 0)
+		{
+			alert("疏浚区域位置数据缺失！ ")
+		}
+		else{
+			draw_area(arrObjPo);
+		}
 		$('html, body').animate({
         scrollTop: $("#mapBody").offset().top
 		}, 100);
@@ -235,7 +242,13 @@ function InitShujunTable()
 		{
 			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
 		}
-		draw_area(arrObjPo);
+		if(arrObjPo.length == 0)
+		{
+			alert("疏浚区域位置数据缺失！ ")
+		}
+		else{
+			draw_area(arrObjPo);
+		}
 		/*deleteButtomFace();
 		labelInfo = [];
 		AddButtomLayer();

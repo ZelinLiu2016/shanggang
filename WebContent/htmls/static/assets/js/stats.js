@@ -64,7 +64,10 @@ function FleetStatsInit()
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();
+	
 	$("#monitor_search_modal").hide();
+	$("#stat_start_end_time").show();
+	
 	$("#detail_information").hide();
 	$("#detailtable").hide();
 	$("#info_div").hide();
@@ -335,7 +338,10 @@ function PortStatsInit()
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();
+	
 	$("#monitor_search_modal").hide();
+	$("#stat_start_end_time").show();
+	
 	$("#detail_information").hide();
 	$("#detailtable").hide();
 	$("#info_div").hide();

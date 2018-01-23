@@ -17,6 +17,7 @@ function DataManageInit()
 	$("#mapBody").hide();
 	$("#data_clean").show();
 	$("#monitor_search_modal").hide();
+	$("#stat_start_end_time").hide();
 	$("#detail_information").hide();
 	$("#detailtable").hide();
 	$("#info_div").hide();

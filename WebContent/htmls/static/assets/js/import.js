@@ -22,6 +22,7 @@ function InitLoadImport()
 	$("#detailtable").hide();
 	$("#info_div").show();
 	$("#monitor_search_modal").hide();
+	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	$("#toolbar_search").val("");
 	$.ajax({

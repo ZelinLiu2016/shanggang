@@ -26,6 +26,9 @@
 	    <select id="getcountafter" parameterType="Workload_day" resultType="Integer">
 	    	select count(*) from workrecord where date &gt;=#{recorddate} AND mmsi=#{mmsi}
 	    </select>
+	    <select id="getcountduring" parameterType="Project" resultType="Integer">
+	    	select count(*) from workrecord where date &gt;=#{beginDate} AND date &lt;=#{endDate} AND mmsi=#{mmsilist}
+	    </select>
 	    <select id="getlastrecord01" parameterType="String" resultMap="WorkrecordMap">
 	    	select * from workrecord where mmsi=#{mmsi} order by exitdump desc limit 1
 	    </select>

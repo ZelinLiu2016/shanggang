@@ -38,6 +38,9 @@
 	    <select id="getdredgingareabyid" parameterType="String" resultType="String">
 	    	select harbor from route where route_id=#{route_id}
 	    </select>
+	    <select id="getroute_idbyharbor" parameterType="String" resultType="Integer">
+	    	select route_id from route where harbor=#{harbor}
+	    </select>
 	    <select id="getSpeedlimit" parameterType="String" resultType="Integer">
 	    	select speedlimit from route where route_id=#{route_id}
 	    </select>

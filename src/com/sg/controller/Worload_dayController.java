@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sg.domain.Project;
+import com.sg.domain.Route;
 import com.sg.domain.Workload_day;
 
 import net.sf.json.JSONObject;
@@ -171,16 +172,17 @@ public class Worload_dayController {
 	@RequestMapping(value="/getworkloadbymmsi",method=RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Double> getworkloadbymmsi(@RequestBody String pro) throws IOException{
-		//查询mmsi某日期之后的工作量（方为单位）
+		//查询mmsi某时间段内的工作量（方为单位）
 		SqlSession session = getSession();
 		JSONObject json = JSONObject.fromObject(pro);
-		Workload_day workload = new Workload_day();
-		workload.setMmsi(json.getInt("mmsi"));
-		workload.setRecorddate(json.getString("date"));
-		System.out.println("查询mmsi编号为"+workload.getMmsi()+"日期"+workload.getRecorddate()+"之后的工作量");
-		if(session.selectOne("getworkload",workload)!=null){
-			double capacity = session.selectOne("getCapacity",workload.getMmsi());
-			int num = session.selectOne("getworkload",workload);
+		Project project = new Project();
+		project.setBeginDate(json.getString("begindate"));
+		project.setEndDate(json.getString("enddate"));
+		project.setMmsilist(json.getString("mmsi"));
+		System.out.println("查询mmsi编号为"+project.getMmsilist()+"日期"+project.getBeginDate()+","+project.getEndDate()+"之间的工作量");
+		if(session.selectOne("getcountduring",project)!=null){
+			double capacity = session.selectOne("getCapacity",Integer.valueOf(project.getMmsilist()));
+			int num = session.selectOne("getcountduring",project);
 			double result = capacity*num;
 			return new ResponseEntity<Double>(result, HttpStatus.OK);
 		}
@@ -188,6 +190,70 @@ public class Worload_dayController {
 			return new ResponseEntity<Double>(0.0,HttpStatus.OK);
 	}
 	
+	@RequestMapping(value="/getprojectproduring",method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<HashMap<String,Double>> getprojectproduring(@RequestBody String pro) throws IOException{
+		//返回某工程下所有船只时间段内工作量
+		HashMap<String,Double> res = new HashMap<String,Double>(); 
+		SqlSession session = getSession();
+		JSONObject json = JSONObject.fromObject(pro);
+		System.out.println("查询工程编号为"+json.getInt("project_id")+"的进度");
+		Project project = new Project();
+		project.setBeginDate(json.getString("begindate"));
+		project.setEndDate(json.getString("enddate"));
+		String mmsilist = session.selectOne("getMmsilist",json.getInt("project_id"));
+		String[] mmsi = mmsilist.split(";");
+		double total = 0.0;
+		for(String num:mmsi){
+			project.setMmsilist(num);
+			if(session.selectOne("getcountduring",project)!=null){
+				int temp = session.selectOne("getcountduring",project);
+				double capacity = session.selectOne("getCapacity",Integer.valueOf(num));
+				res.put(num,(double) capacity*temp);
+				total = total+capacity*temp;
+			}
+			else
+				res.put(num,0.0);
+		}
+		res.put("total", total);
+		return new ResponseEntity<HashMap<String,Double>>(res,HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/getharborproduring",method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<HashMap<String,Double>> getharborproduring(@RequestBody String pro) throws IOException{
+		//返回某挖泥区下所有船只时间段内工作量
+		HashMap<String,Double> res = new HashMap<String,Double>(); 
+		SqlSession session = getSession();
+		JSONObject json = JSONObject.fromObject(pro);
+		System.out.println("查询挖泥区"+json.getInt("harbor_id")+"的进度");
+		Project project = new Project();
+		project.setBeginDate(json.getString("begindate"));
+		project.setEndDate(json.getString("enddate"));
+		List<Integer> route = session.selectList("getroute_idbyharbor",json.getString("harbor_id"));
+		List<String> mmsi = new ArrayList<>();
+		for(int route_id:route){
+			List<String> ship = session.selectList("getshipbyroute",route_id);
+			for(String si:ship){
+				if(!mmsi.contains(si))
+					mmsi.add(si);
+			}
+		}
+		double total = 0.0;
+		for(String num:mmsi){
+			project.setMmsilist(num);
+			if(session.selectOne("getcountduring",project)!=null){
+				int temp = session.selectOne("getcountduring",project);
+				double capacity = session.selectOne("getCapacity",Integer.valueOf(num));
+				res.put(num,(double) capacity*temp);
+				total = total+capacity*temp;
+			}
+			else
+				res.put(num,0.0);
+		}
+		res.put("total", total);
+		return new ResponseEntity<HashMap<String,Double>>(res,HttpStatus.OK);
+	}
 	
 	@RequestMapping(value="/getprojectprocess",method= RequestMethod.POST)
 	@ResponseBody
@@ -217,6 +283,29 @@ public class Worload_dayController {
 		}
 		res.put("total", total);
 		res.put("percent", total/volume);
+		return new ResponseEntity<HashMap<String,Double>>(res,HttpStatus.OK);
+	}
+	@RequestMapping(value="/getcompanyproduring",method= RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<HashMap<String,Double>> getcompanyproduring(@RequestBody String pro) throws IOException{
+		//返回某公司时间段的工作量
+		HashMap<String,Double> res = new HashMap<String,Double>(); 
+		SqlSession session = getSession();
+		JSONObject json = JSONObject.fromObject(pro);
+		System.out.println("查询公司编号为"+json.getString("company_id")+"的工作量");
+		Project project = new Project();
+		project.setBeginDate(json.getString("begindate"));
+		project.setEndDate(json.getString("enddate"));
+		List<Integer> mmsilist = session.selectList("getMMSIofCompany",json.getString("company_id"));
+		double total =0.0;
+		for(int mmsi:mmsilist){
+			project.setMmsilist(String.valueOf(mmsi));
+			int temp = session.selectOne("getcountduring",project);
+			double capacity = session.selectOne("getCapacity",mmsi);
+			res.put(String.valueOf(mmsi),(double) capacity*temp);
+			total = total+capacity*temp;
+		}
+		res.put("total", total);
 		return new ResponseEntity<HashMap<String,Double>>(res,HttpStatus.OK);
 	}
 	@RequestMapping(value="/getcompanyprocess",method= RequestMethod.POST)

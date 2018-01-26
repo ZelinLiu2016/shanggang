@@ -33,7 +33,7 @@ import net.sf.json.JSONObject;
 
 /**
  * @author yuchang xu
- *  workrecord.state: 0:正常 1：作业区时间异常 2：未进入指定区域抛泥 3：抛泥区内时间异常
+ *  workrecord.state: 0:正常 1：作业区时间异常 2：未进入指定区域抛泥 3：抛泥区内时间异常 4.船舶位置异常（不在作业区或抛泥区超过24小时）
  * 2017-11-03
  */
 public class WorkloadTimerTask extends TimerTask {
@@ -165,7 +165,7 @@ public class WorkloadTimerTask extends TimerTask {
 				workrec.setState(0);
 				Workrecord lastrec = session.selectOne("getlastrecord01",mmsi);
 				if(lastrec==null||(sdf.parse(workrec.exitdump).getTime()-sdf.parse(lastrec.exitdump).getTime())/1000/60>180){
-					System.out.println(workrec);
+//					System.out.println(workrec); 
 					session.insert("addworkrecord",workrec);					
 					List<String> recorddate = session.selectList("listMmsiRecorddate",Integer.valueOf(mmsi));
 					Workload_day workload = new Workload_day();
@@ -314,17 +314,17 @@ public class WorkloadTimerTask extends TimerTask {
 		workrec.setExitdump("");
 		Workrecord lastrec = session.selectOne("getlastrecord",mmsi);		
 //		System.out.println("上一条记录："+lastrec.exitdump);
-		if(lastrec!=null&&(lastrec.exitdump.equals("1976-11-30 00:00:00.0"))){
+		if(lastrec!=null&&(lastrec.exitdump.equals(""))){
 			//the situation that a record is done among two days
 //			System.out.println("又跨天任务！！！");
 			session.delete("deletework",lastrec);
 			lastrec.setDate(date);
 			workrec = lastrec;
-			if(workrec.exitdred.equals("1976-11-30 00:00:00.0")||workrec.indump.equals("1976-11-30 00:00:00.0")){
+			if(workrec.exitdred.equals("")||workrec.indump.equals("")){
 				wait1 = false;
 				wait2 =true;
 			}
-			else if(workrec.exitdump.equals("1976-11-30 00:00:00.0")){
+			else if(workrec.exitdump.equals("")){
 				wait1 = false;
 				wait2 = false;
 			}
@@ -380,12 +380,12 @@ public class WorkloadTimerTask extends TimerTask {
 		if(workrec.indred!=""){
 			//a record is unfinishied in this day
 //			System.out.println("有未完成的任务！Q！！");
-			if(workrec.exitdred=="")
-				workrec.exitdred = "1976-11-30 00:00:00";
-			if(workrec.indump=="")
-				workrec.indump = "1976-11-30 00:00:00";
-			if(workrec.exitdump=="")
-				workrec.exitdump = "1976-11-30 00:00:00";
+//			if(workrec.exitdred=="")
+//				workrec.exitdred = "1976-11-30 00:00:00";
+//			if(workrec.indump=="")
+//				workrec.indump = "1976-11-30 00:00:00";
+//			if(workrec.exitdump=="")
+//				workrec.exitdump = "1976-11-30 00:00:00";
 			session.insert("addworkrecord",workrec);
 		}
 	

@@ -27,7 +27,9 @@
 	    <select id="getCompany" resultMap="CompanyMap">
 	    	select * from company 
 	    </select>
-	    
+	    <select id="getbuildcompany" resultType="String">
+	    	select company_id from company where company_type="建设单位"
+	    </select>
 	    <select id="getCompanyName" parameterType="String" resultType="STRING">
 	    	select company_name from company where company_id=#{company_id}
 	    </select>

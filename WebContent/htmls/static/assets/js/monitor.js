@@ -65,7 +65,7 @@ function RTMonInit()
 	allMonitor = [];
 	historyData = [];
 	delete_object();
-	console.log(API_DelAllShips());
+	//console.log(API_DelAllShips());
 	ClearPlayShipInfo();
 	$("#toolbar").hide();
 	//document.getElementById("btn_delete").setAttribute("disabled", true)

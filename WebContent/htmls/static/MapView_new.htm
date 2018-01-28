@@ -157,7 +157,7 @@
 						</a>
 						</li>
 						<li >
-						<a id = "port-stats" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="工程数据统计" onclick = "PortStatsInit()">
+						<a id = "port-stats" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="工程数据统计" onclick = "ProjectStatsInit()">
 							<span id="L2L1L2" class="LeftText">工程数据统计</span>
 						</a>
 						</li>
@@ -428,9 +428,14 @@
 				<input type="date" style="color:black;width:180px;height:30px" name="stat_start" id="stat_start" ></input>
 				<span height="30px" color="black">结束时间</span>
 				<input type="date" style="color:black;width:180px;height:30px" name="stat_end" id="stat_end"></input>
-				<button id="stat_search" type="button" class="btn btn-default" onclick="">
-					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>查询
-				</button>
+				<div class="btn-group">
+					<button id="stat_search_company" type="button" class="btn btn-default" onclick="FleetStatsSearch()">
+						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>查询
+					</button>
+					<button id="stat_search_project" type="button" class="btn btn-default" onclick="ProjectStatsSearch()">
+						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>查询
+					</button>
+				</div>
 			</div>
 				
 			<div id="toolbar" style="margin-bottom:10px;display:none;">

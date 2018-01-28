@@ -43,7 +43,9 @@
 		<select id="getCapacity" parameterType="int" resultType="DOUBLE">
 		  select CAPACITY from ship where 	MMSI=#{mmsi}	
 		</select>
-		
+		<select id="getshipbyroute" parameterType="Integer" resultType="String">
+			select mmsi from ship where route_id = #{route_id}
+		</select>
 		
 	    <update id="updateShip" parameterType="Ship" >
 	        update ship set MMSI=#{mmsi},SHIP_NAME=#{shipname},IMO=#{imo},LENGTH=#{length},WIDTH=#{width},SHIPTYPE=#{shiptype},CAPACITY=#{capacity},FLEET_ID=#{fleet_id},CONTACT=#{contact},PHONE=#{cellphone},route_id=#{route_id},owner=#{owner},owner_phone=#{owner_phone} where MMSI = #{mmsi}    

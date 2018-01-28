@@ -1,51 +1,27 @@
-﻿var allPort = [];
-var timespan = "2017-12-11~2017-12-17";
+﻿var allProject = [];
+var allBoatWork = [];
+var allFleet = [];
+var tmpBoatWork = [];
+var timespan = "-";
+var postData = {}
 
-function BoatStatsInit()
-{	
-	$("#toolbar").hide();
-	$("#mapBody").hide();
-	$("#data_clean").hide();
-	$("#monitor_search_modal").hide();
-	$("#detail_information").hide();
-	$("#detailtable").hide();
-	$("#info_div").hide();
-	$("#project_progress").hide();
-	InitBoatStatsTable();
-}
-
-function InitBoatStatsTable()
+function FleetStatsSearch()
 {
-	$('#datatable').hide();
-	$('#table').bootstrapTable('destroy');
-    $('#table').bootstrapTable({
-    data: allBoatWork,
-    //height:380,
-	pagination: true,
-    pageSize: 5,
-	clickToSelect: true,
-	singleSelect:true,
-
-    columns: [
-	{checkbox: true},
-	{
-        field: 'mmsi',
-        title: 'MMSI'
-    }, 
-	{
-        field: 'day',
-        title: '日工程量（次）'
-    }, 
-	{
-        field: 'week',
-        title: '周工程量（次）'
-    }, 
-	{
-        field: 'month',
-        title: '月工程量（次）'
-    }
-	]});
-    $('#datatable').show();
+	postData["begindate"] = $("#stat_start").val();
+	postData["enddate"] = $("#stat_end").val();
+	$.ajax({
+         type: "POST",
+         url: "/shanggang/workload/getcompanyproduring",
+         data: JSON.stringify(postData),
+         contentType:"application/json",
+         success: function (data) {
+			fillBoatWork(data);
+         	InitFleetStatsTable();
+               },       
+         error: function () {       
+                alert("获取数据失败！");       
+           }       
+     });
 }
 
 function FleetStatsInit()
@@ -67,94 +43,60 @@ function FleetStatsInit()
 	
 	$("#monitor_search_modal").hide();
 	$("#stat_start_end_time").show();
+	$("#stat_search_company").show();
+	$("#stat_search_project").hide();
+	$("#stat_start").val("");
+	$("#stat_end").val("");
 	
 	$("#detail_information").hide();
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#project_progress").hide();
-	$.ajax({
-        method: "GET",
-        url: "/shanggang/workload/getallnewworkload",
-        success: function (data) {
-			console.log(data);
-        	fillBoatWork(data);
-			InitFleetStatsTable();
-            },
-		error: function () {       
-            alert("获取数据失败");
-        }  
-	});
+	allBoatWork = [];
+	allFleet = [];
+	InitFleetStatsTable();
 }
 
 function fillBoatWork(data)
 {
-	var mmsi_project_selected = {};
-	if(project_selected in detailed)
+	console.log(data);
+	allBoatWork = [];
+	tmpBoatWork = [];
+	allFleet = [];
+	for(var i = 0;i<data.length;++i)
 	{
-		if(detailed[project_selected].mmsi.length>0)
+		var tmpstr = data[i].replace(/;/g,",");
+		if(tmpstr == ""){
+			continue;
+		}
+		var tmplist = tmpstr.split(",");
+		if (tmplist.length<3){
+			continue;
+		}
+		var com_id = tmplist[0].split(":");
+		var com_number = tmplist[tmplist.length-2].split(":");
+		var com_volumn = tmplist[tmplist.length-1].split(":");
+		var companyname = "其他公司";
+		if(com_id in allCompany)
 		{
-			var tmp = detailed[project_selected].mmsi.split(";");
-			for (var i = 0;i <tmp.length;++i)
+			companyname = allCompany[com_id].name;
+		}
+		allFleet.push({"fleetid":com_id,"fleetname":companyname,"number":com_number,"volumn":com_volumn})
+		for(var j = 1;j<data.length-2;++j)
+		{
+			var mmsi = tmplist[j].split(':')[1];
+			j = j + 1;
+			var ship_number = tmplist[j].split(':')[1];
+			j = j + 1;
+			var ship_volumn = tmplist[j].split(':')[1];
+			if(mmsi in allMmsi)
 			{
-				mmsi_project_selected[tmp[i]] = 0;
-			}
+				var info = {"mmsi":mmsi,"number":ship_number,"volumn":ship_volumn,"shipname":allMmsi[mmsi].shipname,"companyid":com_id};
+				allBoatWork.push(info);
+			}		
 		}
-		console.log(mmsi_project_selected);
-		allBoatWork = [];
-		allFleet = [];
-		allFleetDict = {};
-		for(var i = 0;i<data.length;++i)
-		{
-			var s = data[i].substr(0,data[i].length);
-			var c = s.split(",");
-			var mm = c[0].split(":")[1];
-			var d = parseInt(c[1].split(":")[1]);
-			var w = parseInt(c[3].split(":")[1]);
-			var m = parseInt(c[5].split(":")[1]);
-			var d_vol = parseFloat(c[2].split(":")[1]);
-			var w_vol = parseFloat(c[4].split(":")[1]);
-			var m_vol = parseFloat(c[6].split(":")[1]);
-			if(mm in mmsi_project_selected)
-			{
-				data[i] = {"mmsi":mm,"day":d,"week":w,"month":m, "day_vol":d_vol, "week_vol":w_vol, "month_vol":m_vol,};
-				if(data[i].mmsi in allMmsi)
-				{
-					var ship = allMmsi[data[i].mmsi];
-					var info = {"mmsi":data[i].mmsi,"day":data[i].day,"week":data[i].week,"month":data[i].month,
-								"day_vol":data[i].day_vol, "week_vol":data[i].week_vol, "month_vol":data[i].month_vol,
-								"shipname":ship.shipname,"companyid":ship.fleetid};
-					if(ship.fleetid in allCompany)
-					{
-						info.companyname = allCompany[ship.fleetid].name;
-					}
-					else{
-						info.companyname = "其他公司";
-					}
-					allBoatWork.push(info);
-					if(!(ship.fleetid in allFleetDict))
-					{
-						allFleetDict[ship.fleetid] = {"day":0,"week":0,"month":0,"day_vol":0,"week_vol":0,"month_vol":0,"name":info.companyname};
-					}
-					allFleetDict[ship.fleetid].day+=data[i].day;
-					allFleetDict[ship.fleetid].week+=data[i].week;
-					allFleetDict[ship.fleetid].month+=data[i].month;
-					allFleetDict[ship.fleetid].day_vol+=data[i].day_vol;
-					allFleetDict[ship.fleetid].week_vol+=data[i].week_vol;
-					allFleetDict[ship.fleetid].month_vol+=data[i].month_vol;
-				}
-			}
-			
-		}
-		for(var f in allFleetDict)
-		{
-			allFleet.push({"fleetid":f,"fleetname":allFleetDict[f].name,"day":allFleetDict[f].day,"week":allFleetDict[f].week,"month":allFleetDict[f].month,
-							"day_vol":allFleetDict[f].day_vol, "week_vol":allFleetDict[f].week_vol,"month_vol":allFleetDict[f].week_vol});
-		}
-			
-		}
-	else{
-		alert("选中工程数据异常！ ");
 	}
+	tmpBoatWork = allBoatWork;
 }
 
 
@@ -172,7 +114,7 @@ function InitFleetStatsTable()
 	
 	onClickRow: function (row, $element) {
 		$('#detailtable').hide();
-		var tmp = [];
+		var tmpBoatWork = [];
 		companyid = row.fleetid;
 		console.log(companyid);
 		for(var i = 0;i<allBoatWork.length;++i)
@@ -182,7 +124,7 @@ function InitFleetStatsTable()
 				tmp.push(allBoatWork[i]);
 			}
 		}
-		$('#dtable').bootstrapTable('load', tmp); 
+		$('#dtable').bootstrapTable('load', tmpBoatWork); 
 		$('#detailtable').show();
     },
 
@@ -204,7 +146,7 @@ function InitFleetStatsTable()
 			title: '进度统计',
 			valign:"middle",
 			align:"center",
-			colspan:6,
+			colspan:2,
 			rowspan:1
 		}
 	],
@@ -213,36 +155,20 @@ function InitFleetStatsTable()
 			title: '起始时间'
 		}, 
 		{
-			title: "-",
+			title: timespan,
 			align:"center",
 			valign:"middle"
 		}
 	],
 	[
 		{
-			field: 'day',
-			title: '日船舶往返（次）'
+			field: 'number',
+			title: '船舶往返（次）'
 		}, 
 		{
-			field: 'day_vol',
-			title: '日疏浚方量（方）'
-		}, 
-		{
-			field: 'week',
-			title: '周船舶往返（次）'
-		}, 
-		{
-			field: 'week_vol',
-			title: '周疏浚方量（方）'
-		}, 
-		{
-			field: 'month',
-			title: '月船舶往返（次）'
+			field: 'volumn',
+			title: '疏浚方量（万方）'
 		},
-		{
-			field: 'month_vol',
-			title: '月疏浚方量（方）'
-		}
 	]
 	]});
 	$('#datatable').show();
@@ -250,7 +176,7 @@ function InitFleetStatsTable()
 	$('#detailtable').hide();
 	$('#dtable').bootstrapTable('destroy');
     $('#dtable').bootstrapTable({
-    data: allBoatWork,
+    data: tmpBoatWork,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,
@@ -279,7 +205,7 @@ function InitFleetStatsTable()
 			title: '进度统计',
 			valign:"middle",
 			align:"center",
-			colspan:6,
+			colspan:2,
 			rowspan:1
 		}
 	],
@@ -288,41 +214,29 @@ function InitFleetStatsTable()
 			title: '起始时间'
 		}, 
 		{
-			title: "-",
+			title: timespan,
 			align:"center",
 			valign:"middle"
 		}
 	],
 	[
 		{
-			field: 'day',
+			field: 'number',
 			title: '日船舶往返（次）'
 		}, 
 		{
-			field: 'day_vol',
-			title: '日疏浚方量（方）'
-		}, 
-		{
-			field: 'week',
-			title: '周船舶往返（次）'
-		}, 
-		{
-			field: 'week_vol',
-			title: '周疏浚方量（方）'
-		}, 
-		{
-			field: 'month',
-			title: '月船舶往返（次）'
-		},
-		{
-			field: 'month_vol',
-			title: '月疏浚方量（方）'
+			field: 'volumn',
+			title: '疏浚方量（万方）'
 		}
 	]
 	]});
     $('#detailtable').show();
 }
-function PortStatsInit()
+
+
+
+
+function ProjectStatsInit()
 {
 	if(project_selected<0)
 	{
@@ -341,17 +255,35 @@ function PortStatsInit()
 	
 	$("#monitor_search_modal").hide();
 	$("#stat_start_end_time").show();
+	$("#stat_search_company").hide();
+	$("#stat_search_project").show();
+	$("#stat_start").val("");
+	$("#stat_end").val("");
 	
 	$("#detail_information").hide();
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#project_progress").hide();
+	allProject = [];
+	timespan = "-";
+	InitProjectStatsTable();
+}
+
+function ProjectStatsSearch()
+{
+	postData = {};
+	postData["begindate"] = $("#stat_start").val();
+	postData["enddate"] = $("#stat_end").val();
+	postData["project_id"] = project_selected;
+	timespan = $("#stat_start").val() + '~' + $("#stat_end").val();
 	$.ajax({
-        method: "GET",
-        url: "/shanggang/workload/projectworkload",
+        method: "POST",
+        url: "/shanggang/workload/getprojectproduring",
+		data: JSON.stringify(postData),
+		contentType:"application/json",
         success: function (data) {
-        	fillProjectWork(data, project_selected);
-			InitPortStatsTable();
+        	fillProjectWork(data);
+			InitProjectStatsTable();
             },
 		error: function () {       
             alert("获取数据失败");
@@ -359,12 +291,12 @@ function PortStatsInit()
 	});	
 }
 
-function InitPortStatsTable()
+function InitProjectStatsTable()
 {
 	$('#datatable').hide();
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
-    data: allPort,
+    data: allProject,
     //height:280,
 	pagination: true,
     pageSize: 5,
@@ -379,14 +311,7 @@ function InitPortStatsTable()
 		}
 		if(arrselections.length==1){
 			var id =-1;
-			for(var i in detailed)
-			{
-				if(detailed[i].projectname == arrselections[0].project)
-				{
-					id = i;
-					break;
-				}
-			}
+			id = project_selected;
 			postData = {"project_id":id};
 			$.ajax({
 				type: "POST",
@@ -432,7 +357,7 @@ function InitPortStatsTable()
 			title: '进度统计',
 			valign:"middle",
 			align:"center",
-			colspan:6,
+			colspan:2,
 			rowspan:1
 		}
 	],
@@ -441,7 +366,7 @@ function InitPortStatsTable()
 			title: '起始时间'
 		}, 
 		{
-			title: "-",
+			title: timespan,
 			valign:"middle",
 			align:"center",
 			valign:"middle"
@@ -449,61 +374,45 @@ function InitPortStatsTable()
 	],
 	[
 		{
-			field: 'day',
-			title: '日船舶往返（次）'
+			field: 'number',
+			title: '船舶往返（次）'
 		}, 
 		{
-			field: 'day_vol',
-			title: '日疏浚方量（方）'
-		}, 
-		{
-			field: 'week',
-			title: '周船舶往返（次）'
-		}, 
-		{
-			field: 'week_vol',
-			title: '周疏浚方量（方）'
-		}, 
-		{
-			field: 'month',
-			title: '月船舶往返（次）'
-		},
-		{
-			field: 'month_vol',
-			title: '月疏浚方量（方）'
+			field: 'volumn',
+			title: '疏浚方量（万方）'
 		}
 	]
 	]});
     $('#datatable').show();
 }
 
-function fillProjectWork(data, p_s)
+function RefreshProjectStatsTable()
+{
+	$('#datatable').hide();
+	$('#table').bootstrapTable('load', allProject); 
+	$('#datatable').show();
+}
+
+function fillProjectWork(data)
 {
 	console.log(data);
-	if(p_s in detailed)
+	allProject = [];
+	if(data.length == 0)
 	{
-		var pname = detailed[p_s].projectname;
-		allPort = [];
-		for(var i = 0;i<data.length;++i)
-		{
-			var s = data[i].substr(0,data[i].length);
-			var c = s.split(",");
-			var p = c[0];
-			if(p==pname)
-			{
-				var d = parseInt(c[1].split(":")[1]);
-				var w = parseInt(c[3].split(":")[1]);
-				var m = parseInt(c[5].split(":")[1]);
-				var d_vol = parseFloat(c[2].split(":")[1]);
-				var w_vol = parseFloat(c[4].split(":")[1]);
-				var m_vol = parseFloat(c[6].split(":")[1]);
-				data[i] = {"project":p,"day":d,"week":w,"month":m,"day_vol":d_vol,"week_vol":w_vol,"month_vol":m_vol,};
-				allPort.push(data[i]);
-			}	
-		}
+		alert("工程进度数据异常！ ")
 	}
 	else{
-		alert("选中工程数据异常！ ");
+		if(project_selected in detailed)
+		{
+			var pname = detailed[project_selected].projectname;
+			var project_stat = data[data.length - 1].split(",");
+			var number = parseInt(project_stat[0].split(":")[1]);
+			var volumn = parseFloat(project_stat[1].split(":")[1]);
+			var info = {"project":pname,"number":number,"volumn":volumn};
+			allProject.push(info);
+		}
+		else{
+			alert("选中工程数据异常！ ");
+		}
 	}
-	
 }

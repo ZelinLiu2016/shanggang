@@ -211,7 +211,9 @@ public class Worload_dayController {
 		double total = 0.0;
 		int total_num =0;
 		for(String num:mmsi){
-			String str ="mmsi:"+num+",";
+			int company_id = session.selectOne("getshipcompany_id",Integer.valueOf(num));
+			String company_name = session.selectOne("getCompanyName",String.valueOf(company_id));
+			String str ="mmsi:"+num+","+"company:"+company_name+",";
 			project.setMmsilist(num);
 			if(session.selectOne("getcountduring",project)!=null){
 				int temp = session.selectOne("getcountduring",project);

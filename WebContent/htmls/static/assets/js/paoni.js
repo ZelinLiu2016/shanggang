@@ -3,6 +3,7 @@ var postData = {};
 
 var coorNum = 4;
 function SetPaoniTable() {
+	project_submenu_selected = -1;
 	CleanAll();
 	$("#L1").attr("class", "LeftTextSelect");
 	$("#L1L5").attr("class", "LeftTextSelect");

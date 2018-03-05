@@ -2,6 +2,7 @@ var allShujun = [];
 var postData = {};
 var coorNum = 4;
 function SetShujunTable() {
+	project_submenu_selected = -1;
 	CleanAll();
 	$("#L1").attr("class", "LeftTextSelect");
 	$("#L1L4").attr("class", "LeftTextSelect");

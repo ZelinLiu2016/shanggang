@@ -9,9 +9,11 @@ function FleetStatsSearch()
 {
 	postData["begindate"] = $("#stat_start").val();
 	postData["enddate"] = $("#stat_end").val();
+	postData["project_id"] = project_selected;
+	timespan = $("#stat_start").val() + '~' + $("#stat_end").val();
 	$.ajax({
          type: "POST",
-         url: "/shanggang/workload/getcompanyproduring",
+         url: "/shanggang/workload/getprojectproduring",
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {
@@ -24,6 +26,7 @@ function FleetStatsSearch()
      });
 }
 
+// init danwei shuju tongji
 function FleetStatsInit()
 {
 	if(project_selected<0)
@@ -31,6 +34,7 @@ function FleetStatsInit()
 		alert("请在页面顶部选择需要查看的工程！ ");
 		return;
 	}
+	project_submenu_selected = 21;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L1").attr("class", "LeftTextSelect");
@@ -54,6 +58,7 @@ function FleetStatsInit()
 	$("#project_progress").hide();
 	allBoatWork = [];
 	allFleet = [];
+	timespan = "-";
 	InitFleetStatsTable();
 }
 
@@ -63,9 +68,10 @@ function fillBoatWork(data)
 	allBoatWork = [];
 	tmpBoatWork = [];
 	allFleet = [];
+	tmpFleetDict = {};
 	for(var i = 0;i<data.length;++i)
 	{
-		var tmpstr = data[i].replace(/;/g,",");
+		var tmpstr = data[i];
 		if(tmpstr == ""){
 			continue;
 		}
@@ -73,30 +79,28 @@ function fillBoatWork(data)
 		if (tmplist.length<3){
 			continue;
 		}
-		var com_id = tmplist[0].split(":");
-		var com_number = tmplist[tmplist.length-2].split(":");
-		var com_volumn = tmplist[tmplist.length-1].split(":");
-		var companyname = "其他公司";
-		if(com_id in allCompany)
+		var mmsi = tmplist[0].split(':')[1];
+		var ship_number = tmplist[2].split(':')[1];
+		var ship_volumn = tmplist[3].split(':')[1];
+		var com_id = tmplist[1].split(":")[1];
+		var companyname = com_id;
+		if(mmsi in allMmsi)
 		{
-			companyname = allCompany[com_id].name;
-		}
-		allFleet.push({"fleetid":com_id,"fleetname":companyname,"number":com_number,"volumn":com_volumn})
-		for(var j = 1;j<data.length-2;++j)
+			var info = {"mmsi":mmsi,"number":ship_number,"volumn":ship_volumn,"shipname":allMmsi[mmsi].shipname,"companyid":com_id};
+			allBoatWork.push(info);
+		}		
+		if (!(com_id in tmpFleetDict))
 		{
-			var mmsi = tmplist[j].split(':')[1];
-			j = j + 1;
-			var ship_number = tmplist[j].split(':')[1];
-			j = j + 1;
-			var ship_volumn = tmplist[j].split(':')[1];
-			if(mmsi in allMmsi)
-			{
-				var info = {"mmsi":mmsi,"number":ship_number,"volumn":ship_volumn,"shipname":allMmsi[mmsi].shipname,"companyid":com_id};
-				allBoatWork.push(info);
-			}		
+			tmpFleetDict[com_id] = [companyname, 0, 0];
 		}
+		tmpFleetDict[com_id][1] += ship_number;
+		tmpFleetDict[com_id][2] += ship_volumn;
 	}
 	tmpBoatWork = allBoatWork;
+	for(comid in tmpFleetDict)
+	{
+		allFleet.push({"fleetid":comid,"fleetname":tmpFleetDict[0],"number":tmpFleetDict[1],"volumn":tmpFleetDict[2]});
+	}
 }
 
 
@@ -243,6 +247,7 @@ function ProjectStatsInit()
 		alert("请在页面顶部选择需要查看的工程！ ");
 		return;
 	}
+	project_submenu_selected = 22;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L1").attr("class", "LeftTextSelect");

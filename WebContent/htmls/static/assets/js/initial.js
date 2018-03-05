@@ -21,6 +21,7 @@ var mouse = 1;
 var allPorts = ["外高桥1-3", "外高桥4-6" , "洋山进港航道" , "洋山港内水域", "罗泾", "黄浦江"];
 var allPortsID = ["waigaoqiao1_dropdown", "waigaoqiao2_dropdown", "yangshan1_dropdown", "yangshan2_dropdown", "luojing_dropdown", "huangpujiangI_dropdown"];
 var project_selected = -1;
+var project_submenu_selected = -1;
 var port_project = {};
 
 
@@ -270,6 +271,7 @@ function authority(){
 
 function pfullView() {
 	dredging_area = "";
+	project_submenu_selected = -1;
 	dashLineOn = 0;
 	$("#ranklevel").hide();
 	// $("#show-time").hide();
@@ -693,6 +695,35 @@ function choose_menu_project(i)
 	{
 		var pname = detailed[project_selected].projectname;
 		$("#project_label").text(pname);
+	}
+	switch(project_submenu_selected)
+	{
+	case 1:
+		InitLoadParam_Project();
+		break;
+	case 21:
+		FleetStatsInit();
+		break;
+	case 22:
+		ProjectStatsInit();
+		break;
+	case 31:
+		RTMonInit();
+		break;
+	case 32:
+		HSMonInit();
+		break;
+	case 33:
+		DTMonInit();
+		break;
+	case 41:
+		DirtError();
+		break;
+	case 42:
+		RunError();
+		break;
+	default:
+		InitLoadParam_Project();
 	}
 }
 

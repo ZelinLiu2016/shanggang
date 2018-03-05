@@ -7,6 +7,7 @@ var allDumping = {};
 var routeDict = {};
 var coorNum = 4;
 function SetRouteTable() {
+	project_submenu_selected = -1;
 	CleanAll();
 	$("#L1").attr("class", "LeftTextSelect");
 	$("#L1L6").attr("class", "LeftTextSelect");

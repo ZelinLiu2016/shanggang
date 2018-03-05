@@ -3,6 +3,7 @@ postData = {};
 
 function InitLoadManage() 
 {
+	project_submenu_selected = -1;
 	CleanAll();
 	$("#L1").attr("class", "LeftTextSelect");
 	$("#L1L3").attr("class", "LeftTextSelect");

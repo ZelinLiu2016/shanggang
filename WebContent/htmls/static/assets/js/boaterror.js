@@ -90,6 +90,7 @@ function DirtError()
 		alert("选中数据异常！");
 		return;
 	}
+	project_submenu_selected = 41;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L3").attr("class", "LeftTextSelect");
@@ -360,6 +361,17 @@ function InitDirtTable()
 
 function RunError()
 {
+	if(project_selected<0)
+	{
+		alert("请在页面顶部选择需要查看的工程！ ");
+		return;
+	}
+	if(!(project_selected in detailed))
+	{
+		alert("选中数据异常！");
+		return;
+	}
+	project_submenu_selected = 42;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L3").attr("class", "LeftTextSelect");

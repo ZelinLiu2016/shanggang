@@ -33,6 +33,7 @@ function RTMonInit()
 		alert("选中数据异常！");
 		return;
 	}
+	project_submenu_selected = 31;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L2").attr("class", "LeftTextSelect");
@@ -226,6 +227,7 @@ function HSMonInit()
 		alert("选中数据异常！");
 		return;
 	}
+	project_submenu_selected = 32;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L2").attr("class", "LeftTextSelect");
@@ -389,6 +391,7 @@ function DTMonInit()
 		alert("选中数据异常！");
 		return;
 	}
+	project_submenu_selected = 33;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L2").attr("class", "LeftTextSelect");

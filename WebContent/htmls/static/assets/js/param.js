@@ -11,6 +11,7 @@ function InitLoadParam_Project()
 		alert("请在页面顶部选择需要查看的工程！ ");
 		return;
 	}
+	project_submenu_selected = 1;
 	CleanAll();
 	$("#L4").attr("class", "LeftTextSelect");
 	$("#toolbar").hide();
@@ -62,6 +63,7 @@ function InitLoadParam_Project()
 
 function InitLoadParam()
 {
+	project_submenu_selected = -1;
 	CleanAll();
 	$("#L1").attr("class", "LeftTextSelect");
 	$("#L1L1").attr("class", "LeftTextSelect");
@@ -276,7 +278,7 @@ function InitParamTable() {
 	singleSelect:true,
 	pageList: [10, 25, 50, 100],
 	
-	onClickRow: function (row, $element) {
+	onCheck: function (row, $element) {
 		var tbody = document.getElementById("company-tbody");
 		var selected = detailed[row.projectid];
 		while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  

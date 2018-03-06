@@ -80,8 +80,8 @@ function fillBoatWork(data)
 			continue;
 		}
 		var mmsi = tmplist[0].split(':')[1];
-		var ship_number = tmplist[2].split(':')[1];
-		var ship_volumn = tmplist[3].split(':')[1];
+		var ship_number = parseInt(tmplist[2].split(':')[1]);
+		var ship_volumn = parseFloat(tmplist[3].split(':')[1]);
 		var com_id = tmplist[1].split(":")[1];
 		var companyname = com_id;
 		if(mmsi in allMmsi)
@@ -97,10 +97,12 @@ function fillBoatWork(data)
 		tmpFleetDict[com_id][2] += ship_volumn;
 	}
 	tmpBoatWork = allBoatWork;
+	
 	for(comid in tmpFleetDict)
 	{
-		allFleet.push({"fleetid":comid,"fleetname":tmpFleetDict[0],"number":tmpFleetDict[1],"volumn":tmpFleetDict[2]});
+		allFleet.push({"fleetid":comid,"fleetname":tmpFleetDict[comid][0],"number":tmpFleetDict[comid][1],"volumn":tmpFleetDict[comid][2]});
 	}
+	console.log(allFleet);
 }
 
 
@@ -116,7 +118,7 @@ function InitFleetStatsTable()
 	clickToSelect: true,
 	singleSelect:true,
 	
-	onClickRow: function (row, $element) {
+	onCheck: function (row, $element) {
 		$('#detailtable').hide();
 		var tmpBoatWork = [];
 		companyid = row.fleetid;
@@ -125,7 +127,7 @@ function InitFleetStatsTable()
 		{
 			if(allBoatWork[i].companyid==companyid)
 			{
-				tmp.push(allBoatWork[i]);
+				tmpBoatWork.push(allBoatWork[i]);
 			}
 		}
 		$('#dtable').bootstrapTable('load', tmpBoatWork); 

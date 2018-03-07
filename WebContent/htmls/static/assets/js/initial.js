@@ -160,6 +160,24 @@ $(document).ready(function() {
             alert("fail");
         }  
     });*/
+	$("#monitor_select").datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		changeMonth: true,
+		changeYear: true,
+		dateFormat: "yy-mm-dd"});
+	$("#stat_start").datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		changeMonth: true,
+		changeYear: true,
+		dateFormat: "yy-mm-dd"});
+	$("#stat_end").datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		changeMonth: true,
+		changeYear: true,
+		dateFormat: "yy-mm-dd"});
 });
 
 function fillMmsiProjectData(data)
@@ -722,6 +740,8 @@ function choose_menu_project(i)
 	case 42:
 		RunError();
 		break;
+	case 42:
+		SpeedError();
 	default:
 		InitLoadParam_Project();
 	}

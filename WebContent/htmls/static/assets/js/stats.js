@@ -34,23 +34,47 @@ function FleetStatsInit()
 		alert("请在页面顶部选择需要查看的工程！ ");
 		return;
 	}
+	if(!(project_selected in detailed))
+	{
+		alert("选中数据异常！");
+		return;
+	}
 	project_submenu_selected = 21;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L1").attr("class", "LeftTextSelect");
 	$("#L2L1L1").attr("class", "LeftTextSelect");
 	
+	var sdate = detailed[project_selected]["startdate"];
+	var edate =detailed[project_selected]["enddate"];
 	$("#toolbar").hide();
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();
-	
 	$("#monitor_search_modal").hide();
 	$("#stat_start_end_time").show();
 	$("#stat_search_company").show();
 	$("#stat_search_project").hide();
-	$("#stat_start").val("");
-	$("#stat_end").val("");
+	$('#stat_start').datepicker('destroy');
+	$("#stat_start").datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		changeMonth: true,
+		changeYear: true,
+		minDate: sdate,
+		maxDate: edate,
+		dateFormat: "yy-mm-dd"});
+	$('#stat_end').datepicker('destroy');
+	$("#stat_end").datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		changeMonth: true,
+		changeYear: true,
+		minDate: sdate,
+		maxDate: edate,
+		dateFormat: "yy-mm-dd"});
+	$("#stat_start").val(sdate);
+	$("#stat_end").val(edate);
 	
 	$("#detail_information").hide();
 	$("#detailtable").hide();
@@ -249,11 +273,19 @@ function ProjectStatsInit()
 		alert("请在页面顶部选择需要查看的工程！ ");
 		return;
 	}
+	if(!(project_selected in detailed))
+	{
+		alert("选中数据异常！");
+		return;
+	}
 	project_submenu_selected = 22;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L1").attr("class", "LeftTextSelect");
 	$("#L2L1L2").attr("class", "LeftTextSelect");
+	
+	var sdate = detailed[project_selected]["startdate"];
+	var edate =detailed[project_selected]["enddate"];
 	
 	$("#toolbar").hide();
 	
@@ -264,8 +296,26 @@ function ProjectStatsInit()
 	$("#stat_start_end_time").show();
 	$("#stat_search_company").hide();
 	$("#stat_search_project").show();
-	$("#stat_start").val("");
-	$("#stat_end").val("");
+	$('#stat_start').datepicker('destroy');
+	$("#stat_start").datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		changeMonth: true,
+		changeYear: true,
+		minDate: sdate,
+		maxDate: edate,
+		dateFormat: "yy-mm-dd"});
+	$('#stat_end').datepicker('destroy');
+	$("#stat_end").datepicker({
+		showOtherMonths: true,
+		selectOtherMonths: true,
+		changeMonth: true,
+		changeYear: true,
+		minDate: sdate,
+		maxDate: edate,
+		dateFormat: "yy-mm-dd"});
+	$("#stat_start").val(sdate);
+	$("#stat_end").val(edate);
 	
 	$("#detail_information").hide();
 	$("#detailtable").hide();

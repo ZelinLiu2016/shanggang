@@ -285,7 +285,7 @@ function HSMonInit()
 				return false;
 			}
 			else{
-				alert("船舶位置数据出错！ ");
+				alert("船舶位置不在上海海域！ ");
 				return false;
 			}
 		}
@@ -293,7 +293,7 @@ function HSMonInit()
 			alert("数据库中没有这段时间关于该船的记录！ ");
 		}
 	})
-	
+	var today_str = GetTodayDate();
 	$("#mapBody").show();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
@@ -303,13 +303,13 @@ function HSMonInit()
 	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	$("#history_time").show();
-	$("#monitor_start").attr('type','datetime-local');
-	$("#monitor_start_label").text("开始时间");
 	$("#monitor_end_label").show();
 	$("#monitor_end").show();
+	$("#monitor_select_label").hide();
+	$("#monitor_select").hide();
 	$("#monitor_search").val("");
-	$("#monitor_start").val("");
-	$("#monitor_end").val("");
+	$("#monitor_start").val(today_str+"T00:00");
+	$("#monitor_end").val(today_str+"T23:59");
 	$("#monitor_button").show();
 	$("#monitor_show").show();
 	$("#monitor_search").show();
@@ -461,7 +461,7 @@ function DTMonInit()
 						return false;
 					}
 					else{
-						alert("船舶位置数据出错！ ");
+						alert("船舶位置不在上海海域！ ");
 						return false;
 					}
 					
@@ -485,13 +485,13 @@ function DTMonInit()
 	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	$("#history_time").show();
-	$("#monitor_start").attr('type','date');
-	$("#monitor_start_label").text("选择日期");
+	$("#monitor_start_label").hide();
+	$("#monitor_start").hide();
 	$("#monitor_end_label").hide();
 	$("#monitor_end").hide();
+	$("#monitor_select_label").show();
+	$("#monitor_select").show();
 	$("#monitor_search").val("");
-	$("#monitor_start").val("");
-	$("#monitor_end").val("");
 	$("#monitor_button").show();
 	$("#monitor_show").show();
 	$("#monitor_search").show();
@@ -555,7 +555,7 @@ function DTMonitorSearch()
             alert("查询失败！");
         }  
     });*/
-	postData["date"] = $('#monitor_start').val().split("T")[0];
+	postData["date"] = $('#monitor_select').val();
 	console.log(postData);
 	$.ajax({
         method: "POST",
@@ -618,4 +618,15 @@ function is_data_valid(data)
 		}
 	}
 	return true;
+}
+
+function GetTodayDate()
+{
+	var now = new Date();
+	var str = now.getFullYear() + "-" + FormatNumber((now.getMonth() + 1),2) + "-" + FormatNumber(now.getDate(),2);
+	return str;
+}
+
+function FormatNumber(num, length) {
+  return ('' + num).length < length ? ((new Array(length + 1)).join('0') + num).slice(-length) : '' + num;
 }

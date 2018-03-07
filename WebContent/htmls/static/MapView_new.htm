@@ -16,6 +16,7 @@
     <link href="assets/css/bootstrap-dialog.min.css" rel="stylesheet">
     <link href="assets/css/customize.css" rel="stylesheet">
 	<link href="assets/css/bootstrap-table.css" rel="stylesheet">
+	<link href="assets/css/jquery-ui.css" rel="stylesheet">
 	<link href="assets/css/font-awesome.css" rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/css.css">
@@ -30,6 +31,8 @@
     <!--script src="assets/js/test.js" type="text/javascript"></script-->
 
     <script src="assets/js/jquery-1.11.3.min.js"></script>
+	<script src="assets/js/jquery-ui.min.js"></script>
+	<script src="assets/js/jquery.ui.datepicker-zh-CN.js" type="text/javascript"></script>
     <script src="assets/js/icheck.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/bootstrap-dialog.min.js"></script>
@@ -205,12 +208,12 @@
 							<span id="L2L3L2" class="LeftText">航行异常</span>
 							</a>
 						</li>
-						<!--li >
+						<li >
 							<a id = "speed-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="速度异常" onclick = "SpeedError()">
 							<span id="L2L3L3" class="LeftText">速度异常</span>
 							</a>
 						</li>
-						<li >
+						<!--li >
 							<a id = "weather-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="天气异常" onclick = "WeatherError()">
 							<span id="L2L3L4" class="LeftText">天气异常</span>
 							</a>
@@ -420,14 +423,16 @@
 					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_start" id="monitor_start" ></input>
 					<span height="30px" color="black" id="monitor_end_label">结束时间</span>
 					<input type="datetime-local" style="color:black;width:180px;height:30px" name="monitor_end" id="monitor_end"></input>
+					<span height="30px" color="black" id="monitor_select_label">选择日期</span>
+					<input type="text" style="color:black;width:180px;height:30px" name="monitor_select" id="monitor_select" ></input>
 				</div>
 			</div>
 			
 			<div id="stat_start_end_time">
 				<span height="30px" color="black">开始时间</span>
-				<input type="date" style="color:black;width:180px;height:30px" name="stat_start" id="stat_start" ></input>
+				<input style="color:black;width:180px;height:30px" name="stat_start" id="stat_start" ></input>
 				<span height="30px" color="black">结束时间</span>
-				<input type="date" style="color:black;width:180px;height:30px" name="stat_end" id="stat_end"></input>
+				<input style="color:black;width:180px;height:30px" name="stat_end" id="stat_end"></input>
 				<div class="btn-group">
 					<button id="stat_search_company" type="button" class="btn btn-default" onclick="FleetStatsSearch()">
 						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>查询

@@ -23,7 +23,7 @@ public class Backup extends TimerTask {
 	/* (non-Javadoc)
 	 * @see java.util.TimerTask#run()
 	 */
-	public static String command="C:/Program Files/MySQL/MySQL Server 5.7/bin/mysqldump -h localhost -uroot -p12345 shanggang";
+	public static String command="C:/Program Files/MySQL/MySQL Server 5.6/bin/mysqldump -h localhost -ushanggang -pshanggang shanggang";
 	
 	
 	@Override
@@ -59,7 +59,7 @@ public class Backup extends TimerTask {
 
             SimpleDateFormat format01  = new SimpleDateFormat("yyyy-MM-dd"); 
             String name = format01.format(new Date().getTime());
-            String fPath = "d:/backupfile/"+name +".sql";
+            String fPath = "f:/backupfile/"+name +".sql";
             FileOutputStream fout = new FileOutputStream(fPath);
             OutputStreamWriter writer = new OutputStreamWriter(fout, "utf-8");
             writer.write(outStr);

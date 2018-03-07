@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
+import com.sg.domain.Route;
 import com.sg.domain.Ship;
 import com.sg.domain.Shipinfo;
 
@@ -146,6 +146,17 @@ public class ShipController {
 		 System.out.println("船队"+fleet_id+"的船只信息：");
 		 return new ResponseEntity<List<Shipinfo>>(info, HttpStatus.OK);
 		}
+	@RequestMapping(value="/listbyprojectid",method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<List<Ship>> listbyproid(@RequestBody String pro) throws IOException{
+		JSONObject json = JSONObject.fromObject(pro);		
+		int pro_id = json.getInt("project_id"); 
+		SqlSession session = this.getSession();
+		String mmsilist = session.selectOne("getMmsilist",pro_id);		
+		List<Ship> ship = session.selectList("getshiplist",mmsilist);		 
+//		 System.out.println("船队"+fleet_id+"的船只信息：");
+		 return new ResponseEntity<List<Ship>>(ship, HttpStatus.OK);
+		}
 	
 	@RequestMapping(value="/listallmmsi",method=RequestMethod.POST)
 	@ResponseBody
@@ -168,5 +179,17 @@ public class ShipController {
 		String str = json.getString("str");
 		List<Integer> mmsi = session.selectList("mohuship",str);
 		return new ResponseEntity<List<Integer>>(mmsi,HttpStatus.OK);
+	}
+	@RequestMapping(value="/getareainfo",method=RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<String> area(@RequestBody String pro) throws IOException{
+		SqlSession session = this.getSession();
+		JSONObject json = JSONObject.fromObject(pro);
+		String route_id = session.selectOne("getShipRoute_id",json.getInt("mmsi"));
+		Route route = session.selectOne("getRouteinfoByid",route_id);
+		String dumping_area = session.selectOne("getDumpingLocation",route.getDumping_area());
+		String dredging_area = session.selectOne("getDredgingLocation",route.getHarbor());
+		String res = "dumping_area:"+dumping_area+",dredging_area:"+dredging_area;
+		return new ResponseEntity<String>(res,HttpStatus.OK);
 	}
 }

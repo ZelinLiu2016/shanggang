@@ -31,7 +31,9 @@
 	    <delete id="deleteShip" parameterType="int" >
 	        delete from ship where MMSI = #{mmsi}  
 	    </delete>
-	    
+	    <select id="getshiplist" parameterType="String" resultType="Ship">
+	    	select * from ship where mmsi in (#{mmsilist})
+	    </select>
 	    <select id="listShipMmsi" resultType="Integer">
 	      select MMSI from ship
 	    </select>

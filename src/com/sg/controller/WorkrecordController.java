@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sg.domain.Project;
 import com.sg.domain.Route;
 import com.sg.domain.Workrecord;
 
@@ -55,6 +56,21 @@ public class WorkrecordController {
 		List<Workrecord> record = session.selectList("listonedayrecord",request);
 		session.close();
 	    return new ResponseEntity<List<Workrecord>>(record, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/recorddate",method=RequestMethod.POST)
+	 @ResponseBody
+	public ResponseEntity<List<String>> recorddate(@RequestBody String pro) throws IOException{
+		JSONObject json = JSONObject.fromObject(pro);
+		System.out.println("获得mmsi为"+json.getString("mmsi")+"的船只有轨迹的日期");
+		SqlSession session = this.getSession();
+		String mmsi = json.getString("mmsi");
+		String project_id = json.getString("project_id");
+		Project project = session.selectOne("getProject",project_id);
+		project.setMmsilist(mmsi);
+		List<String> date = session.selectList("getrecordduring",project);
+		System.out.println("总共"+date.size());
+	    return new ResponseEntity<List<String>>(date, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/abnormal",method=RequestMethod.GET)

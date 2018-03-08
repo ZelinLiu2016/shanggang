@@ -39,7 +39,9 @@
 	    <select id="getbegindate" parameterType="int" resultType="String">
 	    	select BEGIN_DATE from project where PROJECT_ID=#{project_id}
 	    </select>
-	    
+	    <select id="getenddate" parameterType="int" resultType="String">
+	    	select END_DATE from project where PROJECT_ID=#{project_id}
+	    </select>
 	    <select id="getvolume" parameterType="int" resultType="Double">
 	    	select SQUARE_VOLUME from project where PROJECT_ID=#{project_id}
 	    </select>

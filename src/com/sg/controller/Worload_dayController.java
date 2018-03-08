@@ -6,6 +6,7 @@ package com.sg.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -197,15 +198,20 @@ public class Worload_dayController {
 	
 	@RequestMapping(value="/getprojectproduring",method=RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<List<String>> getprojectproduring(@RequestBody String pro) throws IOException{
+	public ResponseEntity<List<String>> getprojectproduring(@RequestBody String pro) throws IOException, ParseException{
 		//返回某工程下所有船只时间段内工作量
 		List<String> res = new ArrayList<String>(); 
 		SqlSession session = getSession();
 		JSONObject json = JSONObject.fromObject(pro);
 		System.out.println("查询工程编号为"+json.getInt("project_id")+"的进度");
 		Project project = new Project();
-		project.setBeginDate(json.getString("begindate"));
+		project.setBeginDate(session.selectOne("getbegindate",json.getInt("project_id")));
+		System.out.println(project.getBeginDate());
 		project.setEndDate(json.getString("enddate"));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		int pro_len = (int) ((sdf.parse(session.selectOne("getenddate",json.getInt("project_id"))).getTime()-sdf.parse(session.selectOne("getbegindate",json.getInt("project_id"))).getTime())/(1000*60*60*24));
+		int now = (int) ((sdf.parse(json.getString("enddate")).getTime()-sdf.parse(session.selectOne("getbegindate",json.getInt("project_id"))).getTime())/(1000*60*60*24));
+		double plan_percent = (double)now/pro_len;
 		String mmsilist = session.selectOne("getMmsilist",json.getInt("project_id"));
 		String[] mmsi = mmsilist.split(";");
 		double total = 0.0;
@@ -228,7 +234,12 @@ public class Worload_dayController {
 				res.add(str);
 			}
 		}
-		res.add("totalnumber:"+total_num+",total_volumn:"+total);
+		double project_volume = session.selectOne("getvolume",json.getInt("project_id"));
+		double project_percent = total/project_volume;
+		res.add("totalnumber:"+total_num);
+		res.add("total_volumn:"+total);
+		res.add("project_process_percent:"+project_percent);
+		res.add("plan_percent:"+plan_percent);
 		return new ResponseEntity<List<String>>(res,HttpStatus.OK);
 	}
 	
@@ -354,5 +365,10 @@ public class Worload_dayController {
 		}
 		res.put("total", total);
 		return new ResponseEntity<HashMap<String,Double>>(res,HttpStatus.OK);
+	}
+	public static void main(String[] args) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		long sub = (sdf.parse("2017-12-03").getTime() - sdf.parse("2017-11-23").getTime())/(1000*60*60*24);
+		System.out.println(sub);
 	}
 }

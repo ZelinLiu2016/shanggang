@@ -224,10 +224,10 @@ public class Worload_dayController {
 			if(session.selectOne("getcountduring",project)!=null){
 				int temp = session.selectOne("getcountduring",project);
 				double capacity = session.selectOne("getCapacity",Integer.valueOf(num));
-				str = str+"number:"+temp+","+"volumn:"+capacity*temp;
+				str = str+"number:"+temp+","+"volumn:"+capacity*temp/10000;
 				res.add(str);
 				total_num = total_num + temp;
-				total = total+capacity*temp;
+				total = total+capacity*temp/10000;
 			}
 			else{
 				str = str+"number:"+"0.0"+","+"volumn:"+"0.0";
@@ -270,10 +270,10 @@ public class Worload_dayController {
 			project.setMmsilist(num);
 			int temp = session.selectOne("getcountduring",project);
 			double capacity = session.selectOne("getCapacity",Integer.valueOf(num));
-			str = str+"number:"+temp+",volumn:"+capacity*temp;
+			str = str+"number:"+temp+",volumn:"+capacity*temp/10000;
 			res.add(str);
 			total_num = total_num +temp;
-			total = total+capacity*temp;	
+			total = total+capacity*temp/10000;	
 		}
 		res.add("total_number:"+total_num+",total_volumn:"+total);
 		return new ResponseEntity<List<String>>(res,HttpStatus.OK);
@@ -299,8 +299,8 @@ public class Worload_dayController {
 			if(session.selectOne("getsumworkload",workload)!=null){
 				int temp = session.selectOne("getcountafter",workload);
 				double capacity = session.selectOne("getCapacity",workload.getMmsi());
-				res.put(num,(double) capacity*temp);
-				total = total+capacity*temp;
+				res.put(num,(double) capacity*temp/10000);
+				total = total+capacity*temp/10000;
 			}
 			else
 				res.put(num,0.0);
@@ -330,9 +330,9 @@ public class Worload_dayController {
 				project.setMmsilist(String.valueOf(mmsi));
 				int temp = session.selectOne("getcountduring",project);
 				double capacity = session.selectOne("getCapacity",mmsi);
-				str = str+"mmsi:"+String.valueOf(mmsi)+",number:"+temp+",volumn:"+(double) capacity*temp+";";
+				str = str+"mmsi:"+String.valueOf(mmsi)+",number:"+temp+",volumn:"+(double) capacity*temp/10000+";";
 				total_num+=temp;
-				total = total+capacity*temp;
+				total = total+capacity*temp/10000;
 			}
 			str = str+"total_number:"+total_num+",total_volumn:"+total;
 			res.add(str);

@@ -706,7 +706,6 @@ function sgdw_multiselected()
 	tmp_sgdw_id_str = result;
 	$("#sg_input").val(GetCompanyNameStrByID(result));
 	$("#multiselect_modal").modal('hide');
-	$("#mmsi_input").val("");
 }
 
 function choose_sgdw()

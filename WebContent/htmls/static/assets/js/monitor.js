@@ -4,6 +4,7 @@ var x_left = convertToLatitu("118:42:00");
 var x_right = convertToLatitu("124:18:00");
 var y_up = convertToLatitu("33:45:00");
 var y_down = convertToLatitu("29:21:00");
+var enableDays = [];
 postData = {};
 historyData = [];
 
@@ -105,6 +106,7 @@ function RTMonInit()
 	$("#monitor_search").show();
 	$("#error_mark").hide();
 	$("#error_handle").hide();
+	$("#monitor_search").off('change');
 	$("#monitor_search").val("");
 	$("#monitor_button").off('click');
 	$("#monitor_button").click(function(){MonitorSearch();})
@@ -307,6 +309,7 @@ function HSMonInit()
 	$("#monitor_end").show();
 	$("#monitor_select_label").hide();
 	$("#monitor_select").hide();
+	$("#monitor_search").off('change');
 	$("#monitor_search").val("");
 	$("#monitor_start").val(today_str+"T00:00");
 	$("#monitor_end").val(today_str+"T23:59");
@@ -491,7 +494,10 @@ function DTMonInit()
 	$("#monitor_end").hide();
 	$("#monitor_select_label").show();
 	$("#monitor_select").show();
+	$("#monitor_select").val("");
 	$("#monitor_search").val("");
+	$("#monitor_search").off('change');
+	$("#monitor_search").change(function(){available_date();});
 	$("#monitor_button").show();
 	$("#monitor_show").show();
 	$("#monitor_search").show();
@@ -629,4 +635,45 @@ function GetTodayDate()
 
 function FormatNumber(num, length) {
   return ('' + num).length < length ? ((new Array(length + 1)).join('0') + num).slice(-length) : '' + num;
+}
+
+function available_date()
+{
+	postData = {};
+	postData["mmsi"] = $('#monitor_search').val();
+	postData["project_id"] = project_selected;
+	$.ajax({
+        method: "POST",
+        url: "/shanggang/workrecord/recorddate",
+		data: JSON.stringify(postData),
+		contentType:"application/json",
+        success: function (data) {
+			console.log(data);
+			enableDays = [];
+			for(var i = 0;i<data.length;++i){
+				enableDays.push(data[i]);
+			}
+			$("#monitor_select").datepicker('destroy');
+			$('#monitor_select').datepicker({dateFormat: 'yy-mm-dd', beforeShowDay: enableAllTheseDays});
+			if (enableDays.length == 0)
+			{
+				alert("没有关于这艘船的轨迹检测数据！ ");
+				$("#monitor_select").val("");
+			}
+			else{
+				$("#monitor_select").val(enableDays[0]);
+			}
+        },
+		error: function () {       
+            alert("查询失败！");
+        }  
+    });
+}
+
+function enableAllTheseDays(date) {
+	var sdate = $.datepicker.formatDate( 'yy-mm-dd', date)
+	if($.inArray(sdate, enableDays) != -1) {
+		return [true];
+	}
+	return [false];
 }

@@ -70,7 +70,7 @@
 	    </select>	
 	   
 	   <select id="mohuship" parameterType="String" resultType="Integer">
-	   	select mmsi from ship where cast(mmsi as char) like concat(concat('%',#{str}),'%')
+	   	select mmsi from ship where concat(cast(mmsi as char),ship_name,contact) like concat(concat('%',#{str}),'%')
 	   </select>
 	   
 	    

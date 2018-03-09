@@ -77,7 +77,7 @@ public class WorkloadTimerTask extends TimerTask {
 		
 		for(String mmsi:all_mmsi){							
 			String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(mmsi));
-			if(route_id.equals("2")||route_id.equals("3"))
+			if(route_id.equals("1")||route_id.equals("2")||route_id.equals("3"))
 				others(mmsi,date);
 			else
 				huangpu(mmsi,date);

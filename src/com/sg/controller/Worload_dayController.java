@@ -316,21 +316,22 @@ public class Worload_dayController {
 		List<String> res = new ArrayList<String>(); 
 		SqlSession session = getSession();
 		JSONObject json = JSONObject.fromObject(pro);
-		List<String> company = session.selectList("getbuildcompany");
+		String pro_company = session.selectOne("getconstructcom",json.getInt("project_id"));
+		String[] company_arr = pro_company.split(";");
 		Project project = new Project();
 		project.setBeginDate(json.getString("begindate"));
 		project.setEndDate(json.getString("enddate"));
-		for(String com:company){
-			String str = "company_id:"+com+",";
+		for(String company:company_arr){
+			String str = "company_id:"+company+",";
 //			System.out.println("查询公司编号为"+com+"的工作量");
-			List<Integer> mmsilist = session.selectList("getMMSIofCompany",com);
+			List<Integer> mmsilist = session.selectList("listShipbyfleetid",Integer.valueOf(company));
 			double total =0.0;
 			int total_num = 0;
 			for(int mmsi:mmsilist){
 				project.setMmsilist(String.valueOf(mmsi));
 				int temp = session.selectOne("getcountduring",project);
 				double capacity = session.selectOne("getCapacity",mmsi);
-				str = str+"mmsi:"+String.valueOf(mmsi)+",number:"+temp+",volumn:"+(double) capacity*temp/10000+";";
+//				str = str+"mmsi:"+String.valueOf(mmsi)+",number:"+temp+",volumn:"+(double) capacity*temp/10000+";";
 				total_num+=temp;
 				total = total+capacity*temp/10000;
 			}

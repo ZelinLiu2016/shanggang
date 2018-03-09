@@ -14,10 +14,11 @@
 		<result column="state" property="state" jdbcType="INTEGER" />
 		<result column="ishandled" property="ishandled" jdbcType="INTEGER"/>
 		<result column="handlerecord" property="handlerecord" jdbcType="CHAR"/>
+		<result column="exceed_speed" property="exceed_speed" jdbcType="INTEGER"/>
 	</resultMap>
 		
 	    <insert id="addworkrecord" parameterType="Workrecord" >
-	        insert into workrecord  values (#{mmsi},#{date},#{indred},#{exitdred},#{indump},#{exitdump},#{state},#{ishandled},#{handlerecord})    
+	        insert into workrecord  values (#{mmsi},#{date},#{indred},#{exitdred},#{indump},#{exitdump},#{state},#{ishandled},#{handlerecord},#{exceed_speed})    
 	    </insert>
 	    <select id="listonedayrecord" parameterType="Workrecord" resultMap="WorkrecordMap">
 	    	select * from workrecord where mmsi=#{mmsi} AND date=#{date}
@@ -28,6 +29,9 @@
 	    <update id="addhandle" parameterType="Abnormal_info">
 	    	update workrecord set handlerecord=#{handle} where mmsi=#{mmsi} and indred=#{time} 
 	    </update>
+		<select id="getexceed_speed" resultMap="WorkrecordMap">
+			select * from workrecord where exceed_speed=1
+		</select>
 	    <select id="getlastrecord" parameterType="String" resultMap="WorkrecordMap">
 	    	select * from workrecord where mmsi=#{mmsi} order by indred desc limit 1
 	    </select>

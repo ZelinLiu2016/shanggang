@@ -18,7 +18,14 @@ public class Workrecord {
 	public int state;
 	public int ishandled;
 	public String handlerecord;
+	public int exceed_speed;
 	
+	public int getExceed_speed() {
+		return exceed_speed;
+	}
+	public void setExceed_speed(int exceed_speed) {
+		this.exceed_speed = exceed_speed;
+	}
 	public int getIshandled() {
 		return ishandled;
 	}
@@ -75,9 +82,10 @@ public class Workrecord {
 	}
 	@Override
 	public String toString() {
-		return "Workrecord [mmsi=" + mmsi + ", date=" + date + ", indred=" + indred + ", exitdred=" + exitdred
-				+ ", indump=" + indump + ", exitdump=" + exitdump + ", state=" + state + ", ishandled=" + ishandled
-				+ ", handlerecord=" + handlerecord + "]";
+		return "\"mmsi\":\"" + mmsi + "\", \"date\":\"" + date + "\", \"indred\":\"" + indred + "\", \"exitdred\":\"" + exitdred
+				+ "\", \"indump\":\"" + indump + "\", \"exitdump\":\"" + exitdump + "\", \"state\":" + state + ", \"ishandled\":" + ishandled
+				+ ", \"handlerecord\":\"" + handlerecord + "\", \"exceed_speed\":" + exceed_speed;
 	}
+	
 		
 }

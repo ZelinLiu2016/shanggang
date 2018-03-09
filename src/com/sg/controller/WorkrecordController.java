@@ -94,6 +94,14 @@ public class WorkrecordController {
 		session.close();
 	    return new ResponseEntity<String>("加入处理信息成功！", HttpStatus.OK);
 	}
+	@RequestMapping(value="/exceed_speed",method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<List<Workrecord>> exceed_speed() throws IOException{
+		System.out.println("获得船只超速工作记录");
+		SqlSession session = this.getSession();
+		List<Workrecord> res = session.selectList("getexceed_speed");
+		return new ResponseEntity<List<Workrecord>>(res,HttpStatus.OK);
+	}
 	@RequestMapping(value="/abnormal",method=RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<List<JSONObject>> abnormal() throws IOException{
@@ -103,7 +111,7 @@ public class WorkrecordController {
 		List<Workrecord> res = session.selectList("getabnormal");
 		for(Iterator<Workrecord> iter = res.iterator();iter.hasNext();){
 			Workrecord rec = (Workrecord)iter.next();
-			String temp = rec.toString();
+			String temp = "{"+rec.toString();
 			String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(rec.mmsi));
 			Route route = session.selectOne("getRouteinfoByid",route_id);
 			temp = temp + ", \"route_id\":\""+route_id+"\", \"dumping_area\":\"" + route.getDumping_area() +"\","+" \"work_area\":\""+route.getHarbor()+"\","+" \"route_location\":\""+route.getLocation()+"\"}";
@@ -112,4 +120,5 @@ public class WorkrecordController {
 		}
 		return new ResponseEntity<List<JSONObject>>(res_str,HttpStatus.OK);
 	}
+
 }

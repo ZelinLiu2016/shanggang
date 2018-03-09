@@ -16,6 +16,21 @@ public class Workrecord {
 	public String indump;
 	public String exitdump;
 	public int state;
+	public int ishandled;
+	public String handlerecord;
+	
+	public int getIshandled() {
+		return ishandled;
+	}
+	public void setIshandled(int ishandled) {
+		this.ishandled = ishandled;
+	}
+	public String getHandlerecord() {
+		return handlerecord;
+	}
+	public void setHandlerecord(String handlerecord) {
+		this.handlerecord = handlerecord;
+	}
 	public String getMmsi() {
 		return mmsi;
 	}
@@ -60,10 +75,9 @@ public class Workrecord {
 	}
 	@Override
 	public String toString() {
-		return "{\"mmsi\":\"" + mmsi + "\", \"date\":\"" + date + "\", \"indred\":\"" + indred + "\", \"exitdred\":\"" + exitdred
-				+ "\", \"indump\":\"" + indump + "\", \"exitdump\":\"" + exitdump + "\", \"state\":\"" + state +"\"";
+		return "Workrecord [mmsi=" + mmsi + ", date=" + date + ", indred=" + indred + ", exitdred=" + exitdred
+				+ ", indump=" + indump + ", exitdump=" + exitdump + ", state=" + state + ", ishandled=" + ishandled
+				+ ", handlerecord=" + handlerecord + "]";
 	}
-	
-	
-	
+		
 }

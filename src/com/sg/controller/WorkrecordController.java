@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sg.domain.Abnormal_info;
 import com.sg.domain.Project;
 import com.sg.domain.Route;
 import com.sg.domain.Workrecord;
@@ -72,7 +73,27 @@ public class WorkrecordController {
 		System.out.println("总共"+date.size());
 	    return new ResponseEntity<List<String>>(date, HttpStatus.OK);
 	}
-	
+	@RequestMapping(value="/handleabnormal",method=RequestMethod.POST)
+	 @ResponseBody
+	public ResponseEntity<String> handleabnormal(@RequestBody String pro) throws IOException{
+		JSONObject json = JSONObject.fromObject(pro);
+		SqlSession session = this.getSession();
+		String mmsi = json.getString("mmsi");
+		String indred = json.getString("indred");
+		String handle_content = json.getString("handle_content");
+		Abnormal_info abinfo = new Abnormal_info();
+		Workrecord rec = new Workrecord();
+		rec.setMmsi(mmsi);
+		rec.setIndred(indred);
+		abinfo.setMmsi(mmsi);
+		abinfo.setHandle(handle_content);
+		abinfo.setTime(indred);
+		session.update("modifyhandle",rec);
+		session.update("addhandle",abinfo);
+		session.commit();
+		session.close();
+	    return new ResponseEntity<String>("加入处理信息成功！", HttpStatus.OK);
+	}
 	@RequestMapping(value="/abnormal",method=RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<List<JSONObject>> abnormal() throws IOException{

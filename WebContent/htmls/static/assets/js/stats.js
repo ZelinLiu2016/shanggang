@@ -62,7 +62,7 @@ function FleetStatsInit()
 		changeMonth: true,
 		changeYear: true,
 		minDate: sdate,
-		maxDate: edate,
+		maxDate: sdate,
 		dateFormat: "yy-mm-dd"});
 	$('#stat_end').datepicker('destroy');
 	$("#stat_end").datepicker({
@@ -71,7 +71,6 @@ function FleetStatsInit()
 		changeMonth: true,
 		changeYear: true,
 		minDate: sdate,
-		maxDate: edate,
 		dateFormat: "yy-mm-dd"});
 	$("#stat_start").val(sdate);
 	$("#stat_end").val(edate);
@@ -110,7 +109,7 @@ function fillBoatWork(data)
 		var companyname = com_id;
 		if(mmsi in allMmsi)
 		{
-			var info = {"mmsi":mmsi,"number":ship_number,"volumn":ship_volumn,"shipname":allMmsi[mmsi].shipname,"companyid":com_id};
+			var info = {"mmsi":mmsi,"number":ship_number,"volumn":ship_volumn,"shipname":allMmsi[mmsi].shipname,"companyid":com_id, "timespan": timespan};
 			allBoatWork.push(info);
 		}		
 		if (!(com_id in tmpFleetDict))
@@ -124,7 +123,7 @@ function fillBoatWork(data)
 	
 	for(comid in tmpFleetDict)
 	{
-		allFleet.push({"fleetid":comid,"fleetname":tmpFleetDict[comid][0],"number":tmpFleetDict[comid][1],"volumn":tmpFleetDict[comid][2]});
+		allFleet.push({"fleetid":comid,"fleetname":tmpFleetDict[comid][0],"number":tmpFleetDict[comid][1],"volumn":tmpFleetDict[comid][2], "timespan": timespan});
 	}
 	console.log(allFleet);
 }
@@ -159,47 +158,24 @@ function InitFleetStatsTable()
     },
 
     columns: [
-	[
-		{checkbox:true,
-			colspan: 1,
-			rowspan: 3
-		},
-		{
-			field: 'fleetname',
-			title: '单位',
-			valign:"middle",
-			align:"center",
-			colspan:1,
-			rowspan:3
-		}, 
-		{
-			title: '进度统计',
-			valign:"middle",
-			align:"center",
-			colspan:2,
-			rowspan:1
-		}
-	],
-	[
-		{
-			title: '起始时间'
-		}, 
-		{
-			title: timespan,
-			align:"center",
-			valign:"middle"
-		}
-	],
-	[
-		{
-			field: 'number',
-			title: '船舶往返（次）'
-		}, 
-		{
-			field: 'volumn',
-			title: '疏浚方量（万方）'
-		},
-	]
+	{checkbox:true},
+	{
+		field: 'fleetname',
+		title: '单位',
+	}, 
+	
+	{
+		field: 'timespan',
+		title: '起始时间'
+	}, 
+	{
+		field: 'number',
+		title: '船舶往返（次）'
+	}, 
+	{
+		field: 'volumn',
+		title: '疏浚方量（万方）'
+	}
 	]});
 	$('#datatable').show();
 	
@@ -214,51 +190,26 @@ function InitFleetStatsTable()
 
     columns: [
 	//{checkbox: true},
-	[
-		{
-			field: 'mmsi',
-			title: 'MMSI',
-			valign:"middle",
-			align:"center",
-			colspan:1,
-			rowspan:3
-		}, 
-		{
-			field: 'shipname',
-			title: '船名',
-			valign:"middle",
-			align:"center",
-			colspan:1,
-			rowspan:3
-		}, 
-		{
-			title: '进度统计',
-			valign:"middle",
-			align:"center",
-			colspan:2,
-			rowspan:1
-		}
-	],
-	[
-		{
-			title: '起始时间'
-		}, 
-		{
-			title: timespan,
-			align:"center",
-			valign:"middle"
-		}
-	],
-	[
-		{
-			field: 'number',
-			title: '日船舶往返（次）'
-		}, 
-		{
-			field: 'volumn',
-			title: '疏浚方量（万方）'
-		}
-	]
+	{
+		field: 'mmsi',
+		title: 'MMSI',
+	}, 
+	{
+		field: 'shipname',
+		title: '船名',
+	}, 
+	{
+		field: 'timespan',
+		title: '起始时间'
+	}, 
+	{
+		field: 'number',
+		title: '日船舶往返（次）'
+	}, 
+	{
+		field: 'volumn',
+		title: '疏浚方量（万方）'
+	}
 	]});
     $('#detailtable').show();
 }
@@ -303,7 +254,7 @@ function ProjectStatsInit()
 		changeMonth: true,
 		changeYear: true,
 		minDate: sdate,
-		maxDate: edate,
+		maxDate: sdate,
 		dateFormat: "yy-mm-dd"});
 	$('#stat_end').datepicker('destroy');
 	$("#stat_end").datepicker({
@@ -312,7 +263,6 @@ function ProjectStatsInit()
 		changeMonth: true,
 		changeYear: true,
 		minDate: sdate,
-		maxDate: edate,
 		dateFormat: "yy-mm-dd"});
 	$("#stat_start").val(sdate);
 	$("#stat_end").val(edate);
@@ -369,17 +319,18 @@ function InitProjectStatsTable()
 		if(arrselections.length==1){
 			var id =-1;
 			id = project_selected;
-			postData = {"project_id":id};
+			postData["enddate"] = $("#stat_end").val();
+			postData["project_id"] = project_selected;
 			$.ajax({
 				type: "POST",
-				url: "/shanggang/workload/getprojectprocess",
+				url: "/shanggang/workload/getprojectproduring",
 				data: JSON.stringify(postData),
 				contentType:"application/json",
 				success: function (data) {
 					console.log(data);
 					$("#project_progress").show();
-					real = parseInt(100*data["percent"]);
-					plan = real;
+					real = parseInt(100*parseFloat(data[data.length-2].split(':')[1]));
+					plan = parseInt(100*parseFloat(data[data.length-1].split(':')[1]));
 					var real_span = document.getElementById("real_progress");
 					var plan_span = document.getElementById("plan_progress");
 					real_span.style.width=real+"%";
@@ -397,48 +348,23 @@ function InitProjectStatsTable()
 		$("#project_progress").hide();
     },
     columns: [
-	[
-		{checkbox:true,
-			colspan: 1,
-			rowspan: 3
-		},
-		{
-			field: 'project',
-			title: '工程名称',
-			valign:"middle",
-			align:"center",
-			colspan:1,
-			rowspan:3
-		}, 
-		{
-			title: '进度统计',
-			valign:"middle",
-			align:"center",
-			colspan:2,
-			rowspan:1
-		}
-	],
-	[
-		{
-			title: '起始时间'
-		}, 
-		{
-			title: timespan,
-			valign:"middle",
-			align:"center",
-			valign:"middle"
-		}
-	],
-	[
-		{
-			field: 'number',
-			title: '船舶往返（次）'
-		}, 
-		{
-			field: 'volumn',
-			title: '疏浚方量（万方）'
-		}
-	]
+	{checkbox:true},
+	{
+		field: 'project',
+		title: '工程名称',
+	},
+	{
+		field: 'timespan',
+		title: '起始时间',
+	}, 
+	{
+		field: 'number',
+		title: '船舶往返（次）'
+	}, 
+	{
+		field: 'volumn',
+		title: '疏浚方量（万方）'
+	}
 	]});
     $('#datatable').show();
 }
@@ -462,10 +388,9 @@ function fillProjectWork(data)
 		if(project_selected in detailed)
 		{
 			var pname = detailed[project_selected].projectname;
-			var project_stat = data[data.length - 1].split(",");
-			var number = parseInt(project_stat[0].split(":")[1]);
-			var volumn = parseFloat(project_stat[1].split(":")[1]);
-			var info = {"project":pname,"number":number,"volumn":volumn};
+			var number = parseInt(data[data.length - 4].split(":")[1]);
+			var volumn = parseFloat(data[data.length - 3].split(":")[1]);
+			var info = {"project":pname,"number":number,"volumn":volumn,"timespan":timespan};
 			allProject.push(info);
 		}
 		else{

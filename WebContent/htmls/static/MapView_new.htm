@@ -203,11 +203,11 @@
 							<span id="L2L3L1" class="LeftText">抛泥异常</span>
 							</a>
 						</li>
-						<li >
+						<!--li >
 							<a id = "run-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="航行异常" onclick = "RunError()">
 							<span id="L2L3L2" class="LeftText">航行异常</span>
 							</a>
-						</li>
+						</li-->
 						<li >
 							<a id = "speed-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="速度异常" onclick = "SpeedError()">
 							<span id="L2L3L3" class="LeftText">速度异常</span>
@@ -417,6 +417,7 @@
 							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>处理
 						</button>
 					</div>
+					<input type="checkbox" id="handle_checkbox" >显示已处理异常</input>
 				</div>
 				<div id="history_time">
 					<span height="30px" color="black" id="monitor_start_label">开始时间</span>
@@ -466,6 +467,7 @@
 							<span class="glyphicon glyphicon-film" aria-hidden="true"></span>显示
 						</button>
 					</div>
+					<input type="checkbox" id="finish_checkbox" onclick="show_finished()">显示已完成工程</input>
 				</div>
 			</div>
 		</div>

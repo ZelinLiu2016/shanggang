@@ -39,11 +39,15 @@
 	    <select id="getbegindate" parameterType="int" resultType="String">
 	    	select BEGIN_DATE from project where PROJECT_ID=#{project_id}
 	    </select>
-	    
+	    <select id="getenddate" parameterType="int" resultType="String">
+	    	select END_DATE from project where PROJECT_ID=#{project_id}
+	    </select>
 	    <select id="getvolume" parameterType="int" resultType="Double">
 	    	select SQUARE_VOLUME from project where PROJECT_ID=#{project_id}
 	    </select>
-
+		<select id="getconstructcom" parameterType="int" resultType="String">
+			select construction_company from project where project_id=#{project_id}
+		</select>
 	    <update id="updateProject" parameterType="Project" >
 	        update project set PROJECT_NAME=#{projectName}, DUMPINGAREA =#{dumpingArea}, SQUARE_VOLUME=#{squareVolume}, BEGIN_DATE=#{beginDate}, END_DATE=#{endDate}, BOAT_NUM=#{boatNum}, HARBOR_NAME=#{harborName},MUD_RATIO=#{mud_ratio},ROUTE_ID=#{route_id},MMSILIST=#{mmsilist},CONSTRUCTION_COMPANY=#{construction_company},DESIGN_COMPANY=#{design_company},SUPERVISION_COMPANY=#{supervision_company},ISWORKING=#{isworking},TOPAREA=#{toparea}  where PROJECT_ID = #{projectId}    
 	    </update>

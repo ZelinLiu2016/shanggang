@@ -20,6 +20,7 @@ function SetRouteTable() {
 	$("#btn_show").show();
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
+	$("#finish_checkbox").hide();
 	
 	$("#mapBody").show();
 	$("#data_clean").hide();

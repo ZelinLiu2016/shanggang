@@ -698,8 +698,10 @@ function set_port_menu()
 			var pid = port_project[allPorts[i]][j];
 			if(pid in detailed)
 			{
-				var pname = detailed[pid].projectname;
-				entry+='<li class="Last"><a style="padding:0px;" href="#" onclick = '+ 'choose_menu_project('+pid+')>' + pname + '</a></li>';
+				if (detailed[pid].isworking == 1){
+					var pname = detailed[pid].projectname;
+					entry+='<li class="Last"><a style="padding:0px;" href="#" onclick = '+ 'choose_menu_project('+pid+')>' + pname + '</a></li>';
+				}
 			}
 		}
 		$("#"+allPortsID[i]).append(entry);

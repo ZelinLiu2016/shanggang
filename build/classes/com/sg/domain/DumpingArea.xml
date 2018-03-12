@@ -25,6 +25,9 @@
 		<select id="getDumpingLocation" parameterType="String" resultType="String">
 			select location from dumping_area where area_id=#{area_id}
 		</select>
+		<select id="getotherdumpingarea" parameterType="String" resultMap="DumpingAreaMap">
+			select * from dumping_area where area_id&lt;&gt;#{id}
+		</select>
 	    <update id="updateDumpingArea" parameterType="DumpingArea" >
 	        update dumping_area set area_id=#{area_id}, location=#{location},areaname=#{areaname}  where area_id = #{area_id}    
 	    </update>

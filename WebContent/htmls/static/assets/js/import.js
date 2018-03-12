@@ -16,6 +16,7 @@ function InitLoadImport()
 	$("#btn_show").hide();
 	$("#toolbar_search").show();
 	$("#btn_search").show();
+	$("#finish_checkbox").hide();
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();

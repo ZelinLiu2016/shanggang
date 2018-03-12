@@ -73,6 +73,8 @@ function InitLoadParam()
 	$("#btn_edit").show();
 	$("#btn_delete").show();
 	$("#btn_show").hide();
+	$("#finish_checkbox").show();
+	document.getElementById('finish_checkbox').checked = false;
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
 	
@@ -115,6 +117,7 @@ function InitLoadParam()
         success: function (data) {
         	fillParamData(data);
 			set_port_menu();
+			finish_filter();
 			InitParamTable();
             },
 		error: function () {       
@@ -131,6 +134,7 @@ function InitLoadParam()
         success: function (data) {
 			fillParamData(data);
 			set_port_menu();
+			finish_filter();
 			InitParamTable();
             },
 		error: function () {       
@@ -1075,4 +1079,41 @@ function choose_route()
 	$("#multiselect_to").append(entry);
 	$("#multiselect_label").text("选择抛泥航线");
 	$("#multiselect_modal").modal('show');
+}
+
+function finish_filter()
+{
+	tmp_allParam = [];
+	var is_checked = $("#finish_checkbox").is(":checked");
+	if (is_checked)
+	{
+		return;
+	}
+	else{
+		for (var i = 0;i<allParam.length;++i)
+		{
+			if (allParam[i].isworking == 1){
+				tmp_allParam.push(allParam[i]);
+			}
+		}
+	}
+	allParam = tmp_allParam;
+	
+}
+
+function show_finished()
+{
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/project/list",
+        success: function (data) {
+        	fillParamData(data);
+			set_port_menu();
+			finish_filter();
+			InitParamTable();
+            },
+		error: function () {       
+            alert("获取数据失败！");
+        }
+	});
 }

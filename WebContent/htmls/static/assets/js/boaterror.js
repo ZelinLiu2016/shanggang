@@ -207,8 +207,12 @@ function DirtError()
 	$("#monitor_button").hide();
 	$("#history_time").hide();
 	$("#monitor_show").show();
-	$("#error_mark").hide();
-	$("#error_handle").hide();
+	$("#error_mark").show();
+	$("#error_handle").show();
+	$("#handle_checkbox").off('click');
+	$("#handle_checkbox").click(function () {show_dirt_handled();});
+	document.getElementById('handle_checkbox').checked = false;
+	$("#handle_checkbox").show();
 	$.ajax({
         method: "GET",
         url: "/shanggang/dredging_area/listall",
@@ -234,7 +238,6 @@ function DirtError()
             url: "/shanggang/route/listall",
             success: function (data) {    
             	    fillAllRoute(data);
-            	    InitRouteTable();
                   },       
             error: function () {       
                    alert("获取数据失败！");       
@@ -246,6 +249,7 @@ function DirtError()
         success: function (data) {
 			console.log(data);
         	fillDirtError(data);
+			handle_filter();
 			InitDirtTable();
             },
 		error: function () {       
@@ -264,7 +268,7 @@ function fillDirtError(data)
 			var info = {"mmsi":data[i].mmsi,"date":data[i].date,"indred":data[i].indred,
 					"exitdred":data[i].exitdred,"indump":data[i].indump,"exitdump":data[i].exitdump,
 					"state":data[i].state,"dredging_id":data[i].work_area,"dumping_id":data[i].dumping_area,
-					"route_id":data[i].route_id,"handle":"-"};
+					"route_id":data[i].route_id,"ishandled":data[i].ishandled,"handlerecord":data[i].handlerecord};
 				
 			if(data[i].mmsi in allMmsi)
 			{
@@ -282,6 +286,13 @@ function fillDirtError(data)
 				info.company="-";
 			}
 			info.type = dirt_abnormal_type[data[i].state];
+			if (info.ishandled == 0)
+			{
+				info.handle = "是";
+			}
+			else{
+				info.handle = "否";
+			}
 			info.dredging_name = GetShujunNameByID(info.dredging_id);
 			info.dumping_name = GetPaoniNameByID(info.dumping_id);
 			allError.push(info);
@@ -351,10 +362,14 @@ function InitDirtTable()
         field: 'exitdump',
         title: '离开抛泥区域'
     },
-	/*{
+	{
         field: 'handle',
+        title: '是否处理'
+    },
+	{
+        field: 'handlerecord',
         title: '处理意见'
-    }*/
+    }
 	]});
     $('#datatable').show();	
 }
@@ -564,9 +579,8 @@ function SpeedError()
 	
 	$.ajax({
         method: "GET",
-        url: "/shanggang/abnormalinfo/listallabnormal",
+        url: "/shanggang/workrecord/exceed_speed",
         success: function (data) {
-			data=[];
         	fillSpeedError(data);
 			InitSpeedTable();
             },
@@ -581,24 +595,32 @@ function fillSpeedError(data)
 	allError = [];
 	for(var i = 0;i<data.length;++i)
 		{
-			if(data[i].abnormal_type=="Exceed the speed limit Abnormal")
+			var info = {"mmsi":data[i].mmsi,"date":data[i].date,"indred":data[i].indred,
+					"exitdred":data[i].exitdred,"indump":data[i].indump,"exitdump":data[i].exitdump,
+					"ishandled":data[i].ishandled,"handlerecord":data[i].handlerecord,"speed":data[i].exceed_speed};
+			if(data[i].mmsi in allMmsi)
 			{
-				if(data[i].mmsi in allMmsi){
-				var dr = "-";
-				var du = "-";
-				if(data[i].mmsi in mmsi_project)
+				info.name = allMmsi[data[i].mmsi].shipname;
+				if(allMmsi[data[i].mmsi].fleetid in allCompany)
 				{
-					dr = mmsi_project[data[i].mmsi].dredging;
-					du = mmsi_project[data[i].mmsi].dumping;
+					info.company=allCompany[allMmsi[data[i].mmsi].fleetid].name;
 				}
-					
-				allError.push(
-				{"mmsi":data[i].mmsi,"type":data[i].abnormal_type,
-				"lon":data[i].lon,"lat":data[i].lat,
-				"time":data[i].time,"handle":data[i].handle,"name":allMmsi[data[i].mmsi].shipname,"company":allMmsi[data[i].mmsi].fleetid,
-				"dredging":dr,"dumping":du,"speed":data[i].speed}
-				);}
+				else{
+					info.company="-";
+				}
 			}
+			else{
+				info.name = "-";
+				info.company="-";
+			}
+			if (info.ishandled == 0)
+			{
+				info.handle = "是";
+			}
+			else{
+				info.handle = "否";
+			}
+			allError.push(info);
 		}
 }
 
@@ -628,23 +650,35 @@ function InitSpeedTable()
         title: '施工单位'
     }, 
 	{
-        field: 'dredging',
-        title: '施工区域'
-    }, 
+        field: 'date',
+        title: '日期'
+    },
 	{
-        field: 'dumping',
-        title: '抛泥区域'
-    }, 
+        field: 'indred',
+        title: '进入施工区域'
+    },
 	{
-        field: 'time',
-        title: '异常时间'
+        field: 'exitdred',
+        title: '离开施工区域'
+    },
+	{
+        field: 'indump',
+        title: '进入抛泥区域'
     },
 	{
         field: 'speed',
         title: '航行速度'
     },
 	{
+        field: 'exitdump',
+        title: '离开抛泥区域'
+    },
+	{
         field: 'handle',
+        title: '是否处理'
+    },
+	{
+        field: 'handlerecord',
         title: '处理意见'
     }
 	]});
@@ -990,7 +1024,40 @@ function AddRedNode()
         API_ReDrawLayer();
 
 		API_SetCurDrawDynamicUseType(DynamicSymbolType.none);
-
-
 };
 
+function handle_filter()
+{
+	tmp_allError = [];
+	var is_handled = $("#handle_checkbox").is(":checked");
+	if (is_handled)
+	{
+		return;
+	}
+	else{
+		for (var i = 0;i<allError.length;++i)
+		{
+			if (allError[i].ishandled == 1){
+				tmp_allError.push(allError[i]);
+			}
+		}
+	}
+	allError = tmp_allError;
+}
+
+function show_dirt_handled()
+{
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/workrecord/abnormal",
+        success: function (data) {
+			console.log(data);
+        	fillDirtError(data);
+			handle_filter();
+			InitDirtTable();
+            },
+		error: function () {       
+            alert("获取数据失败！");
+        }  
+    });
+}

@@ -2,8 +2,8 @@
 var allError = [];
 var postData = {};
 var abtype = "";
-var dirt_abnormal_type = {1:"未驶入抛泥区",2:"抛泥区错误", 3:"船舶位置异常", 4:"抛泥区内时间异常", 5:"作业区内时间异常"};
-
+var dirt_abnormal_type = {0:"正常",1:"未驶入抛泥区",2:"抛泥区错误", 3:"船舶位置异常", 4:"抛泥区内时间异常", 5:"作业区内时间异常"};
+var dirt_type_selected = 0;
 function BoatErrorInit()
 {
 	$('#data_clean').hide();
@@ -78,7 +78,7 @@ function InitBoatErrorTable() {
     $('#datatable').show();
 }
 
-function DirtError()
+function DirtError(i)
 {
 	if(project_selected<0)
 	{
@@ -90,11 +90,12 @@ function DirtError()
 		alert("选中数据异常！");
 		return;
 	}
-	project_submenu_selected = 41;
+	dirt_type_selected = i;
+	project_submenu_selected = 40+i;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L3").attr("class", "LeftTextSelect");
-	$("#L2L3L1").attr("class", "LeftTextSelect");
+	$("#L2L3L"+i).attr("class", "LeftTextSelect");
 	
 	API_DelAllShips();
 	delete_object();
@@ -213,6 +214,7 @@ function DirtError()
 	$("#handle_checkbox").click(function () {show_dirt_handled();});
 	document.getElementById('handle_checkbox').checked = false;
 	$("#handle_checkbox").show();
+	$("#handle_checkbox_label").show();
 	$.ajax({
         method: "GET",
         url: "/shanggang/dredging_area/listall",
@@ -265,7 +267,9 @@ function fillDirtError(data)
 	for(var i = 0;i<data.length;++i){
 		if(data[i].mmsi in mmsi_project_selected)
 		{
-			var info = {"mmsi":data[i].mmsi,"date":data[i].date,"indred":data[i].indred,
+			if (data[i].state == dirt_type_selected)
+			{
+				var info = {"mmsi":data[i].mmsi,"date":data[i].date,"indred":data[i].indred,
 					"exitdred":data[i].exitdred,"indump":data[i].indump,"exitdump":data[i].exitdump,
 					"state":data[i].state,"dredging_id":data[i].work_area,"dumping_id":data[i].dumping_area,
 					"route_id":data[i].route_id,"ishandled":data[i].ishandled,"handlerecord":data[i].handlerecord};
@@ -286,7 +290,7 @@ function fillDirtError(data)
 				info.company="-";
 			}
 			info.type = dirt_abnormal_type[data[i].state];
-			if (info.ishandled == 0)
+			if (info.ishandled == 1)
 			{
 				info.handle = "是";
 			}
@@ -296,6 +300,7 @@ function fillDirtError(data)
 			info.dredging_name = GetShujunNameByID(info.dredging_id);
 			info.dumping_name = GetPaoniNameByID(info.dumping_id);
 			allError.push(info);
+			}
 		}
 	}
 }
@@ -547,11 +552,11 @@ function SpeedError()
 		alert("选中数据异常！");
 		return;
 	}
-	project_submenu_selected = 43;
+	project_submenu_selected = 46;
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
 	$("#L2L3").attr("class", "LeftTextSelect");
-	$("#L2L3L3").attr("class", "LeftTextSelect");
+	$("#L2L3L6").attr("class", "LeftTextSelect");
 	
 	abtype = "Exceed the speed limit Abnormal";
 	$("#toolbar").hide();
@@ -574,6 +579,11 @@ function SpeedError()
 	$("#monitor_show").hide();
 	$("#error_mark").show();
 	$("#error_handle").show();
+	$("#handle_checkbox").off('click');
+	$("#handle_checkbox").click(function () {show_speed_handled();});
+	document.getElementById('handle_checkbox').checked = false;
+	$("#handle_checkbox").show();
+	$("#handle_checkbox_label").show();
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	
@@ -582,6 +592,7 @@ function SpeedError()
         url: "/shanggang/workrecord/exceed_speed",
         success: function (data) {
         	fillSpeedError(data);
+			handle_filter();
 			InitSpeedTable();
             },
 		error: function () {       
@@ -613,7 +624,7 @@ function fillSpeedError(data)
 				info.name = "-";
 				info.company="-";
 			}
-			if (info.ishandled == 0)
+			if (info.ishandled == 1)
 			{
 				info.handle = "是";
 			}
@@ -630,7 +641,7 @@ function InitSpeedTable()
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allError,
-    height:380,
+    //height:380,
 	pagination: true,
     pageSize: 5,
 	clickToSelect: true,
@@ -876,12 +887,11 @@ function error_mark_confirm()
 	postData = {};
 	var arrselections = $("#table").bootstrapTable('getSelections');
 	postData["mmsi"] = arrselections[0].mmsi;
-	postData["abnormal_type"] = abtype;
-	postData["time"] = arrselections[0].time;
-	postData["handle"] = $("#error_mark_text").val();
+	postData["indred"] = arrselections[0].indred;
+	postData["handle_content"] = $("#error_mark_text").val();
 	$.ajax({
         method: "POST",
-        url: "/shanggang/abnormalinfo/addhandle",
+        url: "/shanggang/workrecord/handleabnormal",
 		data: JSON.stringify(postData),
 		contentType:"application/json",
         success: function (data) {
@@ -907,12 +917,11 @@ function error_handle()
 	if(confirm("确定要处理该异常吗？")){
 		postData = {};
 		postData["mmsi"] = arrselections[0].mmsi;
-		postData["abnormal_type"] = abtype;
-		postData["time"] = arrselections[0].time;
-		postData["handle"] = "已处理";
+		postData["indred"] = arrselections[0].indred;
+		postData["handle_content"] = "已处理";
 		$.ajax({
         method: "POST",
-        url: "/shanggang/abnormalinfo/addhandle",
+        url: "/shanggang/workrecord/handleabnormal",
 		data: JSON.stringify(postData),
 		contentType:"application/json",
         success: function (data) {
@@ -930,13 +939,13 @@ function RefreshError()
 {
 	switch (abtype){
 		case "Dumping_area Abnormal":
-			DirtError();
+			show_dirt_handled();
 			break;
 		case "Route Abnormal":
 			RunError();
 			break;
 		case "Exceed the speed limit Abnormal":
-			SpeedError();
+			show_speed_handled();
 			break;
 		case "Weather abnormal":
 			WeatherError();
@@ -1037,7 +1046,7 @@ function handle_filter()
 	else{
 		for (var i = 0;i<allError.length;++i)
 		{
-			if (allError[i].ishandled == 1){
+			if (allError[i].ishandled == 0){
 				tmp_allError.push(allError[i]);
 			}
 		}
@@ -1055,6 +1064,23 @@ function show_dirt_handled()
         	fillDirtError(data);
 			handle_filter();
 			InitDirtTable();
+            },
+		error: function () {       
+            alert("获取数据失败！");
+        }  
+    });
+}
+
+function show_speed_handled()
+{
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/workrecord/exceed_speed",
+        success: function (data) {
+			console.log(data);
+        	fillSpeedError(data);
+			handle_filter();
+			InitSpeedTable();
             },
 		error: function () {       
             alert("获取数据失败！");

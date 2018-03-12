@@ -4,6 +4,8 @@ var allFleet = [];
 var tmpBoatWork = [];
 var timespan = "-";
 var postData = {}
+var progress_real = 0;
+var progress_plan = 0;
 
 function FleetStatsSearch()
 {
@@ -278,6 +280,7 @@ function ProjectStatsInit()
 
 function ProjectStatsSearch()
 {
+	$("#project_progress").show();
 	postData = {};
 	postData["begindate"] = $("#stat_start").val();
 	postData["enddate"] = $("#stat_end").val();
@@ -309,44 +312,6 @@ function InitProjectStatsTable()
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
-	onCheck: function (row, $element) {
-		var arrselections = $("#table").bootstrapTable('getSelections');
-		if(arrselections.length==0)
-		{
-			$("#project_progress").hide();
-			return;
-		}
-		if(arrselections.length==1){
-			var id =-1;
-			id = project_selected;
-			postData["enddate"] = $("#stat_end").val();
-			postData["project_id"] = project_selected;
-			$.ajax({
-				type: "POST",
-				url: "/shanggang/workload/getprojectproduring",
-				data: JSON.stringify(postData),
-				contentType:"application/json",
-				success: function (data) {
-					console.log(data);
-					$("#project_progress").show();
-					real = parseInt(100*parseFloat(data[data.length-2].split(':')[1]));
-					plan = parseInt(100*parseFloat(data[data.length-1].split(':')[1]));
-					var real_span = document.getElementById("real_progress");
-					var plan_span = document.getElementById("plan_progress");
-					real_span.style.width=real+"%";
-					plan_span.style.width=plan+"%";
-					real_span.innerHTML=real+"%";
-					plan_span.innerHTML=plan+"%";
-               },       
-				error: function () {
-					alert("删除数据失败！");   
-				}       
-			});
-		}
-    },
-	onUncheck: function (row, $element) {
-		$("#project_progress").hide();
-    },
     columns: [
 	{checkbox:true},
 	{
@@ -367,6 +332,13 @@ function InitProjectStatsTable()
 	}
 	]});
     $('#datatable').show();
+	
+	var real_span = document.getElementById("real_progress");
+	var plan_span = document.getElementById("plan_progress");
+	real_span.style.width=progress_real+"%";
+	plan_span.style.width=progress_plan+"%";
+	real_span.innerHTML=progress_real+"%";
+	plan_span.innerHTML=progress_plan+"%";
 }
 
 function RefreshProjectStatsTable()
@@ -392,6 +364,8 @@ function fillProjectWork(data)
 			var volumn = parseFloat(data[data.length - 3].split(":")[1]);
 			var info = {"project":pname,"number":number,"volumn":volumn,"timespan":timespan};
 			allProject.push(info);
+			progress_real = parseInt(100*parseFloat(data[data.length-2].split(':')[1]));
+			progress_plan = parseInt(100*parseFloat(data[data.length-1].split(':')[1]));
 		}
 		else{
 			alert("选中工程数据异常！ ");

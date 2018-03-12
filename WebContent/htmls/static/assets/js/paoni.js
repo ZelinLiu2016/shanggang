@@ -17,6 +17,7 @@ function SetPaoniTable() {
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
 	$("#finish_checkbox").hide();
+	$("#finish_checkbox_label").hide();
 	
 	$("#mapBody").show();
 	$("#data_clean").hide();

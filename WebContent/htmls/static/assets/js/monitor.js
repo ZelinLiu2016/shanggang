@@ -106,6 +106,8 @@ function RTMonInit()
 	$("#monitor_search").show();
 	$("#error_mark").hide();
 	$("#error_handle").hide();
+	$("#handle_checkbox").hide();
+	$("#handle_checkbox_label").hide();
 	$("#monitor_search").off('change');
 	$("#monitor_search").val("");
 	$("#monitor_button").off('click');
@@ -318,6 +320,8 @@ function HSMonInit()
 	$("#monitor_search").show();
 	$("#error_mark").hide();
 	$("#error_handle").hide();
+	$("#handle_checkbox").hide();
+	$("#handle_checkbox_label").hide();
 	$("#monitor_button").off('click');
 	$("#monitor_button").click(function(){HSMonitorSearch();})
 
@@ -503,6 +507,8 @@ function DTMonInit()
 	$("#monitor_search").show();
 	$("#error_mark").hide();
 	$("#error_handle").hide();
+	$("#handle_checkbox").hide();
+	$("#handle_checkbox_label").hide();
 	$("#monitor_button").off('click');
 	$("#monitor_button").click(function(){DTMonitorSearch();})
 

@@ -13,6 +13,8 @@ function DataManageInit()
 	$("#btn_edit").hide();
 	$("#btn_delete").hide();
 	$("#btn_show").hide();
+	$("#finish_checkbox").hide();
+	$("#finish_checkbox_label").hide();
 	
 	$("#mapBody").hide();
 	$("#data_clean").show();

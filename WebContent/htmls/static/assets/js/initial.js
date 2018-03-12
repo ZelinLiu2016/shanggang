@@ -737,12 +737,21 @@ function choose_menu_project(i)
 		DTMonInit();
 		break;
 	case 41:
-		DirtError();
+		DirtError(1);
 		break;
 	case 42:
-		RunError();
+		DirtError(2);
 		break;
-	case 42:
+	case 43:
+		DirtError(3);
+		break;
+	case 44:
+		DirtError(4);
+		break;
+	case 45:
+		DirtError(5);
+		break;
+	case 46:
 		SpeedError();
 	default:
 		InitLoadParam_Project();

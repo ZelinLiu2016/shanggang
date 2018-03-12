@@ -17,6 +17,7 @@ function InitLoadManage()
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
 	$("#finish_checkbox").hide();
+	$("#finish_checkbox_label").hide();
 	
 	$("#mapBody").hide();
 	$("#data_clean").hide();

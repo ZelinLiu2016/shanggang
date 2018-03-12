@@ -74,6 +74,7 @@ function InitLoadParam()
 	$("#btn_delete").show();
 	$("#btn_show").hide();
 	$("#finish_checkbox").show();
+	$("#finish_checkbox_label").show();
 	document.getElementById('finish_checkbox').checked = false;
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
@@ -205,6 +206,7 @@ function RefreshLoadParam()
         success: function (data) {
         	fillParamData(data);
 			set_port_menu();
+			finish_filter();
 			RefreshParamTable();
             },
 		error: function () {       
@@ -221,6 +223,7 @@ function RefreshLoadParam()
         success: function (data) {
 			fillParamData(data);
 			set_port_menu();
+			finish_filter();
 			RefreshParamTable();
             },
 		error: function () {       

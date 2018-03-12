@@ -156,12 +156,12 @@
 						</li-->
 						<li >
 						<a id = "fleet-stats" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="船队数据统计" onclick = "FleetStatsInit()">
-							<span id="L2L1L1" class="LeftText">单位数据统计</span>
+							<span id="L2L1L1" class="LeftText">施工单位数据</span>
 						</a>
 						</li>
 						<li >
 						<a id = "port-stats" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="工程数据统计" onclick = "ProjectStatsInit()">
-							<span id="L2L1L2" class="LeftText">工程数据统计</span>
+							<span id="L2L1L2" class="LeftText">项目进度数据</span>
 						</a>
 						</li>
 					</ul>
@@ -199,8 +199,28 @@
 					</a>
 					<ul>		
 						<li >
-							<a id = "dirt-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError()">
-							<span id="L2L3L1" class="LeftText">抛泥异常</span>
+							<a id = "dirt-error1" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(1)">
+							<span id="L2L3L1" class="LeftText">未驶入抛泥区</span>
+							</a>
+						</li>
+						<li >
+							<a id = "dirt-error2" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(2)">
+							<span id="L2L3L2" class="LeftText">抛泥区错误</span>
+							</a>
+						</li>
+						<li >
+							<a id = "dirt-error3" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(3)">
+							<span id="L2L3L3" class="LeftText">船舶位置异常</span>
+							</a>
+						</li>
+						<li >
+							<a id = "dirt-error4" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(4)">
+							<span id="L2L3L4" class="LeftText">抛泥区内时间异常</span>
+							</a>
+						</li>
+						<li >
+							<a id = "dirt-error5" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(5)">
+							<span id="L2L3L5" class="LeftText">作业区内时间异常</span>
 							</a>
 						</li>
 						<!--li >
@@ -210,7 +230,7 @@
 						</li-->
 						<li >
 							<a id = "speed-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="速度异常" onclick = "SpeedError()">
-							<span id="L2L3L3" class="LeftText">速度异常</span>
+							<span id="L2L3L6" class="LeftText">速度异常</span>
 							</a>
 						</li>
 						<!--li >
@@ -417,7 +437,8 @@
 							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>处理
 						</button>
 					</div>
-					<input type="checkbox" id="handle_checkbox" >显示已处理异常</input>
+					<input type="checkbox" id="handle_checkbox" ></input>
+					<span height="30px" color="black" id="handle_checkbox_label">显示已处理异常</span>
 				</div>
 				<div id="history_time">
 					<span height="30px" color="black" id="monitor_start_label">开始时间</span>
@@ -467,7 +488,8 @@
 							<span class="glyphicon glyphicon-film" aria-hidden="true"></span>显示
 						</button>
 					</div>
-					<input type="checkbox" id="finish_checkbox" onclick="show_finished()">显示已完成工程</input>
+					<input type="checkbox" id="finish_checkbox" onclick="show_finished()"></input>
+					<span height="30px" color="black" id="finish_checkbox_label">显示已完成工程</span>
 				</div>
 			</div>
 		</div>

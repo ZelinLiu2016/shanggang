@@ -307,6 +307,8 @@ function HSMonInit()
 	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	$("#history_time").show();
+	$("#monitor_start_label").show();
+	$("#monitor_start").show();
 	$("#monitor_end_label").show();
 	$("#monitor_end").show();
 	$("#monitor_select_label").hide();

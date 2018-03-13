@@ -67,7 +67,7 @@ function InitPaoniTable()
     $('#table').bootstrapTable({
     data: allPaoni,
     //height:380,
-	pagination: true,
+	pagination: false,
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,

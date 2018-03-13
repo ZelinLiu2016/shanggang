@@ -111,7 +111,7 @@ function fillBoatWork(data)
 		var companyname = com_id;
 		if(mmsi in allMmsi)
 		{
-			var info = {"mmsi":mmsi,"number":ship_number,"volumn":ship_volumn,"shipname":allMmsi[mmsi].shipname,"companyid":com_id, "timespan": timespan};
+			var info = {"mmsi":mmsi,"number":ship_number,"volumn":ship_volumn.toFixed(2),"shipname":allMmsi[mmsi].shipname,"companyid":com_id, "timespan": timespan};
 			allBoatWork.push(info);
 		}		
 		if (!(com_id in tmpFleetDict))
@@ -125,7 +125,7 @@ function fillBoatWork(data)
 	
 	for(comid in tmpFleetDict)
 	{
-		allFleet.push({"fleetid":comid,"fleetname":tmpFleetDict[comid][0],"number":tmpFleetDict[comid][1],"volumn":tmpFleetDict[comid][2], "timespan": timespan});
+		allFleet.push({"fleetid":comid,"fleetname":tmpFleetDict[comid][0],"number":tmpFleetDict[comid][1],"volumn":tmpFleetDict[comid][2].toFixed(2), "timespan": timespan});
 	}
 	console.log(allFleet);
 }
@@ -361,7 +361,7 @@ function fillProjectWork(data)
 		{
 			var pname = detailed[project_selected].projectname;
 			var number = parseInt(data[data.length - 4].split(":")[1]);
-			var volumn = parseFloat(data[data.length - 3].split(":")[1]);
+			var volumn = parseFloat(data[data.length - 3].split(":")[1]).toFixed(2);
 			var info = {"project":pname,"number":number,"volumn":volumn,"timespan":timespan};
 			allProject.push(info);
 			progress_real = parseInt(100*parseFloat(data[data.length-2].split(':')[1]));

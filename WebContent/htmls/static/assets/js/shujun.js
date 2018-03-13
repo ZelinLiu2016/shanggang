@@ -67,7 +67,7 @@ function InitShujunTable()
     $('#table').bootstrapTable({
     data: allShujun,
     //height:380,
-	pagination: true,
+	pagination: false,
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
@@ -86,7 +86,7 @@ function InitShujunTable()
 		{
 			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
 		}
-		if(arrObjPo.length == 0)
+		if(arrObjPo.length == 0 && (dredging_id<5 || dredging_id>8))
 		{
 			alert("疏浚区域位置数据缺失！ ")
 		}
@@ -246,7 +246,7 @@ function InitShujunTable()
 		{
 			arrObjPo.push({x:convertToLatitu(sj_coorDict[dredging_id][i].x),y:convertToLatitu(sj_coorDict[dredging_id][i].y)})
 		}
-		if(arrObjPo.length == 0)
+		if(arrObjPo.length == 0 && (dredging_id<5 || dredging_id>8))
 		{
 			alert("疏浚区域位置数据缺失！ ")
 		}

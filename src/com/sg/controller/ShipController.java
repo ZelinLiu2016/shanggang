@@ -44,11 +44,11 @@ public class ShipController {
 		Ship ship = new Ship();
 		ship.setMmsi(json.getInt("mmsi"));
 		ship.setShipname(json.getString("shipname"));
-		ship.setImo(json.getInt("imo"));
-		ship.setLength(json.getDouble("length"));
-		ship.setWidth(json.getDouble("width"));
+		ship.setImo(json.getString("imo").equals("")?0:json.getInt("imo"));
+		ship.setLength(json.getString("length").equals("")?0.0:json.getDouble("length"));
+		ship.setWidth(json.getString("width").equals("")?0.0:json.getDouble("width"));
 		ship.setShiptype(json.getString("shiptype"));
-		ship.setCapacity(json.getDouble("capacity"));
+		ship.setCapacity(json.getString("capacity").equals("")?0.0:json.getDouble("capacity"));
 		ship.setFleet_id(json.getInt("fleet_id"));
 		ship.setContact(json.getString("contact"));
 		ship.setCellphone(json.getString("cellphone"));

@@ -14,6 +14,7 @@ function InitLoadManage()
 	$("#btn_edit").show();
 	$("#btn_delete").show();
 	$("#btn_show").hide();
+	$("#import_project").hide();
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
 	$("#finish_checkbox").hide();

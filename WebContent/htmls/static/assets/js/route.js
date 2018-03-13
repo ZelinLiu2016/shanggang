@@ -18,6 +18,7 @@ function SetRouteTable() {
 	$("#btn_edit").show();
 	$("#btn_delete").show();
 	$("#btn_show").show();
+	$("#import_project").hide();
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
 	$("#finish_checkbox").hide();
@@ -396,7 +397,8 @@ function fillAllRoute(data) {
 	allHangxian = {};
 	for(var i = 0;i<data.length;++i)
 	{
-		allHangxian[data[i].route_id] = {"dredgingid":data[i].harbor,"dumpingid":data[i].dumping_area};
+		allHangxian[data[i].route_id] = {"dredgingid":data[i].harbor,"dumpingid":data[i].dumping_area,
+								"route_name":allDredging[data[i].harbor].dredgingname+'-'+allDumping[data[i].dumping_area].areaname};
 		allRoute.push({"routeid":data[i].route_id,"harbor":allDredging[data[i].harbor].dredgingname,
 		"dumping": allDumping[data[i].dumping_area].areaname, "speed": data[i].speedlimit,"dredgingid":data[i].harbor,"dumpingid":data[i].dumping_area});
 		var locationstr = data[i].location;

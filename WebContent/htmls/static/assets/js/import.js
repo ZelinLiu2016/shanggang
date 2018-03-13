@@ -16,6 +16,7 @@ function InitLoadImport()
 	$("#btn_show").hide();
 	$("#toolbar_search").show();
 	$("#btn_search").show();
+	$("#import_project").show();
 	$("#finish_checkbox").hide();
 	$("#finish_checkbox_label").hide();
 	
@@ -28,13 +29,28 @@ function InitLoadImport()
 	$("#stat_start_end_time").hide();
 	$("#project_progress").hide();
 	$("#toolbar_search").val("");
+	
+	var select_project = document.getElementById("import_project");
+	while(select_project.hasChildNodes()) 
+	{
+		select_project.removeChild(select_project.firstChild);
+	}
+	var entry = "";
+	entry += '<option value=-1>所有工程</option>';
+	for (var d in detailed) {
+		entry += '<option value="'+d+'">'+ d+'---'+detailed[d].projectname +'</option>';
+	}
+	$("#import_project").append(entry);
+	$("#import_project").off('change');
+	$("#import_project").change(function(){project_changed();});
+	
 	$.ajax({
         method: "GET",
         url: "/shanggang/ship/list",
         success: function (data) {
 			fillBoatData(data);
 			fillMmsiData(data);
-			InitImportTable();
+			project_filter();
             },
 		error: function () {       
             alert("获取数据失败！");
@@ -65,7 +81,7 @@ function RefreshLoadImport()
         success: function (data) {
         	fillBoatData(data);
 			fillMmsiData(data);
-			RefreshImportTable();
+			project_filter_refresh();
             },
 		error: function () {       
             alert("获取数据失败！");
@@ -79,7 +95,7 @@ function InitImportTable() {
     $('#table').bootstrapTable({
     data: allBoat,
     //height:380,
-	pagination: true,
+	pagination: false,
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
@@ -118,6 +134,10 @@ function InitImportTable() {
         title: '船舶类型'
     },
 	{
+        field: 'route_name',
+        title: '航线'
+    },
+	{
         field: 'contact',
         title: '所有人'
     },
@@ -144,7 +164,8 @@ function InitImportTable() {
 					var info = {"capacity":allMmsi[data[i]].capacity,
 					"fleetid":allMmsi[data[i]].fleetid,"imo":allMmsi[data[i]].IMO,"length":allMmsi[data[i]].length,
 					"width":allMmsi[data[i]].width,"mmsi":data[i],"shipname":allMmsi[data[i]].shipname,
-					"shiptype":allMmsi[data[i]].shiptype,"contact":allMmsi[data[i]].contact,"cellphone":allMmsi[data[i]].cellphone};
+					"shiptype":allMmsi[data[i]].shiptype,"contact":allMmsi[data[i]].contact,"cellphone":allMmsi[data[i]].cellphone,
+					"route_id":allMmsi[data[i]].route_id};
 					if(info.fleetid in allCompany)
 					{
 						info.fleetname = allCompany[info.fleetid].name;
@@ -152,10 +173,16 @@ function InitImportTable() {
 					else{
 						info.fleetname = "-";
 					}
-					console.log(info);
+					if(info.route_id in allHangxian)
+					{
+						info.route_name = allHangxian[info.route_id].route_name;
+					}
+					else{
+						info.route_name = "-";
+					}
 					allBoat.push(info);
 				}
-				RefreshImportTable();
+				project_filter_refresh();
 			},       
 			error: function () {       
 				alert("获取数据失败！");       
@@ -175,9 +202,22 @@ function InitImportTable() {
 			entry += '<option value="'+c+'">'+ c+'---'+allCompany[c].name +'</option>';
 		}
 		$("#import_fleetid").append(entry);
+		
+		var select_route = document.getElementById("import_routeid");
+		while(select_route.hasChildNodes()) 
+		{
+			select_route.removeChild(select_route.firstChild);
+		}
+		var entry = "";
+		for (var h in allHangxian) {
+			entry += '<option value="'+h+'">'+ h+'---'+allHangxian[h].route_name +'</option>';
+		}
+		$("#import_routeid").append(entry);
+		
 		$("#import_update_label").text("新增");
 		$("#import_mmsl").val("");
 		$("#import_fleetid").val("");
+		$("#import_routeid").val("");
 		$("#import_shipname").val("");
 		$("#import_imo").val("");
 		$("#import_length").val("");
@@ -213,7 +253,20 @@ function InitImportTable() {
 			entry += '<option value="'+c+'">'+ c+'---'+allCompany[c].name +'</option>';
 		}
 		$("#import_fleetid").append(entry);
+		
+		var select_route = document.getElementById("import_routeid");
+		while(select_route.hasChildNodes()) 
+		{
+			select_route.removeChild(select_route.firstChild);
+		}
+		var entry = "";
+		for (var h in allHangxian) {
+			entry += '<option value="'+h+'">'+ h+'---'+allHangxian[h].route_name +'</option>';
+		}
+		$("#import_routeid").append(entry);
+		
 		$("#import_fleetid").val(arrselections[0].fleetid);
+		$("#import_routeid").val(arrselections[0].route_id);
 		$("#import_update_label").text("编辑");
 		$("#import_mmsl").val(arrselections[0].mmsi);
 		$("#import_fleetid").val(arrselections[0].fleetid);
@@ -274,13 +327,20 @@ function fillBoatData(data)
 			"fleetid":data[i].fleet_id,"imo":data[i].imo,"length":data[i].length,
 			"width":data[i].width,"mmsi":data[i].mmsi,"shipname":data[i].shipname,
 			"shiptype":data[i].shiptype,"contact":data[i].contact,"cellphone":data[i].cellphone,
-			"owner":data[i].owner, "ownerphone":data[i].owner_phone};
+			"owner":data[i].owner, "ownerphone":data[i].owner_phone,"route_id":data[i].route_id};
 		
 		if(info.fleetid in allCompany){
 			info.fleetname = allCompany[info.fleetid].name;
 		}
 		else{
 			info.fleetname = "-";
+		}
+		if(info.route_id in allHangxian)
+		{
+			info.route_name = allHangxian[info.route_id].route_name;
+		}
+		else{
+			info.route_name = "-";
 		}
 		allBoat.push(info);
 	}
@@ -300,7 +360,7 @@ function import_add()
 	postData["cellphone"] = $("#import_cellphone").val();
 	postData["owner"] = $("#import_owner").val();
 	postData["owner_phone"] = $("#import_ownerphone").val();
-	postData["route_id"] = "1";
+	postData["route_id"] = $("#import_routeid").val();
 	$.ajax({
          type: "POST",
          url: "/shanggang/ship/add",
@@ -331,7 +391,7 @@ function import_edit()
 	postData["cellphone"] = $("#import_cellphone").val();
 	postData["owner"] = $("#import_owner").val();
 	postData["owner_phone"] = $("#import_ownerphone").val();
-	postData["route_id"] = "1";
+	postData["route_id"] = $("#import_routeid").val();
 	$.ajax({
          type: "POST",
          url: "/shanggang/ship/update",
@@ -366,4 +426,96 @@ function import_delete(mmsi)
                 alert("删除数据失败！");       
            }       
      });
+}
+
+function project_filter()
+{
+	tmp_allBoat = [];
+	var pro = $("#import_project").val();
+	if (pro < 0){
+		InitImportTable();
+	}
+	else{
+		postData["project_id"] = pro;
+		$.ajax({
+			type: "POST",
+			url: "/shanggang/ship/listbyprojectid",
+			data: JSON.stringify(postData),
+			contentType:"application/json",
+			success: function (data) {
+				console.log(data);
+				var mmsis = {};
+				for (var i = 0;i<data.length;++i)
+				{
+					var mmsi = data[i].mmsi;
+					mmsis[mmsi] = "";
+				}
+				for (var i = 0;i<allBoat.length;++i)
+				{
+					if (allBoat[i].mmsi in mmsis){
+						tmp_allBoat.push(allBoat[i]);
+					}
+				}
+				allBoat = tmp_allBoat;
+				InitImportTable();
+			},
+			error: function () {       
+				alert("获取数据失败！ ")
+			}       
+		 });
+	}
+}
+
+function project_filter_refresh()
+{
+	tmp_allBoat = [];
+	var pro = $("#import_project").val();
+	if (pro < 0){
+		InitImportTable();
+	}
+	else{
+		postData["project_id"] = pro;
+		$.ajax({
+			type: "POST",
+			url: "/shanggang/ship/listbyprojectid",
+			data: JSON.stringify(postData),
+			contentType:"application/json",
+			success: function (data) {
+				console.log(data);
+				var mmsis = {};
+				for (var i = 0;i<data.length;++i)
+				{
+					var mmsi = data[i].mmsi;
+					mmsis[mmsi] = "";
+				}
+				for (var i = 0;i<allBoat.length;++i)
+				{
+					if (allBoat[i].mmsi in mmsis){
+						tmp_allBoat.push(allBoat[i]);
+					}
+				}
+				allBoat = tmp_allBoat;
+				RefreshImportTable();
+			},
+			error: function () {       
+				alert("获取数据失败！ ")
+			}       
+		 });
+	}
+}
+
+function project_changed()
+{
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/ship/list",
+        success: function (data) {
+			fillBoatData(data);
+			fillMmsiData(data);
+			project_filter();
+            },
+		error: function () {       
+            alert("获取数据失败！");
+        }  
+    });
 }

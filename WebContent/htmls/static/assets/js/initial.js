@@ -113,21 +113,32 @@ $(document).ready(function() {
         url: "/shanggang/dredging_area/listall",
         success: function (data) {
         	fillAllShujun(data);
-            },
+			$.ajax({
+				method: "GET",
+				url: "/shanggang/dumping_area/list",
+				success: function (data) {
+					fillAllPaoni(data);
+					$.ajax({
+						method: "GET",
+						url: "/shanggang/route/listall",
+						success: function (data) {    
+								fillAllRoute(data);
+							  },       
+						error: function () {       
+							   alert("获取数据失败！");       
+						  }       
+					});
+				},
+				error: function () {       
+					alert("获取数据失败！");
+				}  
+			});
+        },
 		error: function () {       
             alert("获取数据失败！");
         }  
     });
-	$.ajax({
-        method: "GET",
-        url: "/shanggang/dumping_area/list",
-        success: function (data) {
-        	fillAllPaoni(data);
-            },
-		error: function () {       
-            alert("获取数据失败！");
-        }  
-    });
+	
 	/*$.ajax({
         method: "GET",
         url: "/shanggang/abnormalinfo/exceedspeedfre",

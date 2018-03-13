@@ -73,6 +73,7 @@ function InitLoadParam()
 	$("#btn_edit").show();
 	$("#btn_delete").show();
 	$("#btn_show").hide();
+	$("#import_project").hide();
 	$("#finish_checkbox").show();
 	$("#finish_checkbox_label").show();
 	document.getElementById('finish_checkbox').checked = false;
@@ -606,7 +607,7 @@ function fillMmsiData(data)
 	{
 		allMmsi[data[i].mmsi] = {"shipname":data[i].shipname,"contact":data[i].contact,"cellphone":data[i].cellphone,"fleetid": data[i].fleet_id,
 		"IMO":data[i].imo, "length":data[i].length, "width":data[i].width, "capacity":data[i].capacity, "shiptype":data[i].shiptype,
-		"boss":data[i].owner,"bossphone":data[i].owner_phone};
+		"boss":data[i].owner,"bossphone":data[i].owner_phone,"route_id":data[i].route_id};
 	}
 }
 

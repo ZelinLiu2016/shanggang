@@ -200,30 +200,30 @@
 					<ul>		
 						<li >
 							<a id = "dirt-error1" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(1)">
-							<span id="L2L3L1" class="LeftText">未驶入抛泥区</span>
+							<span id="L2L3L1" class="LeftText">作业行为异常</span>
 							</a>
 						</li>
 						<li >
 							<a id = "dirt-error2" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(2)">
-							<span id="L2L3L2" class="LeftText">抛泥区错误</span>
+							<span id="L2L3L2" class="LeftText">未驶入抛泥区</span>
 							</a>
 						</li>
 						<li >
 							<a id = "dirt-error3" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(3)">
-							<span id="L2L3L3" class="LeftText">船舶位置异常</span>
+							<span id="L2L3L3" class="LeftText">作业位置错误</span>
 							</a>
 						</li>
 						<li >
 							<a id = "dirt-error4" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(4)">
-							<span id="L2L3L4" class="LeftText">抛泥区内时间异常</span>
+							<span id="L2L3L4" class="LeftText">抛泥区错误</span>
 							</a>
 						</li>
-						<li >
+						<!--li >
 							<a id = "dirt-error5" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="抛泥异常" onclick = "DirtError(5)">
 							<span id="L2L3L5" class="LeftText">作业区内时间异常</span>
 							</a>
 						</li>
-						<!--li >
+						<li >
 							<a id = "run-error" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="航行异常" onclick = "RunError()">
 							<span id="L2L3L2" class="LeftText">航行异常</span>
 							</a>
@@ -467,6 +467,7 @@
 				
 			<div id="toolbar" style="margin-bottom:10px;display:none;">
 				<div>
+					<select name="import_project" id="import_project" style="width:150px;height:30px"/> </select>
 					<input type="text" style="height:30px;width:350px;color:black;" id="toolbar_search"></input>
 					<div class="btn-group">
 						<button id="btn_search" type="button" class="btn btn-default">
@@ -1149,6 +1150,14 @@
 					</div>
 					<div class="col-sm-4 nopadding">
 						<input type="text" name="import_ownerphone" id="import_ownerphone" style="width:145px;height:25px"/>
+					</div>
+				</div>
+				<div class="row" style="margin:0;height:18%;">
+					<div class="col-sm-2 nopadding">
+						航线
+					</div>
+					<div class="col-sm-4 nopadding">
+						<select name="import_routeid" id="import_routeid" style="width:145px;height:25px"/> </select>
 					</div>
 				</div>
 			</div>

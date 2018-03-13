@@ -2,7 +2,7 @@
 var allError = [];
 var postData = {};
 var abtype = "";
-var dirt_abnormal_type = {0:"正常",1:"未驶入抛泥区",2:"抛泥区错误", 3:"船舶位置异常", 4:"抛泥区内时间异常", 5:"作业区内时间异常"};
+var dirt_abnormal_type = {0:"正常",1:"作业行为异常",2:"未驶入抛泥区", 3:"作业位置错误", 4:"抛泥区错误"};
 var dirt_type_selected = 0;
 function BoatErrorInit()
 {

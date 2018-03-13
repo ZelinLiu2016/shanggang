@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -24,6 +25,8 @@ import org.springframework.http.ResponseEntity;
 import com.baidu.mapapi.model.LatLng;
 import com.sg.abnormalDetection.Point;
 import com.sg.abnormalDetection.Quadrilateral;
+import com.sg.domain.Dredging_area;
+import com.sg.domain.DumpingArea;
 import com.sg.domain.Project;
 import com.sg.domain.Shipinfo;
 import com.sg.domain.Workload_day;
@@ -101,13 +104,16 @@ public class WorkloadTimerTask extends TimerTask {
 //		String dumping_str = "31:16:32,121:45:39-31:16:44,121:45:51-31:16:24,121:46:20-31:16:11,121:46:08";
 		
 		String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(mmsi));
-		String harbor_id = session.selectOne("getdredgingareabyid",route_id);
-		String harbor_str = session.selectOne("getDredgingLocation",harbor_id);
 		String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
 		String dumping_str = session.selectOne("getDumpingLocation",dumping_id);
+		List<DumpingArea> otherdumping_info = session.selectList("getotherdumpingarea",dumping_id);
+		int speed_limit = session.selectOne("getSpeedlimit",route_id);
 //		Quadrilateral harbor = new Quadrilateral(harbor_str);
 		Quadrilateral dumping = new Quadrilateral(dumping_str);
-		
+		List<Quadrilateral> otherdumping = new ArrayList<Quadrilateral>();
+		for(Iterator<DumpingArea> it= otherdumping_info.iterator();it.hasNext();){
+			otherdumping.add(new Quadrilateral(it.next().getLocation()));
+		}
 		
 		if(session.selectList("getinfoduring",info)==null)
 			return;
@@ -125,6 +131,8 @@ public class WorkloadTimerTask extends TimerTask {
 				state[i]=2; //in dumping area
 			else if(rectangdis(dumping_str, point)<1000)
 				state[i]=4;
+			else if(areascontains(otherdumping,point))
+				state[i]=5;//in other dumping area
 			else
 				state[i]=3;// neither in  dumping area nor near
 //			if(state[i]!=3)
@@ -143,7 +151,11 @@ public class WorkloadTimerTask extends TimerTask {
 		workrec.setIndump("");
 		workrec.setExitdump("");
 		workrec.setState(0);
+		workrec.setExceed_speed(0);
+		workrec.setHandlerecord("");
 		for(int j=0;j<state.length;j++){
+			if(Double.valueOf(location_list.get(j).sp)>Double.valueOf(speed_limit))
+				workrec.setExceed_speed(1);
 			if(state[j]==2&&wait2){
 				workrec.setIndump(location_list.get(j).ti);
 				workrec.setExitdred(location_list.get(j).ti);
@@ -156,6 +168,33 @@ public class WorkloadTimerTask extends TimerTask {
 				wait2 = false;
 //				System.out.println("进入抛泥区域！！"+location_list.get(j).ti);
 			}
+			else if(state[j]==5&&wait2){//进入错误的抛泥区
+				workrec.setState(4);
+				Workrecord lastrec = session.selectOne("getlastrecord01",mmsi);
+//				System.out.println("上一个?记录："+lastrec);
+				if(lastrec==null||(sdf.parse(location_list.get(j).ti).getTime()-sdf.parse(lastrec.exitdump).getTime())/1000/60>480){		
+					//more than 8h between two records		
+					String date = location_list.get(j).ti.substring(0, 10);
+					workrec.setDate(date);
+					workrec.setIndump(location_list.get(j).ti);
+					workrec.setExitdred(location_list.get(j).ti);
+					Calendar ca = Calendar.getInstance();
+					ca.setTime(sdf.parse(location_list.get(j).ti));
+					ca.add(Calendar.HOUR, -2);				
+					workrec.setIndred(sdf.format(ca.getTime()));
+					ca.add(Calendar.HOUR, 4);	
+					workrec.setExitdump(sdf.format(ca.getTime()));
+					System.out.println(workrec);
+					session.insert("addworkrecord",workrec);
+					workrec.setIndred("");
+					workrec.setExitdred("");
+					workrec.setIndump("");
+					workrec.setExitdump("");
+					workrec.setState(0);
+					workrec.setExceed_speed(0);
+					session.commit();						
+				}
+			}
 			else if(state[j]==3&&!wait2){
 //				System.out.println("出抛泥区域！！"+location_list.get(j).ti);
 				workrec.setExitdump(location_list.get(j).ti);
@@ -166,8 +205,6 @@ public class WorkloadTimerTask extends TimerTask {
 				Workrecord lastrec = session.selectOne("getlastrecord01",mmsi);
 				if(lastrec==null||(sdf.parse(workrec.exitdump).getTime()-sdf.parse(lastrec.exitdump).getTime())/1000/60>180){
 //					System.out.println(workrec); 
-					if(workrec.state!=0&&((sdf.parse(workrec.exitdump).getTime() - sdf.parse(workrec.indump).getTime())/1000/60>60))
-						workrec.setState(3);
 					System.out.println(workrec);
 					session.insert("addworkrecord",workrec);					
 				}				
@@ -176,19 +213,21 @@ public class WorkloadTimerTask extends TimerTask {
 				workrec.setIndump("");
 				workrec.setExitdump("");
 				workrec.setState(0);
+				workrec.setExceed_speed(0);
 				session.commit();
 				}	
 			else if(state[j]==4){
 				boolean abnormal = true;
 				int k=1;
-				while(j+k<state.length&&((sdf.parse(location_list.get(j+k).ti).getTime()-sdf.parse(location_list.get(j).ti).getTime())/1000/60<240)){
+				while(j+k<state.length&&((sdf.parse(location_list.get(j+k).ti).getTime()-sdf.parse(location_list.get(j).ti).getTime())/1000/60<480)){
 					if(state[j+k]==2){
 						abnormal = false;
 						break;
 					}				
 					k++;
 				}
-				while(j-k>=0&&((sdf.parse(location_list.get(j).ti).getTime()-sdf.parse(location_list.get(j-k).ti).getTime())/1000/60<240)){
+				k=1;
+				while(j-k>=0&&((sdf.parse(location_list.get(j).ti).getTime()-sdf.parse(location_list.get(j-k).ti).getTime())/1000/60<480)){
 					if(state[j-k]==2){
 						abnormal = false;
 						break;
@@ -212,10 +251,7 @@ public class WorkloadTimerTask extends TimerTask {
 //					System.out.println("上一个?记录："+lastrec);
 //					System.out.println("这条记录："+workrec);
 					if(lastrec==null||(sdf.parse(workrec.exitdump).getTime()-sdf.parse(lastrec.exitdump).getTime())/1000/60>480){		
-						//more than 8h between two records
-						System.out.println(workrec);
-						if(workrec.state!=0&&((sdf.parse(workrec.exitdump).getTime() - sdf.parse(workrec.indump).getTime())/1000/60>60))
-							workrec.setState(3);
+						//more than 8h between two records											
 						System.out.println(workrec);
 						session.insert("addworkrecord",workrec);						
 					}
@@ -223,16 +259,17 @@ public class WorkloadTimerTask extends TimerTask {
 					workrec.setExitdred("");
 					workrec.setIndump("");
 					workrec.setExitdump("");
-					workrec.setState(0);		
+					workrec.setState(0);
+					workrec.setExceed_speed(0);
 					wait2=true;
 				}
 			}
 			session.commit();
-			}
-	
+			}	
 	session.commit();
 	session.close();
 	}
+
 	
 	public static void others(String mmsi, String date) throws IOException, ParseException{
 		SqlSession session = getSession();
@@ -245,18 +282,28 @@ public class WorkloadTimerTask extends TimerTask {
 		info.setBeginDate(date);
 	
 		String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(mmsi));
-		System.out.print("route_id:"+route_id);
+//		System.out.print("route_id:"+route_id);
 		String harbor_id = session.selectOne("getdredgingareabyid",route_id);
-		System.out.print("harbor_id:"+harbor_id);
+//		System.out.print("harbor_id:"+harbor_id);
 		String harbor_str = session.selectOne("getDredgingLocation",harbor_id);
+		List<Dredging_area> dredinfo = session.selectList("getotherdredingarea",Integer.valueOf(harbor_id));
 		String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
-		System.out.print("dumping_id:"+dumping_id);
+//		System.out.print("dumping_id:"+dumping_id);
 		String dumping_str = session.selectOne("getDumpingLocation",dumping_id);
+		List<DumpingArea> dumpinfo = session.selectList("getotherdumpingarea",dumping_id);
+		int speed_limit = session.selectOne("getSpeedlimit",route_id);
 //		System.out.println("harbor_str:"+harbor_str);
 //		System.out.println("dumping_str:"+dumping_str);
 		Quadrilateral harbor = new Quadrilateral(harbor_str);
 		Quadrilateral dumping = new Quadrilateral(dumping_str);
-		
+		List<Quadrilateral> otherdredging = new ArrayList<Quadrilateral>();
+		List<Quadrilateral> otherdumping = new ArrayList<Quadrilateral>();
+		for(Dredging_area area:dredinfo){
+			otherdredging.add(new Quadrilateral(area.getLocation()));
+		}
+		for(DumpingArea area:dumpinfo){
+			otherdumping.add(new Quadrilateral(area.getLocation()));
+		}
 		
 		if(session.selectList("getinfoduring",info)==null)
 			return;
@@ -274,12 +321,15 @@ public class WorkloadTimerTask extends TimerTask {
 				state[i]=1;  //in harbor
 			else if(dumping.isContainsPoint(point))
 				state[i]=2; //in dumping area
+			else if(areascontains(otherdredging, point))
+				state[i]=4;
+			else if(areascontains(otherdumping, point))
+				state[i]=5;
 			else
 				state[i]=3;// neither in harbor nor in dumping area
 //			if(state[i]!=3)
 //				System.out.print(state[i]+",");
-			i=i+1;
-			
+			i=i+1;	
 		}
 //		System.out.println("the length of state:"+state.length);
 		boolean wait1 = true;
@@ -293,6 +343,8 @@ public class WorkloadTimerTask extends TimerTask {
 		workrec.setIndump("");
 		workrec.setExitdump("");
 		workrec.setState(0);
+		workrec.setExceed_speed(0);
+		workrec.setHandlerecord("");
 		Workrecord lastrec = session.selectOne("getlastrecord",mmsi);		
 //		System.out.println("上一条记录："+lastrec.exitdump);
 		if(lastrec!=null&&(lastrec.exitdump.equals(lastrec.indump))){
@@ -312,11 +364,20 @@ public class WorkloadTimerTask extends TimerTask {
 			}
 		}
 		for(int j=0;j<state.length;j++){
+			if(Double.valueOf(location_list.get(j).sp)>Double.valueOf(speed_limit))
+				workrec.setExceed_speed(1);
 			if(state[j]==1&&wait1){
 				workrec.setIndred(location_list.get(j).ti);
 				wait1 = false;
 				wait2 = true;
 //				System.out.println("进入工作区域！！"+location_list.get(j).ti);
+			}
+			else if(state[j]==4&&wait1){
+				workrec.setIndred(location_list.get(j).ti);
+				workrec.setExitdred(location_list.get(j).ti);
+				workrec.setState(3);//作业位置错误
+				wait1 = false;
+				wait2 = true;
 			}
 			else if(wait2&&((sdf.parse(location_list.get(j).ti).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60>480)){
 				wait1 = true;
@@ -327,12 +388,13 @@ public class WorkloadTimerTask extends TimerTask {
 				workrec.setState(2);
 				session.insert("addworkrecord",workrec);
 				session.commit();
-//				System.out.println(workrec);
+				System.out.println(workrec);
 				workrec.setIndred("");
 				workrec.setExitdred("");
 				workrec.setIndump("");
 				workrec.setExitdump("");
 				workrec.setState(0);
+				workrec.setExceed_speed(0);
 			}
 			else if(state[j]==2&&wait2){
 //				System.out.println("进入抛泥区域！！"+location_list.get(j).ti);
@@ -347,26 +409,41 @@ public class WorkloadTimerTask extends TimerTask {
 					}
 				}
 			}
+			else if(state[j]==5&&wait2){
+				workrec.setIndump(location_list.get(j).ti);
+				workrec.setState(4);
+				wait1 = false;
+				wait2 = false;
+				for(int k=j-1;k>0;k--){//back to find time of exit dred
+					if(state[k]==3&&state[k-1]==1){
+						workrec.setExitdred(location_list.get(k).ti);//time of exit dred
+//						System.out.println("出工作区域！！"+location_list.get(k).ti);
+						break;
+					}
+				}
+				if(workrec.exitdred.equals(""))
+					workrec.setExitdred(workrec.indred);
+			}
 			else if(state[j]==3&&!wait1&&!wait2){
 //				System.out.println("出抛泥区域！！！"+location_list.get(j).ti);
 				workrec.setExitdump(location_list.get(j).ti); 
 				wait1 = true;
 				wait2 = false;
+				System.out.println(workrec);
 				double timelen_dred = (sdf.parse(workrec.getExitdred()).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60;
 				double timelen_dump = (sdf.parse(workrec.getExitdump()).getTime() - sdf.parse(workrec.getIndump()).getTime())/1000/60;
 //				System.out.println("挖泥时间："+timelen);
 				if(timelen_dred>360)//unit is min
 					workrec.setState(1);//挖泥时间过长
-				if(timelen_dump>100)//unit is min
-					workrec.setState(3);//抛泥时间过长
 				session.insert("addworkrecord",workrec);
 				session.commit();
-//				System.out.println(workrec);
+				System.out.println(workrec);
 				workrec.setIndred("");
 				workrec.setExitdred("");
 				workrec.setIndump("");
 				workrec.setExitdump("");
 				workrec.setState(0);
+				workrec.setExceed_speed(0);
 			}
 		}
 		if(workrec.indred!=""){
@@ -386,13 +463,14 @@ public class WorkloadTimerTask extends TimerTask {
 				}
 			}
 			System.out.println(workrec.toString());
-			session.insert("addworkrecord",workrec);
+//			session.insert("addworkrecord",workrec);
 			session.commit();
 			workrec.setIndred("");
 			workrec.setExitdred("");
 			workrec.setIndump("");
 			workrec.setExitdump("");
 			workrec.setState(0);
+			workrec.setExceed_speed(0);
 		}
 	
 	session.commit();
@@ -412,33 +490,40 @@ public class WorkloadTimerTask extends TimerTask {
 			mindis = Point.GetLineDistance(point, recpoint[0], recpoint[3]);
 		return mindis;
 	}
-	
+	public static boolean areascontains(List<Quadrilateral> areas,LatLng point){
+		for(Quadrilateral area:areas){
+			if(area.isContainsPoint(point)){
+				return true;
+			}
+		}
+		return false;
+	}
 	public static void main(String[] args) throws IOException, ParseException {
-//		others("413380190","2017-11-26");
-		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
-		Date start = sdf.parse("2017-11-16");
+		
+		SimpleDateFormat msdf = new SimpleDateFormat( "yyyy-MM-dd" );
+		Date start = msdf.parse("2017-11-17");
 		Calendar cd = Calendar.getInstance();    
 		cd.setTime(start);
-		for(int i=0;i<111;i++){
-			String timestr = sdf.format(cd.getTime());
+		for(int i=0;i<134;i++){
+			String timestr = msdf.format(cd.getTime());
 			System.out.println(timestr);
-			huangpu("413373530",timestr);
-			huangpu("413773147",timestr);
-			huangpu("413375760",timestr);
-			huangpu("412358640",timestr);
-			huangpu("413814781",timestr);
-			huangpu("413352890",timestr);
-			huangpu("413364060",timestr);
-			huangpu("413364010",timestr);
-			huangpu("413379680",timestr);
-			huangpu("413379690",timestr);
-			huangpu("413364210",timestr);
-			huangpu("413364220",timestr);
-			huangpu("413358270",timestr);
-			huangpu("413357370",timestr);
-//			others("413380190",timestr);
+			others("413380190",timestr);
+			others("413465060",timestr);
 			cd.add(Calendar.DATE, 1);
 		}
 	}
-		
+//huangpu("413373530",timestr);
+//huangpu("413773147",timestr);
+//huangpu("413375760",timestr);
+//huangpu("412358640",timestr);ok
+//huangpu("413814781",timestr);
+//huangpu("413352890",timestr);
+//huangpu("413364060",timestr);
+//huangpu("413364010",timestr);
+//huangpu("413379680",timestr);
+//huangpu("413379690",timestr);
+//huangpu("413364210",timestr);
+//huangpu("413364220",timestr);
+//huangpu("413358270",timestr);ok
+//huangpu("413357370",timestr);ok
 }

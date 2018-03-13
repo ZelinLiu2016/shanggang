@@ -99,7 +99,8 @@ public class HttpPostXml {
 //		System.out.println("字符串是："+result);
 		SqlSession session = getSession();
 		List<String> mmsi = session.selectList("getworkingmmsilist");
-		String[] mmsiset = {"413357370", "413358270", "413364010", "413364060", "413364210", "413364220", "413373530", "413375760", "413379680", "413379690", "413439320", "413697420", "413699190", "413773147", "413814781"};
+		String[] mmsiset = {"412208530","413439320"};
+			//{"413357370", "413358270", "413364010", "413364060", "413364210", "413364220", "413373530", "413375760", "413379680", "413379690", "413439320", "413697420", "413699190", "413773147", "413814781"};
 //		for(int i=0;i<3;i++){
 //			String[] temp = mmsi.get(i).split(";");
 //			for(int j=0;j<temp.length;j++){
@@ -113,13 +114,13 @@ public class HttpPostXml {
 		for(int i=0;i<mmsiset.length;i++){
 			String mi = mmsiset[i];
 			System.out.println(mi);
-			Date start = sdf.parse("2017-12-07 00:00:05");
-			Date end = sdf.parse("2017-12-07 23:59:59");
+			Date start = sdf.parse("2017-07-11 00:00:05");
+			Date end = sdf.parse("2017-07-11 23:59:59");
 			Calendar cdstart = Calendar.getInstance();   
 			Calendar cdend = Calendar.getInstance();   
 			cdstart.setTime(start);
 			cdend.setTime(end);
-			for(int j=0;j<6;j++){
+			for(int j=0;j<45;j++){
 				String start_str = sdf.format(cdstart.getTime());
 				String end_str = sdf.format(cdend.getTime());
 				String xmlInfo = "<?xml version='1.0' encoding='gb2312'?><sendparament><MMSI>"+mi+"</MMSI><starttime>"+start_str+"</starttime><endtime>"+end_str+"</endtime></sendparament>";

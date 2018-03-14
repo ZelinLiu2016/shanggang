@@ -226,9 +226,9 @@ function InitRouteTable()
                 return;
             }
 			route_id = arrselections[0].routeid;
-			harbor = routeDict[route_id].harbor;
-			dumping_area = routeDict[route_id].dumping;
-			speed = routeDict[route_id].speed;
+			harbor = arrselections[0].dredgingid;
+			dumping_area = arrselections[0].dumpingid;
+			speed = arrselections[0].speed;
 			$("#route_id").val(route_id);
 			$("#route_speed").val(speed);
 			

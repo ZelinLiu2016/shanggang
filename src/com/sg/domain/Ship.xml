@@ -31,8 +31,9 @@
 	    <delete id="deleteShip" parameterType="int" >
 	        delete from ship where MMSI = #{mmsi}  
 	    </delete>
-	    <select id="getshiplist" parameterType="String" resultType="Ship">
-	    	select * from ship where mmsi in (#{mmsilist})
+	    <select id="getshiplist" resultType="Ship">
+	    	select * from ship where mmsi in <foreach item="AList" index="index" collection="list"
+                open="(" separator="," close=")"> #{AList}</foreach>
 	    </select>
 	    <select id="listShipMmsi" resultType="Integer">
 	      select MMSI from ship

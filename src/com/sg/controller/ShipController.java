@@ -3,6 +3,7 @@ package com.sg.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ibatis.io.Resources;
@@ -152,8 +153,10 @@ public class ShipController {
 		JSONObject json = JSONObject.fromObject(pro);		
 		int pro_id = json.getInt("project_id"); 
 		SqlSession session = this.getSession();
-		String mmsilist = session.selectOne("getMmsilist",pro_id);		
-		List<Ship> ship = session.selectList("getshiplist",mmsilist);		 
+		String mmsilist = session.selectOne("getMmsilist",pro_id);	
+		System.out.println(mmsilist);
+		List<String> wareIdList = Arrays.asList(mmsilist.split(";"));
+		List<Ship> ship = session.selectList("getshiplist",wareIdList);		 
 //		 System.out.println("船队"+fleet_id+"的船只信息：");
 		 return new ResponseEntity<List<Ship>>(ship, HttpStatus.OK);
 		}

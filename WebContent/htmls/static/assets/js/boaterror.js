@@ -367,10 +367,10 @@ function InitDirtTable()
         field: 'exitdump',
         title: '离开抛泥区域'
     },
-	{
+	/*{
         field: 'handle',
         title: '是否处理'
-    },
+    },*/
 	{
         field: 'handlerecord',
         title: '处理意见'
@@ -677,17 +677,13 @@ function InitSpeedTable()
         title: '进入抛泥区域'
     },
 	{
-        field: 'speed',
-        title: '航行速度'
-    },
-	{
         field: 'exitdump',
         title: '离开抛泥区域'
     },
-	{
+	/*{
         field: 'handle',
         title: '是否处理'
-    },
+    },*/
 	{
         field: 'handlerecord',
         title: '处理意见'

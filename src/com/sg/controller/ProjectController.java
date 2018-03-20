@@ -61,6 +61,8 @@ public class ProjectController {
 		project.setConstruction_company(json.getString("construction_company"));
 		project.setDesign_company(json.getString("design_company"));
 		project.setSupervision_company(json.getString("supervision_company"));
+		project.setFinacial_supervision(json.getString("finacial_supervision"));
+		project.setMeasuring_company(json.getString("measuring_company"));
 		project.setIsworking(json.getInt("isworking"));
 		project.setToparea(json.getString("top_area"));
 		SqlSession session = this.getSession();
@@ -92,6 +94,8 @@ public class ProjectController {
 		project.setConstruction_company(json.getString("construction_company"));
 		project.setDesign_company(json.getString("design_company"));
 		project.setSupervision_company(json.getString("supervision_company"));
+		project.setFinacial_supervision(json.getString("finacial_supervision"));
+		project.setMeasuring_company(json.getString("measuring_company"));
 		project.setIsworking(json.getInt("isworking"));
 		project.setToparea(json.getString("top_area"));
 		SqlSession session = this.getSession();
@@ -168,6 +172,16 @@ public class ProjectController {
 				temp.add(proj);
 			}
 		} 
+		return new ResponseEntity<List<Project>>(temp,HttpStatus.OK);
+	}
+	@RequestMapping(value="/listprojecthis",method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<List<Project>> listcompanyhis(@RequestBody String pro) throws IOException{
+		JSONObject json = JSONObject.fromObject(pro);
+		List<Project> project = new ArrayList<Project>();
+		String harbor = json.getString("harbor_name");
+		SqlSession session = this.getSession();
+		List<Project> temp = session.selectList("getProjecthis");
 		return new ResponseEntity<List<Project>>(temp,HttpStatus.OK);
 	}
 }

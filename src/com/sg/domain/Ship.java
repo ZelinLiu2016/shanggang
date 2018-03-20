@@ -14,8 +14,30 @@ public class Ship {
 	private int route_id;
 	private String owner;
 	private String owner_phone;
+	private String startdate;
+	private String enddate;
+	private int project_id;
 	
 	
+	
+	public String getStartdate() {
+		return startdate;
+	}
+	public void setStartdate(String startdate) {
+		this.startdate = startdate;
+	}
+	public String getEnddate() {
+		return enddate;
+	}
+	public void setEnddate(String enddate) {
+		this.enddate = enddate;
+	}
+	public int getProject_id() {
+		return project_id;
+	}
+	public void setProject_id(int project_id) {
+		this.project_id = project_id;
+	}
 	public String getOwner_phone() {
 		return owner_phone;
 	}
@@ -102,7 +124,8 @@ public class Ship {
 		return "Ship [mmsi=" + mmsi + ", shipname=" + shipname + ", imo=" + imo + ", length=" + length + ", width="
 				+ width + ", shiptype=" + shiptype + ", capacity=" + capacity + ", fleet_id=" + fleet_id + ", contact="
 				+ contact + ", cellphone=" + cellphone + ", route_id=" + route_id + ", owner=" + owner
-				+ ", owner_phone=" + owner_phone + "]";
+				+ ", owner_phone=" + owner_phone + ", startdate=" + startdate + ", enddate=" + enddate + ", project_id="
+				+ project_id + "]";
 	}
 	
 	

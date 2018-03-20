@@ -22,10 +22,27 @@ public class Project {
 		private String construction_company;
 		private String design_company;
 		private String supervision_company;
+		private String finacial_supervision;
+		private String measuring_company;
 		private String toparea;
 		private int isworking;
 		
 
+		public String getFinacial_supervision() {
+			return finacial_supervision;
+		}
+
+		public void setFinacial_supervision(String finacial_supervision) {
+			this.finacial_supervision = finacial_supervision;
+		}
+
+		public String getMeasuring_company() {
+			return measuring_company;
+		}
+
+		public void setMeasuring_company(String measuring_company) {
+			this.measuring_company = measuring_company;
+		}
 
 		public String getToparea() {
 			return toparea;

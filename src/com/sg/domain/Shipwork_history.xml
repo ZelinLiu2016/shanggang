@@ -15,7 +15,7 @@
 	    <insert id="addShipworkhistory" parameterType="Shipwork_history" >
 	        insert into shipwork_history   values (#{mmsi},#{company_id},#{route_id},#{startdate},#{enddate},#{project_id})    
 	    </insert>
-	    <select id="getShipworkhisbyid" parameterType="Integer" resultType="ShipworkhisMap">
+	    <select id="getShipworkhisbyid" parameterType="Integer" resultMap="ShipworkhisMap">
 	    	select * from shipwork_history where mmsi=#{mmsi}
 	    </select>
 	    

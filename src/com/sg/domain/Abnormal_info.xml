@@ -12,13 +12,14 @@
 		<result column="time" property="time" jdbcType="CHAR" />
 		<result column="handlerecord" property="handle" jdbcType="CHAR"/>
 		<result column="speed" property="speed" jdbcType="CHAR" />
+		<result column="exceed_interval" property="exceed_interval" jdbcType="INTEGER"/>
 	</resultMap>
 		<resultMap id="AbnormalFrequency" type="com.sg.domain.AbnormalFrequency">
 		<id column="mmsi" property="mmsi" jdbcType="INTEGER"/>
 		<id column="frequency" property="frequency" jdbcType="INTEGER"/>
 		</resultMap>
 	    <insert id="addAbnormal" parameterType="Abnormal_info" >
-	        insert into abnormal_logging   values (#{mmsi},#{abnormal_type},#{lon},#{lat},#{time},#{speed},#{handle},#{windspeed})    
+	        insert into abnormal_logging   values (#{mmsi},#{abnormal_type},#{lon},#{lat},#{time},#{speed},#{handle},#{windspeed},#{exceed_interval})    
 	    </insert>
 	    <update id="addHandle" parameterType="Abnormal_info">
 	    	update abnormal_logging set handlerecord=#{handle} where mmsi=#{mmsi} AND time=#{time}  AND abnormal_type=#{abnormal_type}

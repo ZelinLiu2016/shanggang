@@ -45,7 +45,7 @@ import com.sg.http.WorkloadTimerTask;
 public class OnlineAbnormalDetection {
 	   //实时异常监测
     private static HashMap<Integer,List<Shipinfo>> ship_trajectory = new HashMap<Integer,List<Shipinfo>>();
-    private static HashMap<Integer,List<Integer>> exceed_flag = new HashMap<Integer,List<Integer>>();
+    private static Abnormal_info exceed_flag = new Abnormal_info();
 //    private static HashMap<Integer,List<Integer>> ship_state = new HashMap<Integer,List<Integer>>();
     private static HashMap<Integer,List<String>> timerecord = new HashMap<Integer,List<String>>(); 
     private static int max_interval = 10;//超过10min超速为连续超速
@@ -117,7 +117,7 @@ public class OnlineAbnormalDetection {
 		return shipinfo;
 	}
 	
-	public static void main() throws DocumentException{
+	public static void main(String[] args) throws DocumentException{
 		// TODO Auto-generated method stub
 		SimpleDateFormat dft1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		SqlSession session = null;
@@ -127,9 +127,9 @@ public class OnlineAbnormalDetection {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String mmsi="";
-		String start_str="";
-		String end_str = "";
+		int mmsi=413380190;
+		String start_str="2017-11-02 00:00:00";
+		String end_str = "2017-11-11 23:59:59";
 		String pathUrl = "http://112.126.75.47/xmlr/getzjshiptrajectory.do";
 		String xmlInfo = "<?xml version='1.0' encoding='gb2312'?><sendparament><MMSI>"+mmsi+"</MMSI><starttime>"+start_str+"</starttime><endtime>"+end_str+"</endtime></sendparament>";
 		String result = doPost(pathUrl, xmlInfo);
@@ -145,7 +145,6 @@ public class OnlineAbnormalDetection {
 			shipinfo.setCo(tra.element("co").getText());
 			shipinfo.setSp(tra.element("sp").getText());
 			shipinfo.setTi(tra.element("ti").getText());
-//			System.out.println(shipinfo.mmsi+","+shipinfo.ti);
 		
 			//实时异常检测
 			Abnormal_info abnormal = new Abnormal_info();
@@ -155,10 +154,9 @@ public class OnlineAbnormalDetection {
 			abnormal.setSpeed(shipinfo.sp);
 			abnormal.setTime(shipinfo.ti);
 			if(!ship_trajectory.containsKey(mmsi)){
-				ship_trajectory.put(Integer.valueOf(mmsi), new ArrayList<Shipinfo>());
+				ship_trajectory.put(mmsi, new ArrayList<Shipinfo>());
 //				ship_state.put(mmsi, new ArrayList<Integer>());
-				exceed_flag.put(Integer.valueOf(mmsi), new ArrayList<Integer>());
-				timerecord.put(Integer.valueOf(mmsi), new ArrayList<String>());
+				timerecord.put(mmsi, new ArrayList<String>());
 			}
 			String route_id = session.selectOne("getShipRoute_id",mmsi);
 			String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
@@ -166,7 +164,7 @@ public class OnlineAbnormalDetection {
 			String dumping_str = session.selectOne("getDumpingLocation",dumping_id);
 			String dredging_str = session.selectOne("getDredgingLocation",dredging_id);
 			List<DumpingArea> otherdumping_info = session.selectList("getotherdumpingarea",dumping_id);
-			List<Dredging_area> otherdredging_info = session.selectList("getotherdredgingArea",dredging_id);
+			List<Dredging_area> otherdredging_info = session.selectList("getotherdredingarea",Integer.valueOf(dredging_id));
 			int speed_limit = session.selectOne("getSpeedlimit",route_id);
 			Quadrilateral dumping = new Quadrilateral(dumping_str);
 			Quadrilateral dredging = new Quadrilateral(dredging_str);
@@ -181,36 +179,37 @@ public class OnlineAbnormalDetection {
 			ship_trajectory.get(mmsi).add(shipinfo);
 			LatLng point = new LatLng(Double.valueOf(shipinfo.lat),Double.valueOf(shipinfo.lon));
 			//判断是否超速
+//			System.out.println("speed_limit:"+speed_limit);
+//			System.out.println("actual speed:"+shipinfo.sp);
 			if(Double.valueOf(shipinfo.sp)>Double.valueOf(speed_limit)){
-				ListIterator<Integer> iter = exceed_flag.get(mmsi).listIterator();
-				String last_exceed = "";
-				while(iter.hasNext()){
-					iter.next();
-				}
-				while(iter.hasPrevious()){
-					last_exceed = ship_trajectory.get(mmsi).get(iter.previousIndex()).ti;
-					int temp = iter.previous();
-					if(temp==0){
-						last_exceed = ship_trajectory.get(mmsi).get(iter.nextIndex()).ti;
-						break;
-					}
-				}
 				try {
-					if((dft1.parse(shipinfo.ti).getTime()-dft1.parse(last_exceed).getTime())/1000/60>max_interval){
+					if(exceed_flag.abnormal_type.equals("Instant exceed speed")&&(dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.time.substring(0, 19)).getTime())/1000/60>max_interval){
+						System.out.println("this exceed:"+shipinfo.ti);
+						System.out.println("last_exceed:"+exceed_flag.time);		
 						abnormal.setAbnormal_type("Continuous exceed speed");
-						abnormal.setExceed_interval((int) ((dft1.parse(shipinfo.ti).getTime()-dft1.parse(last_exceed).getTime())/1000/60));
+						abnormal.setExceed_interval((int) (dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.time.substring(0, 19)).getTime())/1000/60);
+						exceed_flag.setAbnormal_type("");
+						exceed_flag.setTime("");
+						session.insert("addAbnormal",abnormal);
+						session.commit();
 					}
-					else
+					else if(!exceed_flag.abnormal_type.equals("Instant exceed speed")){
 						abnormal.setAbnormal_type("Instant exceed speed");
+						abnormal.setTime(shipinfo.ti);
+						exceed_flag.setAbnormal_type("Instant exceed speed");
+						exceed_flag.setTime(shipinfo.ti);
+						session.insert("addAbnormal",abnormal);
+						session.commit();
+						}
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				session.insert("addAbnormal",abnormal);
-				session.commit();
+//				System.out.println(abnormal.abnormal_type);
 			}
-			else
-				exceed_flag.get(mmsi).add(0);
+			else{
+				exceed_flag.setAbnormal_type("");
+			}
 			
 			if((dredging.isContainsPoint(point))&&timerecord.get(mmsi).isEmpty()){
 //				ship_state.get(mmsi).add(1);
@@ -224,8 +223,9 @@ public class OnlineAbnormalDetection {
 				abnormal.setAbnormal_type("Wrong dredging area");
 				session.insert("addAbnormal",abnormal);
 				session.commit();
+				System.out.println(abnormal.abnormal_type);
 				ship_trajectory.get(mmsi).clear();
-				exceed_flag.get(mmsi).clear();
+				exceed_flag.setAbnormal_type("");;
 				timerecord.get(mmsi).clear();
 			}
 			else if(WorkloadTimerTask.areascontains(otherdumping, point)){
@@ -234,30 +234,33 @@ public class OnlineAbnormalDetection {
 				abnormal.setAbnormal_type("Wrong dumping area");
 				session.insert("addAbnormal",abnormal);
 				session.commit();
+				System.out.println(abnormal.abnormal_type);
 				ship_trajectory.get(mmsi).clear();
 //				ship_state.get(mmsi).clear();
-				exceed_flag.get(mmsi).clear();
+				exceed_flag.setAbnormal_type("");;
 				timerecord.get(mmsi).clear();
 			}
-			else if(WorkloadTimerTask.areascontains(otherdredging,point)&&!(timerecord.get(mmsi).isEmpty())){
+			else if(dredging.isContainsPoint(point)&&!(timerecord.get(mmsi).isEmpty())){
 				try {
-					if(((dft1.parse(shipinfo.ti).getTime()-dft1.parse(timerecord.get(mmsi).get(0)).getTime())/1000/60>360)&&((dft1.parse(shipinfo.ti).getTime()-dft1.parse(timerecord.get(mmsi).get(0)).getTime())/1000/60<480)){
+					if(((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).get(0).substring(0, 19)).getTime())/1000/60>360)&&((dft1.parse(shipinfo.ti).getTime()-dft1.parse(timerecord.get(mmsi).get(0)).getTime())/1000/60<480)){
 						//作业行为异常
 						abnormal.setAbnormal_type("Working behaviour abnormal");
 						session.insert("addAbnormal",abnormal);
 						session.commit();
+						System.out.println(abnormal.abnormal_type);
 						ship_trajectory.get(mmsi).clear();
 //						ship_state.get(mmsi).clear();
-						exceed_flag.get(mmsi).clear();
+						exceed_flag.setAbnormal_type("");;
 						timerecord.get(mmsi).clear();
 					}
-					else if((dft1.parse(shipinfo.ti).getTime()-dft1.parse(timerecord.get(mmsi).get(0)).getTime())/1000/60>480){
+					else if((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).get(0).substring(0, 19)).getTime())/1000/60>480){
 						abnormal.setAbnormal_type("Havn't dump into dumping area");
 						session.insert("addAbnormal",abnormal);
 						session.commit();
+						System.out.println(abnormal.abnormal_type);
 						ship_trajectory.get(mmsi).clear();
 //						ship_state.get(mmsi).clear();
-						exceed_flag.get(mmsi).clear();
+						exceed_flag.setAbnormal_type("");
 						timerecord.get(mmsi).clear();
 					}
 				} catch (ParseException e) {

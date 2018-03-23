@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +16,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,6 +40,7 @@ import com.sg.abnormalDetection.Point;
 import com.sg.abnormalDetection.Quadrilateral;
 import com.sg.domain.Abnormal_info;
 import com.sg.domain.Dredging_area;
+import com.sg.domain.DumpingArea;
 import com.sg.domain.Project;
 import com.sg.domain.Shipinfo;
 import com.sg.domain.Trajectory;
@@ -58,9 +62,13 @@ public class RequestTimerTask extends TimerTask {
 	private static HashMap<String, List<List<Cell>>> supportTrajectoriesMap ;
     private static HashMap<String, List<Cell>> adaptiveWindowMap;
     private static HashMap<String, List<List<Cell>>> allTrajectoriesMap;
-
+    //实时异常监测
+    private static HashMap<Integer,List<Shipinfo>> ship_trajectory = new HashMap<Integer,List<Shipinfo>>();
+    private static Abnormal_info exceed_flag = new Abnormal_info();
+//    private static HashMap<Integer,List<Integer>> ship_state = new HashMap<Integer,List<Integer>>();
+    private static HashMap<Integer,List<String>> timerecord = new HashMap<Integer,List<String>>(); 
+    private static int max_interval = 10;//超过10min超速为连续超速
     
-
 	public static String doPost(String urlStr, String strInfo) {
 		String reStr="";
 		try {
@@ -132,6 +140,7 @@ public class RequestTimerTask extends TimerTask {
 	public void run(){
 		// TODO Auto-generated method stub
 		SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dft1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		System.out.println("向数据库插入数据!!!");
 		Calendar calendar = Calendar.getInstance();
 		System.out.println("这条记录的时间是："+calendar.getTime());
@@ -144,38 +153,21 @@ public class RequestTimerTask extends TimerTask {
 			e1.printStackTrace();
 		}
 		List<String> mmsi_str = session.selectList("getworkingmmsilist");
-		List<Integer> mmsi = new ArrayList<Integer>();
+		List<Integer> mmsilist = new ArrayList<Integer>();
 		for(String str:mmsi_str){
 			String[] mm = str.split(";");
 			for(int i=0;i<mm.length;i++){
-				if(!mmsi.contains(Integer.valueOf(mm[i])))
-					mmsi.add(Integer.valueOf(mm[i]));
+				if(!mmsilist.contains(Integer.valueOf(mm[i])))
+					mmsilist.add(Integer.valueOf(mm[i]));
 			}
 		}
 		
-		HashMap<String,Project> map = new HashMap<String,Project>();
-		List<Project> projectlist = session.selectList("listProject");
-		for(Project pro:projectlist){
-			String shiplist = pro.getMmsilist();
-			String[] ship = shiplist.split(";");
-			for(String str:ship){
-				map.put(str, pro);
-			}
-		}
-		for(int num:mmsi){
-			System.out.println("获取"+num+"的最新坐标");
-			Project project = map.get(String.valueOf(num));
-//			System.out.println(num);
-			String route_id = session.selectOne("getShipRoute_id",num);
-			String area = session.selectOne("getDumpingAreabyid",route_id);
-			String dredging = session.selectOne("getdredgingareabyid",route_id);
-			int speedlimit = session.selectOne("getSpeedlimit",route_id);
-//			String dredgingstr = project.getHarborName();
-//			List<String> dredging = new ArrayList<String>(Arrays.asList(dredgingstr.split(";")));
-//			System.out.println("mmsi:"+num+",area_id:"+area);
-			List<String> ti = session.selectList("listShipRecordTime",num);
+		for(int mmsi:mmsilist){
+			System.out.println("获取"+mmsi+"的最新坐标");
+
+			List<String> ti = session.selectList("listShipRecordTime",mmsi);
 			/*****************************GET DATA FROM INTERFACE************************************************************/
-			String xmlInfo = "<?xml version='1.0' encoding='utf-8'?>"+"<sendparament>"+"<MMSI>"+num+"</MMSI>"+"</sendparament>";
+			String xmlInfo = "<?xml version='1.0' encoding='utf-8'?>"+"<sendparament>"+"<MMSI>"+mmsi+"</MMSI>"+"</sendparament>";
 			String pathUrl = "http://112.126.75.47/xmlr/getcrtshipposition.do";	
 			String doc = doPost(pathUrl, xmlInfo);
 			Shipinfo shipinfo = new Shipinfo();
@@ -195,11 +187,133 @@ public class RequestTimerTask extends TimerTask {
 				session.commit();
 //				System.out.println("INSERT SUCCESSFULLY!");
 			}
+			//实时异常检测
+			Abnormal_info abnormal = new Abnormal_info();
+			abnormal.setLat(shipinfo.lat);
+			abnormal.setLon(shipinfo.lon);
+			abnormal.setMmsi(String.valueOf(mmsi));
+			abnormal.setSpeed(shipinfo.sp);
+			abnormal.setTime(shipinfo.ti);
+			if(!ship_trajectory.containsKey(mmsi)){
+				ship_trajectory.put(mmsi, new ArrayList<Shipinfo>());
+//				ship_state.put(mmsi, new ArrayList<Integer>());
+				timerecord.put(mmsi, new ArrayList<String>());
+			}
+			String route_id = session.selectOne("getShipRoute_id",mmsi);
+			String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
+			String dredging_id = session.selectOne("getdredgingareabyid",route_id);
+			String dumping_str = session.selectOne("getDumpingLocation",dumping_id);
+			String dredging_str = session.selectOne("getDredgingLocation",dredging_id);
+			List<DumpingArea> otherdumping_info = session.selectList("getotherdumpingarea",dumping_id);
+			List<Dredging_area> otherdredging_info = session.selectList("getotherdredingarea",Integer.valueOf(dredging_id));
+			int speed_limit = session.selectOne("getSpeedlimit",route_id);
+			Quadrilateral dumping = new Quadrilateral(dumping_str);
+			Quadrilateral dredging = new Quadrilateral(dredging_str);
+			List<Quadrilateral> otherdumping = new ArrayList<Quadrilateral>();
+			List<Quadrilateral> otherdredging = new ArrayList<Quadrilateral>();
+			for(Iterator<DumpingArea> it= otherdumping_info.iterator();it.hasNext();){
+				otherdumping.add(new Quadrilateral(it.next().getLocation()));
+			}
+			for(Iterator<Dredging_area> it=otherdredging_info.iterator();it.hasNext();){
+				otherdredging.add(new Quadrilateral(it.next().getLocation()));
+			}
+			ship_trajectory.get(mmsi).add(shipinfo);
+			LatLng point = new LatLng(Double.valueOf(shipinfo.lat),Double.valueOf(shipinfo.lon));
+			//判断是否超速
+//			System.out.println("speed_limit:"+speed_limit);
+//			System.out.println("actual speed:"+shipinfo.sp);
+			if(Double.valueOf(shipinfo.sp)>Double.valueOf(speed_limit)){
+				try {
+					if(exceed_flag.abnormal_type.equals("Instant exceed speed")&&(dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.time.substring(0, 19)).getTime())/1000/60>max_interval){
+						System.out.println("this exceed:"+shipinfo.ti);
+						System.out.println("last_exceed:"+exceed_flag.time);		
+						abnormal.setAbnormal_type("Continuous exceed speed");
+						abnormal.setExceed_interval((int) (dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.time.substring(0, 19)).getTime())/1000/60);
+						exceed_flag.setAbnormal_type("");
+						exceed_flag.setTime("");
+						session.insert("addAbnormal",abnormal);
+						session.commit();
+					}
+					else if(!exceed_flag.abnormal_type.equals("Instant exceed speed")){
+						abnormal.setAbnormal_type("Instant exceed speed");
+						abnormal.setTime(shipinfo.ti);
+						exceed_flag.setAbnormal_type("Instant exceed speed");
+						exceed_flag.setTime(shipinfo.ti);
+						session.insert("addAbnormal",abnormal);
+						session.commit();
+						}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+//				System.out.println(abnormal.abnormal_type);
+			}
+			else{
+				exceed_flag.setAbnormal_type("");
+			}
 			
+			if((dredging.isContainsPoint(point))&&timerecord.get(mmsi).isEmpty()){
+//				ship_state.get(mmsi).add(1);
+				//in dredging area
+				if(timerecord.get(mmsi).isEmpty())
+					timerecord.get(mmsi).add(shipinfo.ti);
+			}
+			else if(WorkloadTimerTask.areascontains(otherdredging,point)){
+//				ship_state.get(mmsi).add(2);
+				//in wrong dredging area
+				abnormal.setAbnormal_type("Wrong dredging area");
+				session.insert("addAbnormal",abnormal);
+				session.commit();
+				System.out.println(abnormal.abnormal_type);
+				ship_trajectory.get(mmsi).clear();
+				exceed_flag.setAbnormal_type("");;
+				timerecord.get(mmsi).clear();
+			}
+			else if(WorkloadTimerTask.areascontains(otherdumping, point)){
+//				ship_state.get(mmsi).add(3);
+				//in wrong dredging area
+				abnormal.setAbnormal_type("Wrong dumping area");
+				session.insert("addAbnormal",abnormal);
+				session.commit();
+				System.out.println(abnormal.abnormal_type);
+				ship_trajectory.get(mmsi).clear();
+//				ship_state.get(mmsi).clear();
+				exceed_flag.setAbnormal_type("");;
+				timerecord.get(mmsi).clear();
+			}
+			else if(dredging.isContainsPoint(point)&&!(timerecord.get(mmsi).isEmpty())){
+				try {
+					if(((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).get(0).substring(0, 19)).getTime())/1000/60>360)&&((dft1.parse(shipinfo.ti).getTime()-dft1.parse(timerecord.get(mmsi).get(0)).getTime())/1000/60<480)){
+						//作业行为异常
+						abnormal.setAbnormal_type("Working behaviour abnormal");
+						session.insert("addAbnormal",abnormal);
+						session.commit();
+						System.out.println(abnormal.abnormal_type);
+						ship_trajectory.get(mmsi).clear();
+//						ship_state.get(mmsi).clear();
+						exceed_flag.setAbnormal_type("");;
+						timerecord.get(mmsi).clear();
+					}
+					else if((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).get(0).substring(0, 19)).getTime())/1000/60>480){
+						abnormal.setAbnormal_type("Havn't dump into dumping area");
+						session.insert("addAbnormal",abnormal);
+						session.commit();
+						System.out.println(abnormal.abnormal_type);
+						ship_trajectory.get(mmsi).clear();
+//						ship_state.get(mmsi).clear();
+						exceed_flag.setAbnormal_type("");
+						timerecord.get(mmsi).clear();
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}		
 //		session.commit();
 		session.close();
 	}
+	
 	
 	public static boolean iBOATOline(String num) {
 		Shipinfo shipinfo = new Shipinfo();

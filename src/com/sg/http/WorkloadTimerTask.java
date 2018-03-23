@@ -139,7 +139,7 @@ public class WorkloadTimerTask extends TimerTask {
 //				System.out.print(state[i]+",");
 			i=i+1;
 		}
-//		System.out.println("the length of state:"+state.length);
+		System.out.println("the length of state:"+state.length);
 		
 		boolean wait2 = true;
 		
@@ -286,6 +286,7 @@ public class WorkloadTimerTask extends TimerTask {
 		String harbor_id = session.selectOne("getdredgingareabyid",route_id);
 //		System.out.print("harbor_id:"+harbor_id);
 		String harbor_str = session.selectOne("getDredgingLocation",harbor_id);
+		System.out.println("mmsi:"+mmsi+"route_id:"+route_id+"harbor_id:"+harbor_id);
 		List<Dredging_area> dredinfo = session.selectList("getotherdredingarea",Integer.valueOf(harbor_id));
 		String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
 //		System.out.print("dumping_id:"+dumping_id);
@@ -379,13 +380,33 @@ public class WorkloadTimerTask extends TimerTask {
 				wait1 = false;
 				wait2 = true;
 			}
-			else if(wait2&&((sdf.parse(location_list.get(j).ti).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60>480)){
+			else if((wait2&&((sdf.parse(location_list.get(j).ti).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60>480))||(wait2&&state[j]==1&&((sdf.parse(location_list.get(j).ti).getTime() - sdf.parse(workrec.getIndred()).getTime())/1000/60>360))){
+				boolean flag1 = false;
+				int k=1;
+				while(j+k<state.length&&((sdf.parse(location_list.get(j+k).ti).getTime()-sdf.parse(location_list.get(j).ti).getTime())/1000/60<180)){
+					if(state[j+k]==1){
+						flag1 = true;
+						break;
+					}				
+					k++;
+				}
+				if(flag1){
+					Calendar ca = Calendar.getInstance();
+					ca.setTime(sdf.parse(location_list.get(j).ti));
+					ca.add(Calendar.HOUR, 3);
+					workrec.setExitdred(location_list.get(j).ti);
+					workrec.setIndump(sdf.format(ca.getTime()));
+					workrec.setExitdump(sdf.format(ca.getTime()));
+					workrec.setState(1);
+				}
+				else{
+					workrec.setExitdred(location_list.get(j).ti);
+					workrec.setIndump(location_list.get(j).ti);
+					workrec.setExitdump(location_list.get(j).ti);
+					workrec.setState(2);
+				}
 				wait1 = true;
 				wait2 = false;
-				workrec.setExitdred(location_list.get(j).ti);
-				workrec.setIndump(location_list.get(j).ti);
-				workrec.setExitdump(location_list.get(j).ti);
-				workrec.setState(2);
 				session.insert("addworkrecord",workrec);
 				session.commit();
 				System.out.println(workrec);
@@ -499,31 +520,40 @@ public class WorkloadTimerTask extends TimerTask {
 		return false;
 	}
 	public static void main(String[] args) throws IOException, ParseException {
-		
-		SimpleDateFormat msdf = new SimpleDateFormat( "yyyy-MM-dd" );
-		Date start = msdf.parse("2017-11-17");
-		Calendar cd = Calendar.getInstance();    
-		cd.setTime(start);
-		for(int i=0;i<134;i++){
-			String timestr = msdf.format(cd.getTime());
-			System.out.println(timestr);
-			others("413380190",timestr);
-			others("413465060",timestr);
-			cd.add(Calendar.DATE, 1);
-		}
+		huangpu("412376220","2017-11-03");
+//		SimpleDateFormat msdf = new SimpleDateFormat( "yyyy-MM-dd" );
+//		Date start = msdf.parse("2017-06-11");
+//		Calendar cd = Calendar.getInstance();    
+//		cd.setTime(start);
+//		for(int i=0;i<160;i++){
+//			String timestr = msdf.format(cd.getTime());
+//			System.out.println(timestr);
+//			others("413439320",timestr);
+//			others("412208530",timestr);
+//			huangpu("413373530",timestr);
+//			huangpu("413773147",timestr);
+//			huangpu("413375760",timestr);
+//			huangpu("412358640",timestr);
+//			huangpu("413814781",timestr);
+//			huangpu("413352890",timestr);
+//			huangpu("413364060",timestr);
+//			huangpu("413364010",timestr);
+//			huangpu("413379680",timestr);
+//			huangpu("413379690",timestr);
+//			huangpu("413364210",timestr);
+//			huangpu("413364220",timestr);
+//			huangpu("413358270",timestr);
+//			huangpu("413357370",timestr);
+//			cd.add(Calendar.DATE, 1);
+//		}
 	}
-//huangpu("413373530",timestr);
-//huangpu("413773147",timestr);
-//huangpu("413375760",timestr);
-//huangpu("412358640",timestr);ok
-//huangpu("413814781",timestr);
-//huangpu("413352890",timestr);
-//huangpu("413364060",timestr);
-//huangpu("413364010",timestr);
-//huangpu("413379680",timestr);
-//huangpu("413379690",timestr);
-//huangpu("413364210",timestr);
-//huangpu("413364220",timestr);
-//huangpu("413358270",timestr);ok
-//huangpu("413357370",timestr);ok
+//	huangpu("412376220",timestr);
+//	huangpu("412407280",timestr);
+//	huangpu("413362580",timestr);
+//	huangpu("413362610",timestr);
+//	huangpu("413367230",timestr);
+//	huangpu("413456030",timestr);
+//	huangpu("413771176",timestr);
+//	huangpu("413793806",timestr);
+//	huangpu("413850719",timestr);
 }

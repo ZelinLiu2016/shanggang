@@ -10,7 +10,7 @@ package com.sg.domain;
  */
 public class Abnormal_info {
 	public String mmsi;
-	public String abnormal_type;
+	public String abnormal_type="";
 	public String lon;
 	public String lat;
 	public String time;

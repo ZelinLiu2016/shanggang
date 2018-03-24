@@ -80,11 +80,13 @@ public class WorkrecordController {
 		SqlSession session = this.getSession();
 		String mmsi = json.getString("mmsi");
 		String indred = json.getString("indred");
+		int ishandle = json.getInt("ishandle");
 		String handle_content = json.getString("handle_content");
 		Abnormal_info abinfo = new Abnormal_info();
 		Workrecord rec = new Workrecord();
 		rec.setMmsi(mmsi);
 		rec.setIndred(indred);
+		rec.setIshandled(ishandle);
 		abinfo.setMmsi(mmsi);
 		abinfo.setHandle(handle_content);
 		abinfo.setTime(indred);

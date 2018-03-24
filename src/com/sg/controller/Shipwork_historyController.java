@@ -85,6 +85,7 @@ public class Shipwork_historyController {
 	public ResponseEntity<List<Shipwork_history>> listbymmsi(@RequestBody String pro) throws IOException{
 		JSONObject json = JSONObject.fromObject(pro);
 		int mmsi=json.getInt("mmsi");
+		int project_id = json.getInt("project_id");
 		SqlSession session = this.getSession();
 		List<Shipwork_history> res = session.selectList("getShipworkhisbyid",mmsi);
 		return new ResponseEntity<List<Shipwork_history>>(res,HttpStatus.OK);

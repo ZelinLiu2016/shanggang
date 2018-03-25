@@ -19,11 +19,13 @@
 		<result column="CONSTRUCTION_COMPANY" property="construction_company" jdbcType="CHAR"/>
 		<result column="DESIGN_COMPANY" property="design_company" jdbcType="CHAR"/>
 		<result column="SUPERVISION_COMPANY" property="supervision_company" jdbcType="CHAR"/>
+		<result column="FINALCIAL_SUPERVISION" property="finacial_supervision" jdbcType="CHAR"/>
+		<result column="MEASURING_COMPANY" property="measuring_company" jdbcType="CHAR"/>
 		<result column="ISWORKING" property="isworking" jdbcType="INTEGER"/>
 		<result column="TOPAREA" property="toparea" jdbcType="CHAR"/>
 	</resultMap>
 	    <insert id="addProject" parameterType="Project" >
-	        insert into project values (#{projectId},#{projectName},#{dumpingArea},#{squareVolume},#{beginDate},#{endDate},#{boatNum},#{harborName},#{mud_ratio},#{route_id},#{mmsilist},#{construction_company},#{design_company},#{supervision_company},#{isworking},#{toparea})    
+	        insert into project values (#{projectId},#{projectName},#{dumpingArea},#{squareVolume},#{beginDate},#{endDate},#{boatNum},#{harborName},#{mud_ratio},#{route_id},#{mmsilist},#{construction_company},#{design_company},#{supervision_company},#{finacial_supervision},#{measuring_company},#{isworking},#{toparea})    
 	    </insert>
 	    
 	    <delete id="deleteProject" parameterType="Project" >
@@ -48,14 +50,18 @@
 		<select id="getconstructcom" parameterType="int" resultType="String">
 			select construction_company from project where project_id=#{project_id}
 		</select>
+		<select id="getProjecthis" resultType="String">
+	    	select * from project order by  BEGIN_DATE
+	    </select>
 	    <update id="updateProject" parameterType="Project" >
-	        update project set PROJECT_NAME=#{projectName}, DUMPINGAREA =#{dumpingArea}, SQUARE_VOLUME=#{squareVolume}, BEGIN_DATE=#{beginDate}, END_DATE=#{endDate}, BOAT_NUM=#{boatNum}, HARBOR_NAME=#{harborName},MUD_RATIO=#{mud_ratio},ROUTE_ID=#{route_id},MMSILIST=#{mmsilist},CONSTRUCTION_COMPANY=#{construction_company},DESIGN_COMPANY=#{design_company},SUPERVISION_COMPANY=#{supervision_company},ISWORKING=#{isworking},TOPAREA=#{toparea}  where PROJECT_ID = #{projectId}    
+	        update project set PROJECT_NAME=#{projectName}, DUMPINGAREA =#{dumpingArea}, SQUARE_VOLUME=#{squareVolume}, BEGIN_DATE=#{beginDate}, END_DATE=#{endDate}, BOAT_NUM=#{boatNum}, HARBOR_NAME=#{harborName},MUD_RATIO=#{mud_ratio},ROUTE_ID=#{route_id},MMSILIST=#{mmsilist},CONSTRUCTION_COMPANY=#{construction_company},DESIGN_COMPANY=#{design_company},SUPERVISION_COMPANY=#{supervision_company},FINACIAL_SUPERVISION=#{finacial_supervision},MEASURING_COMPANY=#{measuring_company},ISWORKING=#{isworking},TOPAREA=#{toparea}  where PROJECT_ID = #{projectId}    
 	    </update>
 
 	    <select id="listProject" resultMap="ProjectMap">
 	        select * from   project    
 	    </select>	    
-		<select id="listworkingproject" resultMap="ProjectMap">
+		<select id="listworkingproject" resultMap="ProjectMap">1558
+		
 			select * from project where ISWORKING=1
 		</select>
 		<select id="getMmsilist" parameterType="int" resultType="String">

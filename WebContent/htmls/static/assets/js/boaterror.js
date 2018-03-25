@@ -1,4 +1,5 @@
-﻿var allBoatError = [];
+﻿//ishandled 0 未处理 1 异常 2 正常
+var allBoatError = [];
 var allError = [];
 var postData = {};
 var abtype = "";
@@ -209,7 +210,7 @@ function DirtError(i)
 	$("#history_time").hide();
 	$("#monitor_show").show();
 	$("#error_mark").show();
-	$("#error_handle").show();
+	$("#error_handle").hide();
 	$("#handle_checkbox").off('click');
 	$("#handle_checkbox").click(function () {show_dirt_handled();});
 	document.getElementById('handle_checkbox').checked = false;
@@ -290,15 +291,21 @@ function fillDirtError(data)
 				info.company="-";
 			}
 			info.type = dirt_abnormal_type[data[i].state];
-			if (info.ishandled == 1)
+			if (info.ishandled == 0)
 			{
-				info.handle = "是";
+				info.handle = "否";
 			}
 			else{
-				info.handle = "否";
+				info.handle = "是";
 			}
 			info.dredging_name = GetShujunNameByID(info.dredging_id);
 			info.dumping_name = GetPaoniNameByID(info.dumping_id);
+			if(dirt_type_selected == 1)
+			{
+				var d1 = new Date(data[i].indred);
+				var d2 = new Date(data[i].exitdred);
+				info.work_time = (parseInt(d2 - d1)/1000/60/60).toFixed(1);
+			}
 			allError.push(info);
 			}
 		}
@@ -307,76 +314,44 @@ function fillDirtError(data)
 
 function InitDirtTable()
 {
-	$('#datatable').hide();
-	$('#table').bootstrapTable('destroy');
-    $('#table').bootstrapTable({
-    data: allError,
-    //height:380,
-	pagination: true,
-    pageSize: 5,
-	clickToSelect: true,
-	singleSelect:true,
-    columns: [
-	{checkbox: true},
-	{
-        field: 'mmsi',
-        title: 'MMSI'
-    }, 
-	{
-        field: 'name',
-        title: '船名'
-    }, 
-	{
-        field: 'company',
-        title: '施工单位'
-    }, 
-	{
-        field: 'dredging_name',
-        title: '施工区域'
-    }, 
-	{
-        field: 'dumping_name',
-        title: '抛泥区域'
-    },
-	{
-        field: 'route_id',
-        title: '抛泥航线'
-    }, 	
-	{
-        field: 'type',
-        title: '异常类型',
-		sortable : true,
-    },
-	{
-        field: 'date',
-        title: '日期'
-    },
-	{
-        field: 'indred',
-        title: '进入施工区域'
-    },
-	{
-        field: 'exitdred',
-        title: '离开施工区域'
-    },
-	{
-        field: 'indump',
-        title: '进入抛泥区域'
-    },
-	{
-        field: 'exitdump',
-        title: '离开抛泥区域'
-    },
-	/*{
-        field: 'handle',
-        title: '是否处理'
-    },*/
-	{
-        field: 'handlerecord',
-        title: '处理意见'
-    }
-	]});
-    $('#datatable').show();	
+	var cols=[{checkbox: true},{field: 'mmsi',title: 'MMSI'}, {field: 'name',title: '船名'}, {field: 'company',title: '施工单位'}, 
+	{field: 'dredging_name',title: '施工区域'}, {field: 'dumping_name',title: '抛泥区域'},{field: 'route_id',title: '抛泥航线'}, 	
+	{field: 'type',title: '异常类型',sortable : true,},{field: 'date',title: '日期'},{field: 'indred',title: '进入施工区域'},
+	{field: 'exitdred',title: '离开施工区域'},{field: 'indump',title: '进入抛泥区域'},{field: 'exitdump',title: '离开抛泥区域'},
+	{field: 'handlerecord',title: '处理意见'}
+	];
+	var cols_1 = [{checkbox: true},{field: 'mmsi',title: 'MMSI'}, {field: 'name',title: '船名'}, {field: 'company',title: '施工单位'}, 
+	{field: 'dredging_name',title: '施工区域'}, {field: 'dumping_name',title: '抛泥区域'},{field: 'route_id',title: '抛泥航线'}, 	
+	{field: 'work_time',title: '作业时间（小时）',sortable : true,},{field: 'date',title: '日期'},{field: 'indred',title: '进入施工区域'},
+	{field: 'exitdred',title: '离开施工区域'},{field: 'indump',title: '进入抛泥区域'},{field: 'exitdump',title: '离开抛泥区域'},
+	{field: 'handlerecord',title: '处理意见'}
+	];
+	if(dirt_type_selected == 1){
+		$('#datatable').hide();
+		$('#table').bootstrapTable('destroy');
+		$('#table').bootstrapTable({
+		data: allError,
+		//height:380,
+		pagination: true,
+		pageSize: 5,
+		clickToSelect: true,
+		singleSelect:true,
+		columns: cols_1 });
+		$('#datatable').show();	
+	}
+	else{
+		$('#datatable').hide();
+		$('#table').bootstrapTable('destroy');
+		$('#table').bootstrapTable({
+		data: allError,
+		//height:380,
+		pagination: true,
+		pageSize: 5,
+		clickToSelect: true,
+		singleSelect:true,
+		columns: cols});
+		$('#datatable').show();	
+	}	
 }
 
 function RunError()
@@ -578,7 +553,7 @@ function SpeedError()
 	$("#history_time").hide();
 	$("#monitor_show").hide();
 	$("#error_mark").show();
-	$("#error_handle").show();
+	$("#error_handle").hide();
 	$("#handle_checkbox").off('click');
 	$("#handle_checkbox").click(function () {show_speed_handled();});
 	document.getElementById('handle_checkbox').checked = false;
@@ -624,12 +599,12 @@ function fillSpeedError(data)
 				info.name = "-";
 				info.company="-";
 			}
-			if (info.ishandled == 1)
+			if (info.ishandled == 0)
 			{
-				info.handle = "是";
+				info.handle = "否";
 			}
 			else{
-				info.handle = "否";
+				info.handle = "是";
 			}
 			allError.push(info);
 		}
@@ -875,6 +850,22 @@ function error_mark()
 	if (arrselections.length <= 0) {
 		return;
 	}
+	switch (arrselections[0].ishandled){
+		case 0:
+			$("input[name='error_radio']").get(0).checked=false;
+			$("input[name='error_radio']").get(1).checked=false;
+			break;
+		case 1:
+			$("input[name='error_radio']").get(0).checked=true;
+			$("input[name='error_radio']").get(1).checked=false;
+			break;
+		case 1:
+			$("input[name='error_radio']").get(0).checked=true;
+			$("input[name='error_radio']").get(1).checked=false;
+			break;
+		default:
+		
+	}
 	$("#error_mark_info").modal('show');
 }
 
@@ -882,6 +873,17 @@ function error_mark_confirm()
 {
 	postData = {};
 	var arrselections = $("#table").bootstrapTable('getSelections');
+	var iserror = $("input[name='error_radio']").get(0).checked;
+	var noterror = $("input[name='error_radio']").get(1).checked;
+	var handle = 0;
+	if (iserror)
+	{
+		handle = 1;
+	}
+	if (noterror)
+	{
+		handle = 2;
+	}
 	postData["mmsi"] = arrselections[0].mmsi;
 	postData["indred"] = arrselections[0].indred;
 	postData["handle_content"] = $("#error_mark_text").val();

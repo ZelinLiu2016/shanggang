@@ -3,6 +3,9 @@ var tmp_sjgq_id_str = "";
 var tmp_sgdw_id_str = "";
 var tmp_sjdw_id_str = "";
 var tmp_jldw_id_str = "";
+var tmp_cldw_id_str = "";
+var tmp_cwdw_id_str = "";
+
 
 function InitLoadParam_Project()
 {
@@ -76,7 +79,12 @@ function InitLoadParam()
 	$("#import_project").hide();
 	$("#finish_checkbox").show();
 	$("#finish_checkbox_label").show();
+	$("#finish_checkbox_label").text("显示已完成工程");
 	document.getElementById('finish_checkbox').checked = false;
+	$("#finish_checkbox").off('click');
+	$("#finish_checkbox").click(function () {
+		show_finished();
+	});
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
 	
@@ -299,7 +307,7 @@ function InitParamTable() {
 			sggs = selected.sggs.split(';');
 			for (var i = 0; i < sggs.length; i++) {
 				if(sggs[i] in allSgdw){
-					entry += '<tr><td>'+"施工公司"+'</td><td>'+allSgdw[sggs[i]].name+'</td><td>'+allSgdw[sggs[i]].contact+'</td><td>'+allSgdw[sggs[i]].cellphone+'</td></tr>';
+					entry += '<tr><td>'+"施工单位"+'</td><td>'+allSgdw[sggs[i]].name+'</td><td>'+allSgdw[sggs[i]].contact+'</td><td>'+allSgdw[sggs[i]].cellphone+'</td></tr>';
 				}
 			}
 		}
@@ -308,7 +316,7 @@ function InitParamTable() {
 			sjgs = selected.sjgs.split(';');
 			for (var i = 0; i < sjgs.length; i++) {
 				if(sjgs[i] in allSjdw){
-					entry += '<tr><td>'+"设计公司"+'</td><td>'+allSjdw[sjgs[i]].name+'</td><td>'+allSjdw[sjgs[i]].contact+'</td><td>'+allSjdw[sjgs[i]].cellphone+'</td></tr>';
+					entry += '<tr><td>'+"设计单位"+'</td><td>'+allSjdw[sjgs[i]].name+'</td><td>'+allSjdw[sjgs[i]].contact+'</td><td>'+allSjdw[sjgs[i]].cellphone+'</td></tr>';
 				}
 			}
 		}
@@ -317,7 +325,25 @@ function InitParamTable() {
 			jlgs = selected.jlgs.split(';');
 			for (var i = 0; i < jlgs.length; i++) {
 				if(jlgs[i] in allJldw){
-				entry += '<tr><td>'+"监理公司"+'</td><td>'+allJldw[jlgs[i]].name+'</td><td>'+allJldw[jlgs[i]].contact+'</td><td>'+allJldw[jlgs[i]].cellphone+'</td></tr>';
+				entry += '<tr><td>'+"监理单位"+'</td><td>'+allJldw[jlgs[i]].name+'</td><td>'+allJldw[jlgs[i]].contact+'</td><td>'+allJldw[jlgs[i]].cellphone+'</td></tr>';
+				}
+			}
+		}
+		if(selected.clgs != "")
+		{
+			clgs = selected.clgs.split(';');
+			for (var i = 0; i < clgs.length; i++) {
+				if(clgs[i] in allCldw){
+				entry += '<tr><td>'+"测量单位"+'</td><td>'+allCldw[clgs[i]].name+'</td><td>'+allCldw[clgs[i]].contact+'</td><td>'+allCldw[clgs[i]].cellphone+'</td></tr>';
+				}
+			}
+		}
+		if(selected.cwgs != "")
+		{
+			cwgs = selected.cwgs.split(';');
+			for (var i = 0; i < cwgs.length; i++) {
+				if(cwgs[i] in allCwdw){
+				entry += '<tr><td>'+"财务监理单位"+'</td><td>'+allCwdw[cwgs[i]].name+'</td><td>'+allCwdw[cwgs[i]].contact+'</td><td>'+allCwdw[cwgs[i]].cellphone+'</td></tr>';
 				}
 			}
 		}
@@ -419,6 +445,8 @@ function InitParamTable() {
 			$("#sg_input").val("");
 			$("#sj_input").val("");
 			$("#jl_input").val("");
+			$("#cl_input").val("");
+			$("#cw_input").val("");
 			$("#mmsi_input").val("");
 			$("#param_mudratio").val("");
 			$("#param_route").val("");
@@ -457,9 +485,13 @@ function InitParamTable() {
 			tmp_sgdw_id_str = detailed[project_id].sggs;
 			tmp_sjdw_id_str = detailed[project_id].sjgs;
 			tmp_jldw_id_str = detailed[project_id].jlgs;
+			tmp_cldw_id_str = detailed[project_id].clgs;
+			tmp_cwdw_id_str = detailed[project_id].cwgs;
 			$("#sg_input").val(GetCompanyNameStrByID(tmp_sgdw_id_str));
 			$("#sj_input").val(GetCompanyNameStrByID(tmp_sjdw_id_str));
 			$("#jl_input").val(GetCompanyNameStrByID(tmp_jldw_id_str));
+			$("#cl_input").val(GetCompanyNameStrByID(tmp_cldw_id_str));
+			$("#cw_input").val(GetCompanyNameStrByID(tmp_cwdw_id_str));
 			$("#mmsi_input").val(detailed[project_id].mmsi);
 			$("#param_inprogress").val(arrselections[0].isworking);
 			$("#param_port").val(arrselections[0].toparea);
@@ -566,7 +598,28 @@ function fillParamData(data)
 			allParam.push(info);
 			detailed[data[i].projectId] = {"sggs":data[i].construction_company,"sjgs":data[i].design_company,
 			"jlgs":data[i].supervision_company,"mmsi":data[i].mmsilist,"projectname":data[i].projectName,
-			"startdate":data[i].beginDate, "enddate":data[i].endDate,"isworking":data[i].isworking};
+			"startdate":data[i].beginDate, "enddate":data[i].endDate,"isworking":data[i].isworking,
+			"clgs":data[i].measuring_company,"cwgs":data[i].finacial_supervision,};
+			if (detailed[data[i].projectId].sggs == null)
+			{
+				detailed[data[i].projectId].sggs ="";
+			}
+			if (detailed[data[i].projectId].jlgs == null)
+			{
+				detailed[data[i].projectId].jlgs ="";
+			}
+			if (detailed[data[i].projectId].sjgs == null)
+			{
+				detailed[data[i].projectId].sjgs ="";
+			}
+			if (detailed[data[i].projectId].cwgs == null)
+			{
+				detailed[data[i].projectId].cwgs ="";
+			}
+			if (detailed[data[i].projectId].clgs == null)
+			{
+				detailed[data[i].projectId].clgs ="";
+			}
 			if(data[i].toparea in port_project)
 			{
 				port_project[data[i].toparea].push(data[i].projectId);		
@@ -579,6 +632,9 @@ function fillCompanyData(data)
 	allSgdw = {};
 	allSjdw = {};
 	allJldw = {};
+	allCldw = {};
+	allCwdw = {};
+	
 	allCompany = {};
 	for(var i = 0;i<data.length;++i)
 	{
@@ -593,6 +649,12 @@ function fillCompanyData(data)
 				break;
 			case "监理单位":
 				allJldw[data[i].company_id] = {"name":data[i].company_name,"contact":data[i].contact,"cellphone":data[i].cellphone};
+				break;
+			case "测量单位":
+				allCldw[data[i].company_id] = {"name":data[i].company_name,"contact":data[i].contact,"cellphone":data[i].cellphone};
+				break;
+			case "财务监理单位":
+				allCwdw[data[i].company_id] = {"name":data[i].company_name,"contact":data[i].contact,"cellphone":data[i].cellphone};
 				break;
 			default:
 				alert("company_type not compatible")
@@ -627,6 +689,8 @@ function param_add()
 	postData["construction_company"] = tmp_sgdw_id_str;
 	postData["design_company"] = tmp_sjdw_id_str;
 	postData["supervision_company"] = tmp_jldw_id_str;
+	postData["measuring_company"] = tmp_cldw_id_str;
+	postData["finacial_supervision"] = tmp_cwdw_id_str;
 	postData["isworking"] = $("#param_inprogress").val();
 	postData["top_area"] = $("#param_port").val();
 	$.ajax({
@@ -661,6 +725,8 @@ function param_edit()
 	postData["construction_company"] = tmp_sgdw_id_str;
 	postData["design_company"] = tmp_sjdw_id_str;
 	postData["supervision_company"] = tmp_jldw_id_str;
+	postData["measuring_company"] = tmp_cldw_id_str;
+	postData["finacial_supervision"] = tmp_cwdw_id_str;
 	postData["isworking"] = $("#param_inprogress").val();
 	postData["top_area"] = $("#param_port").val();
 	$.ajax({
@@ -864,6 +930,120 @@ function choose_jldw()
 	}
 	$("#multiselect_to").append(entry);
 	$("#multiselect_label").text("监理单位");
+	$("#multiselect_modal").modal('show');
+}
+
+function cldw_multiselected()
+{
+	var result = "";
+	childs = document.getElementById("multiselect_to").childNodes;
+	if (childs.length>0)
+	{
+		for(var i = 0;i<childs.length-1;++i)
+		{
+			result = result+childs[i].innerHTML.split("---")[0]+";";
+		}
+		result+=childs[childs.length-1].innerHTML.split("---")[0];
+	}
+	tmp_cldw_id_str = result;
+	$("#cl_input").val(GetCompanyNameStrByID(result));
+	$("#multiselect_modal").modal('hide');
+}
+
+function choose_cldw()
+{
+	$("#multiselect_confirm").off('click');
+	$("#multiselect_confirm").click(function () {cldw_multiselected();});
+	var mst = document.getElementById("multiselect");
+	while(mst.hasChildNodes()) 
+	{
+		mst.removeChild(mst.firstChild);
+	}
+	var mst_to= document.getElementById("multiselect_to");
+	while(mst_to.hasChildNodes()) 
+	{
+		mst_to.removeChild(mst_to.firstChild);
+	}
+	var s = {};
+	var selected = [];
+	if(tmp_cldw_id_str!="")
+		selected = tmp_cldw_id_str.split(";");
+	for(var i=0;i<selected.length;++i)
+	{
+		s[selected[i]] = {};
+	}
+	var entry = "";
+	for (var comp in allCldw) {
+		if(!(comp in s))
+			entry += '<option>'+comp+'---'+allCldw[comp].name+'</option>';
+	}
+	$("#multiselect").append(entry);
+	entry = "";
+	for (var comp in s) {
+		if(comp in allCldw)
+		{
+			entry += '<option>'+comp+'---'+allCldw[comp].name+'</option>';
+		}
+	}
+	$("#multiselect_to").append(entry);
+	$("#multiselect_label").text("测量单位");
+	$("#multiselect_modal").modal('show');
+}
+
+function cwdw_multiselected()
+{
+	var result = "";
+	childs = document.getElementById("multiselect_to").childNodes;
+	if (childs.length>0)
+	{
+		for(var i = 0;i<childs.length-1;++i)
+		{
+			result = result+childs[i].innerHTML.split("---")[0]+";";
+		}
+		result+=childs[childs.length-1].innerHTML.split("---")[0];
+	}
+	tmp_cwdw_id_str = result;
+	$("#cw_input").val(GetCompanyNameStrByID(result));
+	$("#multiselect_modal").modal('hide');
+}
+
+function choose_cwdw()
+{
+	$("#multiselect_confirm").off('click');
+	$("#multiselect_confirm").click(function () {cwdw_multiselected();});
+	var mst = document.getElementById("multiselect");
+	while(mst.hasChildNodes()) 
+	{
+		mst.removeChild(mst.firstChild);
+	}
+	var mst_to= document.getElementById("multiselect_to");
+	while(mst_to.hasChildNodes()) 
+	{
+		mst_to.removeChild(mst_to.firstChild);
+	}
+	var s = {};
+	var selected = [];
+	if(tmp_cwdw_id_str!="")
+		selected = tmp_cwdw_id_str.split(";");
+	for(var i=0;i<selected.length;++i)
+	{
+		s[selected[i]] = {};
+	}
+	var entry = "";
+	for (var comp in allCwdw) {
+		if(!(comp in s))
+			entry += '<option>'+comp+'---'+allCwdw[comp].name+'</option>';
+	}
+	$("#multiselect").append(entry);
+	entry = "";
+	for (var comp in s) {
+		if(comp in allCwdw)
+		{
+			entry += '<option>'+comp+'---'+allCwdw[comp].name+'</option>';
+		}
+	}
+	$("#multiselect_to").append(entry);
+	$("#multiselect_label").text("财务监理单位");
 	$("#multiselect_modal").modal('show');
 }
 

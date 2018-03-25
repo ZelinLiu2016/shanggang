@@ -62,7 +62,8 @@ function InitLoadImport()
 	{
 		thead.removeChild(thead.firstChild);
 	}
-	entry = '<tr><th width="20%">船老大</th><th width="20%">联系方式</th><th width="20%">船长</th><th width="20%">船宽</th><th width="20%">满载量</th></tr>';
+	entry = '<tr><th colspan="5">船舶详细信息</th></tr>';
+	entry += '<tr><th width="20%">船老大</th><th width="20%">联系方式</th><th width="20%">船长</th><th width="20%">船宽</th><th width="20%">满载量</th></tr>';
 	$("#info_head").append(entry);
 	var tbody = document.getElementById("info_body");
 	while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  

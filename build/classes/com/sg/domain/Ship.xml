@@ -18,9 +18,12 @@
 		<result column="route_id" property="route_id" jdbcType="INTEGER"/>
 		<result column="owner" property="owner" jdbcType="CHAR"/>
 		<result column="owner_phone" property="owner_phone" jdbcType="CHAR"/>
+		<result column="startdate" property="startdate" jdbcType="CHAR"/>
+		<result column="enddate" property="enddate" jdbcType="CHAR"/>
+		<result column="project_id" property="project_id" jdbcType="INTEGER"/>
 	</resultMap>
 	    <insert id="addShip" parameterType="Ship" >
-	        insert into ship   values (#{mmsi},#{shipname},#{imo},#{length},#{width},#{shiptype},#{capacity},#{fleet_id},#{contact},#{cellphone},#{route_id},#{owner},#{owner_phone})    
+	        insert into ship   values (#{mmsi},#{shipname},#{imo},#{length},#{width},#{shiptype},#{capacity},#{fleet_id},#{contact},#{cellphone},#{route_id},#{owner},#{owner_phone},#{startdate},#{enddate},#{project_id})    
 	    </insert>
 	    <update id="setShipRoute_id" parameterType="Ship">
 	    	update ship set route_id =#{route_id} where mmsi=#{mmsi}
@@ -31,8 +34,9 @@
 	    <delete id="deleteShip" parameterType="int" >
 	        delete from ship where MMSI = #{mmsi}  
 	    </delete>
-	    <select id="getshiplist" parameterType="String" resultType="Ship">
-	    	select * from ship where mmsi in (#{mmsilist})
+	    <select id="getshiplist" resultType="Ship">
+	    	select * from ship where mmsi in <foreach item="AList" index="index" collection="list"
+                open="(" separator="," close=")"> #{AList}</foreach>
 	    </select>
 	    <select id="listShipMmsi" resultType="Integer">
 	      select MMSI from ship
@@ -52,10 +56,9 @@
 			select FLEET_ID from ship where mmsi=#{mmsi}
 		</select>
 	    <update id="updateShip" parameterType="Ship" >
-	        update ship set MMSI=#{mmsi},SHIP_NAME=#{shipname},IMO=#{imo},LENGTH=#{length},WIDTH=#{width},SHIPTYPE=#{shiptype},CAPACITY=#{capacity},FLEET_ID=#{fleet_id},CONTACT=#{contact},PHONE=#{cellphone},route_id=#{route_id},owner=#{owner},owner_phone=#{owner_phone} where MMSI = #{mmsi}    
+	        update ship set MMSI=#{mmsi},SHIP_NAME=#{shipname},IMO=#{imo},LENGTH=#{length},WIDTH=#{width},SHIPTYPE=#{shiptype},CAPACITY=#{capacity},FLEET_ID=#{fleet_id},CONTACT=#{contact},PHONE=#{cellphone},route_id=#{route_id},owner=#{owner},owner_phone=#{owner_phone},startdate=#{startdate},enddate=#{enddate},project_id=#{project_id} where MMSI = #{mmsi}    
 	    </update>
 
-	
 	    <select id="listShipRecordTime" parameterType="String" resultType="String">
 	    	<bind name="shiptable" value="'ship_' + _parameter" />
 	        select ti from  ${shiptable}

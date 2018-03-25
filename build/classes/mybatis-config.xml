@@ -31,5 +31,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         <mapper resource="com/sg/domain/Trajectory.xml"/>
         <mapper resource="com/sg/domain/InvertIndex.xml"/>
         <mapper resource="com/sg/domain/Workrecord.xml"/>
+        <mapper resource="com/sg/domain/Shipwork_history.xml"/>
     </mappers>
 </configuration>

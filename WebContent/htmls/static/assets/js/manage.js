@@ -44,7 +44,8 @@ function InitLoadManage()
 	{
 		thead.removeChild(thead.firstChild);
 	}
-	entry = '<tr><th width="40%">工程名称</th><th width="30%">开始日期</th><th width="30%">结束日期</th></tr>';
+	entry = '<tr><th colspan="3">历史参建项目</th></tr>';
+	entry += '<tr><th width="40%">工程名称</th><th width="30%">开始日期</th><th width="30%">结束日期</th></tr>';
 	$("#info_head").append(entry);
 	var tbody = document.getElementById("info_body");
 	while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
@@ -86,8 +87,6 @@ function InitManageTable() {
     $('#table').bootstrapTable({
     data: allManage,
     //height:280,
-	pagination: true,
-    pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
 	
@@ -99,13 +98,32 @@ function InitManageTable() {
 		}
 		entry = "";
 		var companyid = row.fleetid;
+		var tmp_list = new Array();
 		for(d in detailed)
 		{
-			if(hasvalue(detailed[d].sggs.split(';'), companyid)||hasvalue(detailed[d].sjgs.split(';'), companyid)||hasvalue(detailed[d].jlgs.split(';'), companyid))
+			if(hasvalue(detailed[d].sggs.split(';'), companyid)||hasvalue(detailed[d].sjgs.split(';'), companyid)||hasvalue(detailed[d].jlgs.split(';'), companyid)
+				||hasvalue(detailed[d].clgs.split(';'), companyid)||hasvalue(detailed[d].cwgs.split(';'), companyid))
 			{
-				entry += '<tr><td>'+detailed[d].projectname+'</td><td>'+detailed[d].startdate+'</td><td>'+detailed[d].enddate+'</td></tr>';
+				tmp_list.push([d, detailed[d].startdate, detailed[d].enddate]);
 			}
 		}
+		tmp_list.sort(
+		    function(a,b){
+				if(a[1]==b[1])
+				{
+					return a[2]>b[2];
+				}
+				else{
+					return a[1]>b[1];
+				}
+			}
+		);
+		for(var i = 0; i<tmp_list.length;++i)
+		{
+			entry += '<tr><td>'+detailed[tmp_list[i][0]].projectname+'</td><td>'+detailed[tmp_list[i][0]].startdate+'</td><td>'+detailed[tmp_list[i][0]].enddate+'</td></tr>';
+		}
+		$("#info_body").append(entry);
+		entry = "";
 		for(var i = tbody.rows.length;i<4;++i)
 		{
 			entry+=('<tr><td></td><td></td><td></td></tr>');

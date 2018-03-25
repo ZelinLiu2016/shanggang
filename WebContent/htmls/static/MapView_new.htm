@@ -73,6 +73,7 @@
     <script src="assets/js/dynamic.js"></script>
 	<script src="assets/js/initial.js"></script>
 	<script src="assets/js/shujun.js"></script>
+	<script src="assets/js/shipwork.js"></script>
 	<script src="assets/js/menucolor.js"></script>
 	<!--script src="assets/js/test.js"></script-->
 	
@@ -185,7 +186,7 @@
 						</li>
 						<li >
 						<a id = "detect" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="轨迹检测" onclick = "DTMonInit()">
-							<span id="L2L2L3" class="LeftText">轨迹检测</span>
+							<span id="L2L2L3" class="LeftText">作业检测</span>
 						</a>
 						</li>
 					</ul>
@@ -307,6 +308,12 @@
                             <span id="L1L6" class="LeftText">抛泥航线信息</span>
                         </a>
                         </li>
+						<li >
+                        <a id = "ship_work" style="border-radius:0px;padding-left:40px;" class="tooltip-tip ajax-load" href="#" title="船舶调配信息" onclick = "InitShipWork()">
+                            <img src = "image/i_1.png">
+                            <span id="L1L7" class="LeftText">船舶调配信息</span>
+                        </a>
+						</li>
                     </ul>
                 </li>
                 
@@ -431,7 +438,7 @@
 							<span class="glyphicon glyphicon-film" aria-hidden="true"></span>观看
 						</button>
 						<button id="error_mark" type="button" class="btn btn-default" onclick="error_mark()">
-							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>评价
+							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>处理
 						</button>
 						<button id="error_handle" type="button" class="btn btn-default" onclick="error_handle()">
 							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>处理
@@ -468,6 +475,7 @@
 			<div id="toolbar" style="margin-bottom:10px;display:none;">
 				<div>
 					<select name="import_project" id="import_project" style="width:150px;height:30px"/> </select>
+					<select name="select_mmsi" id="select_mmsi" style="width:250px;height:30px"/> </select>
 					<input type="text" style="height:30px;width:350px;color:black;" id="toolbar_search"></input>
 					<div class="btn-group">
 						<button id="btn_search" type="button" class="btn btn-default">
@@ -489,7 +497,7 @@
 							<span class="glyphicon glyphicon-film" aria-hidden="true"></span>显示
 						</button>
 					</div>
-					<input type="checkbox" id="finish_checkbox" onclick="show_finished()"></input>
+					<input type="checkbox" id="finish_checkbox"></input>
 					<span height="30px" color="black" id="finish_checkbox_label">显示已完成工程</span>
 				</div>
 			</div>
@@ -688,13 +696,16 @@
 					<table style="color:black;" border="1" width="100%" height="120px" id = "company-table">
 					<thead>
 						<tr>
-							<th width="25%">公司类型</th>
-							<th width="25%">公司名称</th>
+							<th colspan=4>参建单位信息</th>
+						</tr>
+						<tr>
+							<th width="25%">单位类型</th>
+							<th width="25%">单位名称</th>
 							<th width="25%">联系人</th>
 							<th width="25%">联系方式</th>
 						</tr>
 					</thead>
-					<tbody id="company-tbody">
+					<tbody id="company-tbody" align="center">
 					</tbody>  
 					</table>
 				</div>
@@ -702,13 +713,16 @@
 					<table style="color:black;" border="1" width="100%" height="120px" id = "mmsi-table">
 					<thead>
 						<tr>
+							<th colspan=4>参建船舶信息</th>
+						</tr>
+						<tr>
 							<th width="25%">MMSI</th>
 							<th width="25%">船名</th>
 							<th width="25%">船长</th>
 							<th width="25%">联系方式</th>
 						</tr>
 					</thead>
-					<tbody id="mmsi-tbody">
+					<tbody id="mmsi-tbody" align="center">
 					</tbody>  
 					</table>
 				</div>
@@ -720,7 +734,7 @@
 			<div class="row-fluid" style="padding:10px;">
 				<table id="info_table" style="color:black;" border="1" width="80%" height="50px" align="center">
 					<thead id="info_head"></thead>
-					<tbody id="info_body"></tbody>
+					<tbody id="info_body" align="center"></tbody>
 				</table>
 			</div>
 		</div>
@@ -896,7 +910,7 @@
 </div>
 
 <div class="modal fade" id="param_update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">  
-    <div class="modal-dialog">  
+    <div class="modal-dialog" style="width:600px;height:900px">  
         <div class="modal-content">  
             <div class="modal-header">  
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>  
@@ -977,6 +991,26 @@
 				</div>
 				<div class="row" style="margin:0;height:13%;">
 					<div class="col-sm-2 nopadding">
+						测量单位
+					</div>
+					<div class="col-sm-4 nopadding">
+						<input type="text" name="cl_input" id="cl_input" style="width:100px;height:25px"/>
+						<button type="button" class="btn btn-default" style="width:40px;height:25px" id="cldw_choose" onclick="choose_cldw()">
+						<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+						</button>
+					</div>
+					<div class="col-sm-2 nopadding">
+						财务监理单位
+					</div>
+					<div class="col-sm-4 nopadding">
+						<input type="text" name="cwinput" id="cw_input" style="width:100px;height:25px"/>
+						<button type="button" class="btn btn-default" style="width:40px;height:25px" id="cwdw_choose" onclick="choose_cwdw()">
+						<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+						</button>
+					</div>
+				</div>
+				<div class="row" style="margin:0;height:13%;">
+					<div class="col-sm-2 nopadding">
 						泥浆比
 					</div>
 					<div class="col-sm-4 nopadding">
@@ -1052,6 +1086,69 @@
                 <button type="button" class="btn btn-primary" id="param_edit_button" onclick="param_edit()">确定</button>
 				<button type="button" class="btn btn-primary" id="param_add_button" onclick="param_add()">确定</button>
 				<button type="button" class="btn btn-primary" id="param_delete_button" onclick="param_delete()">确定</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>  
+            </div>  
+        </div>  
+        <!-- /.modal-content -->  
+    </div>  
+    <!-- /.modal -->  
+</div>  
+
+<div class="modal fade" id="shipwork_update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">  
+    <div class="modal-dialog" style="width:600px;height:900px">  
+        <div class="modal-content">  
+            <div class="modal-header">  
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>  
+                <p class="modal-title" style="font-size:20px;" id="shipwork_update_label">Modal</p>
+            </div>  
+            <div class="modal-body">
+				<div class="row" style="margin:0;height:13%;">
+					<div class="col-sm-2 nopadding">
+						工程编号
+					</div>
+					<div class="col-sm-4 nopadding">
+						<input type="text" name="shipwork_projectid" id="shipwork_projectid" style="width:145px;height:25px"/>
+					</div>
+					<div class="col-sm-2 nopadding">
+						MMSI
+					</div>
+					<div class="col-sm-4 nopadding">
+						<input type="text" name="shipwork_mmsi" id="shipwork_mmsi" style="width:145px;height:25px" />
+					</div>
+				</div>
+				<div class="row" style="margin:0;height:13%;">
+					<div class="col-sm-2 nopadding">
+						施工单位
+					</div>
+					<div class="col-sm-4 nopadding">
+						<select name="shipwork_fleetid" id="shipwork_fleetid" style="width:145px;height:25px"/> </select>
+					</div>
+					<div class="col-sm-2 nopadding">
+						航线
+					</div>
+					<div class="col-sm-4 nopadding">
+						<select name="shipwork_routeid" id="shipwork_routeid" style="width:145px;height:25px"/> </select>
+					</div>
+				</div>
+				<div class="row" style="margin:0;height:13%;">
+					<div class="col-sm-2 nopadding">
+						开始日期
+					</div>
+					<div class="col-sm-4 nopadding">
+						<input type="date" style="color:black;width:145px;height:25px" name="shipwork_startdate" id="shipwork_startdate"/>
+					</div>
+					<div class="col-sm-2 nopadding">
+						结束日期
+					</div>
+					<div class="col-sm-4 nopadding">
+						<input type="date" style="color:black;width:145px;height:25px" name="shipwork_enddate" id="shipwork_enddate"/>
+					</div>
+				</div>
+			</div>
+            <div class="modal-footer">  
+                <button type="button" class="btn btn-primary" id="shipwork_edit_button" onclick="shipwork_edit()">确定</button>
+				<button type="button" class="btn btn-primary" id="shipwork_add_button" onclick="shipwork_add()">确定</button>
+				<button type="button" class="btn btn-primary" id="shipwork_delete_button" onclick="shipwork_delete()">确定</button>
 				<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>  
             </div>  
         </div>  
@@ -1183,13 +1280,13 @@
             <div class="modal-body">
 				<div class="row" style="margin:0;height:20%;">
 					<div class="col-sm-2">
-						公司编号
+						单位编号
 					</div>
 					<div class="col-sm-4">
 						<input type="text" name="manage_fleetid" id="manage_fleetid" style="width:145px;height:25px"/>
 					</div>
 					<div class="col-sm-2">
-						公司名称
+						单位名称
 					</div>
 					<div class="col-sm-4">
 						<input type="text" name="manage_name" id="manage_name" style="width:145px;height:25px"/>
@@ -1197,19 +1294,21 @@
 				</div>
 				<div class="row" style="margin:0;height:20%;">
 					<div class="col-sm-2">
-						公司地址
+						单位地址
 					</div>
 					<div class="col-sm-4">
 						<input type="text" name="manage_address" id="manage_address" style="width:145px;height:25px"/>
 					</div>
 					<div class="col-sm-2">
-						公司类型
+						单位类型
 					</div>
 					<div class="col-sm-4">
 						<select name="manage_type" id="manage_type" style="width:145px;height:25px">
 							<option value="施工单位">施工单位</option>
 							<option value="设计单位">设计单位</option>
 							<option value="监理单位">监理单位</option>
+							<option value="测量单位">测量单位</option>
+							<option value="财务监理单位">财务监理单位</option>
 						</select>
 					</div>
 				</div>
@@ -1245,10 +1344,14 @@
         <div class="modal-content">  
             <div class="modal-header">  
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>  
-                <p class="modal-title glyphicon glyphicon-pencil" style="font-size:20px;">异常评价</p>  
-            </div>  
+                <p class="modal-title glyphicon glyphicon-pencil" style="font-size:20px;">异常处理</p>  
+            </div>
             <div class="modal-body" height="300px">
-				<p>填写异常评价</p>
+				<div class="row" style="margin:0;height:20%;">
+					<input id="error_yes" type="radio" value="0" name="error_radio">异常</input>  
+					<input id="error_no" type="radio" value="1" name="error_radio" style='margin-left:70px' >正常</input>  
+				</div>
+				<p>备注</p>
 				<textarea style="height:80%;width:100%" id="error_mark_text"></textarea>
 				
 			</div>
@@ -1293,6 +1396,25 @@
             </div>  
         </div>  	
         
+        <!-- /.modal-content -->  
+    </div>  
+    <!-- /.modal -->  
+</div>
+
+<div class="modal fade" id="startup_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">  
+    <div class="modal-dialog" style="width:900px;">  
+        <div class="modal-content">  
+            <div class="modal-header">  
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>  
+                <p class="modal-title glyphicon glyphicon-pencil" style="font-size:20px;">在建工程详细</p>  
+            </div>  
+            <div class="modal-body" style="height:400px;">
+				<table id="startup_table"></table>
+			</div>
+            <div class="modal-footer">  
+				<button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+            </div>  
+        </div>  
         <!-- /.modal-content -->  
     </div>  
     <!-- /.modal -->  

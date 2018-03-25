@@ -16,8 +16,14 @@ function SetShujunTable() {
 	$("#import_project").hide();
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
-	$("#finish_checkbox").hide();
-	$("#finish_checkbox_label").hide();
+	$("#finish_checkbox").show();
+	$("#finish_checkbox_label").show();
+	$("#finish_checkbox_label").text("显示已竣工疏浚区域");
+	document.getElementById('finish_checkbox').checked = false;
+	$("#finish_checkbox").off('click');
+	$("#finish_checkbox").click(function () {
+		show_shujun_finished();
+	});
 	
 	$("#mapBody").show();
 	$("#data_clean").hide();
@@ -37,6 +43,7 @@ function SetShujunTable() {
 		url: "/shanggang/dredging_area/listall",
 		success: function (data) {    
 			fillAllShujun(data);
+			finish_shujun_filter();
 			InitShujunTable();
 		  },       
 		error: function () {       
@@ -52,6 +59,7 @@ function RefreshLoadShujun()
             url: "/shanggang/dredging_area/listall",
             success: function (data) {    
             	    fillAllShujun(data);
+					finish_shujun_filter();
             	    RefreshShujunTable();
                   },       
             error: function () {       
@@ -431,4 +439,51 @@ function choosechangjiang(){
 	$("#port-stats").show();	
 		
     $("#xianshi").click()
+}
+
+function finish_shujun_filter()
+{
+	tmp_allShujun = [];
+	var is_checked = $("#finish_checkbox").is(":checked");
+	if (is_checked)
+	{
+		return;
+	}
+	else{
+		var worked_shujun_id = {};
+		for (var i = 0;i<allParam.length;++i)
+		{
+			if (allParam[i].isworking == 1){
+				var shujun_list = allParam[i].harborname.split(';');
+				for(var j = 0;j<shujun_list.length;++j)
+				{
+					worked_shujun_id[shujun_list[j]] = "";
+				}
+			}
+		}
+		for (var i = 0;i<allShujun.length;++i)
+		{
+			if(allShujun[i].dredgingid in worked_shujun_id)
+			{
+				tmp_allShujun.push(allShujun[i]);
+			}
+		}
+	}
+	allShujun = tmp_allShujun;
+}
+
+function show_shujun_finished()
+{
+	$.ajax({
+		type: "GET",
+		url: "/shanggang/dredging_area/listall",
+		success: function (data) {    
+			fillAllShujun(data);
+			finish_shujun_filter();
+			InitShujunTable();
+		  },       
+		error: function () {       
+			   alert("获取数据失败！");       
+		  }       
+	});
 }

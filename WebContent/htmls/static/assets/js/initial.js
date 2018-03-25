@@ -29,7 +29,8 @@ var allParam = [];
 var detailed = {};
 var allSgdw = {};
 var allSjdw = {};
-var allJldw = {};
+var allCldw = {};
+var allCwdw = {};
 var allCompany = {};
 var allMmsi = {};
 var allDredging = {};
@@ -77,100 +78,110 @@ $(document).ready(function() {
 	$("#stat_start_end_time").hide();
 	// waigaoqiao4Defult()
 	$.ajax({
-        method: "GET",
-        url: "/shanggang/project/list",
-        success: function (data) {
+		method: "GET",
+		url: "/shanggang/project/list",
+		async:false,
+		success: function (data) {
 			fillParamData(data);
 			fillMmsiProjectData(data);
 			set_port_menu();
-            },
+			startup_show();
+			},
 		error: function () {       
-            alert("获取数据失败！");
-        }  
-    });
+			alert("获取数据失败！");
+		}  
+	});
 	$.ajax({
-        method: "GET",
-        url: "/shanggang/company/listall",
-        success: function (data) {
-        	fillCompanyData(data);
-            },
+		method: "GET",
+		url: "/shanggang/company/listall",
+		async:false,
+		success: function (data) {
+			fillCompanyData(data);
+			},
 		error: function () {       
-            alert("获取数据失败！");
-        }  
-    });
+			alert("获取数据失败！");
+		}  
+	});
 	$.ajax({
-        method: "GET",
-        url: "/shanggang/ship/list",
-        success: function (data) {
-        	fillMmsiData(data);
-            },
+		method: "GET",
+		url: "/shanggang/ship/list",
+		async:false,
+		success: function (data) {
+			fillMmsiData(data);
+			},
 		error: function () {       
-            alert("获取数据失败！");
-        }  
-    });
+			alert("获取数据失败！");
+		}  
+	});
 	$.ajax({
-        method: "GET",
-        url: "/shanggang/dredging_area/listall",
-        success: function (data) {
-        	fillAllShujun(data);
-			$.ajax({
-				method: "GET",
-				url: "/shanggang/dumping_area/list",
-				success: function (data) {
-					fillAllPaoni(data);
-					$.ajax({
-						method: "GET",
-						url: "/shanggang/route/listall",
-						success: function (data) {    
-								fillAllRoute(data);
-							  },       
-						error: function () {       
-							   alert("获取数据失败！");       
-						  }       
-					});
-				},
-				error: function () {       
-					alert("获取数据失败！");
-				}  
-			});
-        },
+		method: "GET",
+		async:false,
+		url: "/shanggang/dredging_area/listall",
+		async:false,
+		success: function (data) {
+			fillAllShujun(data);
+		},
 		error: function () {       
-            alert("获取数据失败！");
-        }  
-    });
-	
+			alert("获取数据失败！");
+		}  
+	});
+
+	$.ajax({
+		method: "GET",
+		url: "/shanggang/dumping_area/list",
+		async:false,
+		success: function (data) {
+			fillAllPaoni(data);
+		},
+		error: function () {       
+			alert("获取数据失败！");
+		}  
+	});
+
+	$.ajax({
+		method: "GET",
+		url: "/shanggang/route/listall",
+		async:false,
+		success: function (data) {    
+				fillAllRoute(data);
+			  },       
+		error: function () {       
+			   alert("获取数据失败！");       
+		  }       
+	});
+
 	/*$.ajax({
-        method: "GET",
-        url: "/shanggang/abnormalinfo/exceedspeedfre",
-        success: function (data) {
+		method: "GET",
+		url: "/shanggang/abnormalinfo/exceedspeedfre",
+		success: function (data) {
 			data=[];
-        	fillSpeedfre(data);
-            },
+			fillSpeedfre(data);
+			},
 		error: function () {       
-            alert("fail");
-        }  
-    });*/
+			alert("fail");
+		}  
+	});*/
 	$.ajax({
-        method: "GET",
-        url: "/shanggang/workrecord/abnormal",
-        success: function (data) {
-        	fillAreafre(data);
-            },
+		method: "GET",
+		url: "/shanggang/workrecord/abnormal",
+		success: function (data) {
+			fillAreafre(data);
+			},
 		error: function () {       
-            alert("获取数据失败");
-        }  
-    });
+			alert("获取数据失败");
+		}  
+	});
 	/*$.ajax({
-        method: "GET",
-        url: "/shanggang/abnormalinfo/routefre",
-        success: function (data) {
+		method: "GET",
+		url: "/shanggang/abnormalinfo/routefre",
+		success: function (data) {
 			data=[];
-        	fillRoutefre(data);
-            },
+			fillRoutefre(data);
+			},
 		error: function () {       
-            alert("fail");
-        }  
-    });*/
+			alert("fail");
+		}  
+	});*/
 	$("#monitor_select").datepicker({
 		showOtherMonths: true,
 		selectOtherMonths: true,
@@ -877,4 +888,46 @@ function GetCompanyNameStrByID(id_str)
 		}
 	}
 	return company_name;
+}
+
+function startup_show()
+{
+	$('#startup_table').bootstrapTable('destroy');
+	var tmpparam = [];
+	for(var i = 0;i<allParam.length;++i)
+	{
+		if (allParam[i].isworking == 1){
+				tmpparam.push(allParam[i]);
+		}
+	}
+    $('#startup_table').bootstrapTable({
+		data: tmpparam,
+		pagination: false,
+		columns: [
+		{
+        field: 'projectid',
+        title: '工程编号'
+		}, 
+		{
+			field: 'projectname',
+			title: '工程名称'
+		},
+		{
+			field: 'capacity',
+			title: '抛泥方量'
+		},
+		{
+			field: 'mudratio',
+			title: '泥浆比'
+		},
+		{
+			field: 'startdate',
+			title: '开始日期'
+		},
+		{
+			field: 'enddate',
+			title: '结束日期'
+		}
+		]});
+	$("#startup_modal").modal('show');
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="ShipworkhisMap" type="com.sg.domain.Shipwork_history">
+		<id column="mmsi" property="mmsi" jdbcType="INTEGER" />
+		<result column="company_id" property="company_id" jdbcType="INTEGER" />
+		<result column="route_id" property="route_id" jdbcType="INTEGER"/>
+		<result column="startdate" property="startdate" jdbcType="CHAR"/>
+		<result column="enddate" property="enddate" jdbcType="CHAR"/>
+		<result column="project_id" property="project_id" jdbcType="INTEGER"/>
+	</resultMap>
+	    <insert id="addShipworkhistory" parameterType="Shipwork_history" >
+	        insert into shipwork_history   values (#{mmsi},#{company_id},#{route_id},#{startdate},#{enddate},#{project_id})    
+	    </insert>
+	    <select id="getShipworkhisbyid" parameterType="Integer" resultMap="ShipworkhisMap">
+	    	select * from shipwork_history where mmsi=#{mmsi}
+	    </select>
+	    
+	    <delete id="deleteShipworkhis" parameterType="Shipwork_history" >
+	        delete from ship where mmsi = #{mmsi} and startdate=#{startdate} and enddate=#{enddate} 
+	    </delete>	    
+	    
+	</mapper>

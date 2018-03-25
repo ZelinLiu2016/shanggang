@@ -52,13 +52,13 @@ public class RestoreController {
 	@ResponseBody
 	public ResponseEntity<String> restore(@RequestBody String pro) {
 		JSONObject json = JSONObject.fromObject(pro);
-		String file = "d:\\backupfile\\" + json.getString("filename");
+		String file = "f:\\backupfile\\" + json.getString("filename");
 		String result = null;
         try {
             Runtime runtime = Runtime.getRuntime();
-            String databaseName = "test001";
+            String databaseName = "shanggang";
             Process process = runtime
-                    .exec("C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin\\mysql.exe -hlocalhost -uroot -p12345 --default-character-set=utf8 "
+                    .exec("C:/Program Files/MySQL/MySQL Server 5.6/bin/mysqldump -h localhost -ushanggang -pshanggang --default-character-set=utf8 "
                             + databaseName);
             OutputStream outputStream = process.getOutputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
@@ -89,7 +89,7 @@ public class RestoreController {
     }
 
 	public List<String> listincrement(){
-		String path = "D:\\backupfile";
+		String path = "f:\\backupfile";
 		 File file = new File(path);
 		 String[] filelist = file.list();
 		 List<String> filename = new ArrayList<String>();

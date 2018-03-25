@@ -10,15 +10,23 @@ package com.sg.domain;
  */
 public class Abnormal_info {
 	public String mmsi;
-	public String abnormal_type;
+	public String abnormal_type="";
 	public String lon;
 	public String lat;
 	public String time;
 	public String speed;
 	public String handle;
 	public int windspeed;
+	public int exceed_interval;
 	
 	
+	
+	public int getExceed_interval() {
+		return exceed_interval;
+	}
+	public void setExceed_interval(int exceed_interval) {
+		this.exceed_interval = exceed_interval;
+	}
 	public int getWindspeed() {
 		return windspeed;
 	}
@@ -70,8 +78,8 @@ public class Abnormal_info {
 	@Override
 	public String toString() {
 		return "Abnormal_info [mmsi=" + mmsi + ", abnormal_type=" + abnormal_type + ", lon=" + lon + ", lat=" + lat
-				+ ", time=" + time + ", speed=" + speed + ", handle=" + handle + ", windspeed=" + windspeed + "]";
+				+ ", time=" + time + ", speed=" + speed + ", handle=" + handle + ", windspeed=" + windspeed
+				+ ", exceed_interval=" + exceed_interval + "]";
 	}
-	
 	
 }

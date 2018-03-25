@@ -5,7 +5,8 @@ function InitBlackList()
 {
 	CleanAll();
 	$("#L2").attr("class", "LeftTextSelect");
-	$("#L2L4").attr("class", "LeftTextSelect");
+	$("#L2L3").attr("class", "LeftTextSelect");
+	$("#L2L3L7").attr("class", "LeftTextSelect");
 	
 	$('#data_clean').hide();
 	$('#mapBody').hide();
@@ -15,8 +16,60 @@ function InitBlackList()
 	$("#detailtable").hide();
 	$("#info_div").hide();
 	$("#project_progress").hide();
-	fillBlackListData();
-	InitBlackListTable();
+	$.ajax({
+        method: "GET",
+        url: "/shanggang/workrecord/exceed_speed",
+        success: function (data) {
+        	tmp = {};
+			allBlackList = [];
+			for(var i=0;i<data.length;++i){
+				x = data[i].mmsi;
+				if(x in tmp)
+				{
+					tmp[x]["speed"] += 1;
+				}
+				else
+				{
+					tmp[x] = {"speed":0,"area":0,"route":0,"mmsi":x};
+					tmp[x]["speed"] += 1;
+				}
+			}
+			$.ajax({
+				method: "GET",
+				url: "/shanggang/workrecord/abnormal",
+				success: function (data) {
+					console.log(data);
+					for(var i=0;i<data.length;++i){
+						x = data[i].mmsi;
+						if(x in tmp)
+						{
+							tmp[x]["area"] += 1;
+						}
+						else
+						{
+							tmp[x] = {"speed":0,"area":0,"route":0,"mmsi":x};
+							tmp[x]["area"] += 1;
+						}
+					}
+					for(var x in tmp)
+					{
+						var a = tmp[x];
+						a["all"] = tmp[x].area + tmp[x].speed;
+						allBlackList.push(a);
+					}
+					InitBlackListTable();
+				},
+				error: function () {       
+					alert("获取数据失败！");
+				}  
+			});
+			
+        },
+		error: function () {       
+            alert("fail");
+        }  
+    });
+	
 }
 
 function InitBlackListTable()
@@ -25,9 +78,6 @@ function InitBlackListTable()
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allBlackList,
-    //height:380,
-	pagination: true,
-    pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
 
@@ -45,10 +95,6 @@ function InitBlackListTable()
         field: 'area',
         title: '抛泥异常次数'
     }, 
-	{
-        field: 'route',
-        title: '航线异常次数'
-    },
 	{
         field: 'all',
         title: '总异常次数',
@@ -83,18 +129,6 @@ function fillBlackListData()
 		{
 			tmp[x] = {"speed":0,"area":0,"route":0,"mmsi":x};
 			tmp[x]["area"] = areafre[x];
-		}
-	}
-	for(var x in routefre)
-	{
-		if(x in tmp)
-		{
-			tmp[x]["route"] = routefre[x];
-		}
-		else
-		{
-			tmp[x] = {"speed":0,"area":0,"route":0,"mmsi":x};
-			tmp[x]["route"] = routefre[x];
 		}
 	}
 	for(var x in tmp)

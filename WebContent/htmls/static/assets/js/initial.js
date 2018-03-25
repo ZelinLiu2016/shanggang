@@ -150,17 +150,6 @@ $(document).ready(function() {
 		  }       
 	});
 
-	/*$.ajax({
-		method: "GET",
-		url: "/shanggang/abnormalinfo/exceedspeedfre",
-		success: function (data) {
-			data=[];
-			fillSpeedfre(data);
-			},
-		error: function () {       
-			alert("fail");
-		}  
-	});*/
 	$.ajax({
 		method: "GET",
 		url: "/shanggang/workrecord/abnormal",

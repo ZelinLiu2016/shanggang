@@ -24,7 +24,7 @@
 	    	select * from workrecord where mmsi=#{mmsi} AND date=#{date}
 	    </select>
 	    <update id="modifyhandle" parameterType="Workrecord" >
-	    	update workrecord set ishandled=1 where mmsi=#{mmsi} and indred=#{indred}
+	    	update workrecord set ishandled=#{ishandled} where mmsi=#{mmsi} and indred=#{indred}
 	    </update>
 	    <update id="addhandle" parameterType="Abnormal_info">
 	    	update workrecord set handlerecord=#{handle} where mmsi=#{mmsi} and indred=#{time} 

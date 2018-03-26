@@ -20,7 +20,7 @@
 	    </select>
 	    
 	    <delete id="deleteShipworkhis" parameterType="Shipwork_history" >
-	        delete from ship where mmsi = #{mmsi} and startdate=#{startdate} and enddate=#{enddate} 
+	        delete from shipwork_history where mmsi = #{mmsi} and startdate=#{startdate} and enddate=#{enddate} 
 	    </delete>	    
 	    
 	</mapper>

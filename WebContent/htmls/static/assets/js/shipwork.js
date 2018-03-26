@@ -48,14 +48,6 @@ function InitShipWork()
 	{
 		selected.removeChild(selected.firstChild);
 	}
-	var mmsis = detailed[$("#import_project").val()].mmsi;
-    var tmp_mmsi_list = mmsis.split(';');
-	entry = "";
-	for (var i = 0;i<tmp_mmsi_list.length;++i){
-		var m = tmp_mmsi_list[i];
-		entry += '<option value="'+m+'">'+ m+'---'+allMmsi[m].shipname +'</option>';
-	}
-	$("#select_mmsi").append(entry);
 	$("#select_mmsi").val("");
 	allShipWork = [];
 	InitShipWorkTable();
@@ -285,7 +277,7 @@ function shipwork_add()
          	 RefreshLoadShipWork();
                },       
          error: function () {       
-                alert("删除数据失败！");       
+                alert("新增数据失败！");       
            }       
      });
 }
@@ -305,12 +297,12 @@ function shipwork_edit()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("新增数据成功！");
+        	 alert("修改数据成功！");
 			 $('#shipwork_update').modal('hide');
          	 RefreshLoadShipWork();
                },       
          error: function () {       
-                alert("删除数据失败！");       
+                alert("修改数据失败！");       
            }       
      });
 }
@@ -330,7 +322,7 @@ function shipwork_delete()
          data: JSON.stringify(postData),
          contentType:"application/json",
          success: function (data) {    
-        	 alert("新增数据成功！");
+        	 alert("删除数据成功！");
 			 $('#shipwork_update').modal('hide');
          	 RefreshLoadShipWork();
                },       

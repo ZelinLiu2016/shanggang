@@ -19,6 +19,7 @@ function SetRouteTable() {
 	$("#btn_delete").show();
 	$("#btn_show").show();
 	$("#import_project").hide();
+	$("#select_mmsi").hide();
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
 	$("#finish_checkbox").hide();

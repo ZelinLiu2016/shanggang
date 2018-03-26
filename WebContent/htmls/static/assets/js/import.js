@@ -17,6 +17,7 @@ function InitLoadImport()
 	$("#toolbar_search").show();
 	$("#btn_search").show();
 	$("#import_project").show();
+	$("#select_mmsi").hide();
 	$("#finish_checkbox").hide();
 	$("#finish_checkbox_label").hide();
 	

@@ -887,6 +887,7 @@ function error_mark_confirm()
 	postData["mmsi"] = arrselections[0].mmsi;
 	postData["indred"] = arrselections[0].indred;
 	postData["handle_content"] = $("#error_mark_text").val();
+	postData["ishandle"] = handle;
 	$.ajax({
         method: "POST",
         url: "/shanggang/workrecord/handleabnormal",

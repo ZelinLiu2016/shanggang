@@ -77,6 +77,7 @@ function InitLoadParam()
 	$("#btn_delete").show();
 	$("#btn_show").hide();
 	$("#import_project").hide();
+	$("#select_mmsi").hide();
 	$("#finish_checkbox").show();
 	$("#finish_checkbox_label").show();
 	$("#finish_checkbox_label").text("显示已完成工程");

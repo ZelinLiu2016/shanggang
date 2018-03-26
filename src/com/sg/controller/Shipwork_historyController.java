@@ -86,8 +86,11 @@ public class Shipwork_historyController {
 		JSONObject json = JSONObject.fromObject(pro);
 		int mmsi=json.getInt("mmsi");
 		int project_id = json.getInt("project_id");
+		Shipwork_history shiphis = new Shipwork_history();
+		shiphis.setMmsi(mmsi);
+		shiphis.setProject_id(project_id);
 		SqlSession session = this.getSession();
-		List<Shipwork_history> res = session.selectList("getShipworkhisbyid",mmsi);
+		List<Shipwork_history> res = session.selectList("getShipworkhisbyid",shiphis);
 		return new ResponseEntity<List<Shipwork_history>>(res,HttpStatus.OK);
 	}
 }

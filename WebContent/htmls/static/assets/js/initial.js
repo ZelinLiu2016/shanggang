@@ -807,7 +807,14 @@ function GetPaoniNameByID(id)
 
 function GetRouteNameByID(id)
 {
-	return "-";
+	if(id in allHangxian)
+	{
+		return allHangxian[id].route_name;
+	}
+	else
+	{
+		return "-";
+	}
 }
 
 function GetCompanyNameByID(id)

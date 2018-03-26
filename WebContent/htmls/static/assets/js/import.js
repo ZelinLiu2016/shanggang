@@ -65,13 +65,16 @@ function InitLoadImport()
 	}
 	entry = '<tr><th colspan="5">船舶详细信息</th></tr>';
 	entry += '<tr><th width="20%">船老大</th><th width="20%">联系方式</th><th width="20%">船长</th><th width="20%">船宽</th><th width="20%">满载量</th></tr>';
+	entry += '<tr><td></td><td></td><td></td><td></td><td></td></td>';
+	entry += '<tr><th colspan="5">历史参建项目</th></tr>';
+	entry += '<tr><th>工程名称</th><th>开始日期</th><th>结束日期</th><th></th><th></th></tr>';
 	$("#info_head").append(entry);
 	var tbody = document.getElementById("info_body");
 	while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
 	{
 		tbody.removeChild(tbody.firstChild);
 	}
-	entry = '<tr><td></td><td></td><td></td><td></td><td></td></tr>'
+	entry = '<tr><td></td><td></td><td></td><td></td><td></td></tr>';
 	$("#info_body").append(entry);
 }
 
@@ -103,17 +106,58 @@ function InitImportTable() {
 	singleSelect:true,
 	
 	onClickRow: function (row, $element) {
-		var tbody = document.getElementById("info_body");
 		var mmsi = row.mmsi;
-		while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
+		var thead = document.getElementById("info_head");
+		while(thead.hasChildNodes()) //当div下还存在子节点时 循环继续  
 		{
-			tbody.removeChild(tbody.firstChild);
+			thead.removeChild(thead.firstChild);
 		}
-		entry = '<tr><td>'+allMmsi[mmsi].boss;
+		entry = '<tr><th colspan="5">船舶详细信息</th></tr>';
+		entry += '<tr><th width="20%">船老大</th><th width="20%">联系方式</th><th width="20%">船长</th><th width="20%">船宽</th><th width="20%">满载量</th></tr>';
+		entry += '<tr><td>'+allMmsi[mmsi].boss;
 		entry += '</td><td>'+allMmsi[mmsi].bossphone;
 		entry += '</td><td>'+allMmsi[mmsi].length;
 		entry += '</td><td>'+allMmsi[mmsi].width;
 		entry += '</td><td>'+allMmsi[mmsi].capacity+'</td></tr>';
+		entry += '<tr><th colspan="5">历史参建项目</th></tr>';
+		entry += '<tr><th>工程名称</th><th>开始日期</th><th>结束日期</th><th></th><th></th></tr>';
+		$("#info_head").append(entry);
+		var tbody = document.getElementById("info_body");
+		
+		while(tbody.hasChildNodes()) //当div下还存在子节点时 循环继续  
+		{
+			tbody.removeChild(tbody.firstChild);
+		}
+		entry = "";
+		var tmp_list = new Array();
+		for(d in detailed)
+		{
+			if(hasvalue(detailed[d].mmsi.split(';'), mmsi))
+			{
+				tmp_list.push([d, detailed[d].startdate, detailed[d].enddate]);
+			}
+		}
+		tmp_list.sort(
+		    function(a,b){
+				if(a[1]==b[1])
+				{
+					return a[2]>b[2];
+				}
+				else{
+					return a[1]>b[1];
+				}
+			}
+		);
+		for(var i = 0; i<tmp_list.length;++i)
+		{
+			entry += '<tr><td>'+detailed[tmp_list[i][0]].projectname+'</td><td>'+detailed[tmp_list[i][0]].startdate+'</td><td>'+detailed[tmp_list[i][0]].enddate+'</td><td></td><td></td></tr>';
+		}
+		$("#info_body").append(entry);
+		entry = "";
+		for(var i = tbody.rows.length;i<4;++i)
+		{
+			entry+=('<tr><td></td><td></td><td></td><td></td><td></td></tr>');
+		}
 		$("#info_body").append(entry);
     },
 	

@@ -83,7 +83,7 @@ function shipwork_ship_changed()
 			success: function (data) {
 				console.log(data);
 				fillShipWorkData(data);
-				InitShipWorkTable();
+				RefreshShipWorkTable();
 			},
 			error: function () {       
 				alert("获取数据失败！ ")
@@ -94,6 +94,14 @@ function shipwork_ship_changed()
 function fillShipWorkData(data)
 {
 	allShipWork = [];
+	for (var i = 0;i<data.length;++i)
+	{
+		var info = {"mmsi":data[i].mmsi,"startdate":data[i].startdate, "enddate":data[i].enddate,"route_id":data[i].route_id,
+					"fleetid":data[i].company_id, "project_id":data[i].project_id};
+		info["company_name"] = GetCompanyNameByID(info.fleetid);
+		info["route_name"] = GetRouteNameByID(info.route_id);
+		allShipWork.push(info);
+	}
 }
 
 function InitShipWorkTable()

@@ -579,11 +579,12 @@ function SpeedError()
 function fillSpeedError(data)
 {
 	allError = [];
-	for(var i = 0;i<data.length;++i)
-		{
+	mmsi_project_selected = get_mmsi_selected();
+	for(var i = 0;i<data.length;++i){
+		if(data[i].mmsi in mmsi_project_selected){
 			var info = {"mmsi":data[i].mmsi,"date":data[i].date,"indred":data[i].indred,
-					"exitdred":data[i].exitdred,"indump":data[i].indump,"exitdump":data[i].exitdump,
-					"ishandled":data[i].ishandled,"handlerecord":data[i].handlerecord,"speed":data[i].exceed_speed};
+				"exitdred":data[i].exitdred,"indump":data[i].indump,"exitdump":data[i].exitdump,
+				"ishandled":data[i].ishandled,"handlerecord":data[i].handlerecord,"speed":data[i].exceed_speed};
 			if(data[i].mmsi in allMmsi)
 			{
 				info.name = allMmsi[data[i].mmsi].shipname;
@@ -608,6 +609,7 @@ function fillSpeedError(data)
 			}
 			allError.push(info);
 		}
+	}
 }
 
 function InitSpeedTable()

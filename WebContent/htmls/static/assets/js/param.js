@@ -674,6 +674,31 @@ function fillMmsiData(data)
 	}
 }
 
+function check_param(data)
+{
+	if (data["project_id"] == "")
+		return false;
+	if (data["projectname"] == "")
+		return false;
+	if (data["dumpingarea"] == "")
+		return false;
+	if (data["harborname"] == "")
+		return false;
+	if (data["squarevolume"] == "")
+		return false;
+	if (data["route_id"] == "")
+		return false;
+	if (data["mmsilist"] == "")
+		return false;
+	if (data["begindate"] == "")
+		return false;
+	if (data["enddate"] == "")
+		return false;
+	if (data["top_area"] == "")
+		return false;
+	return true;
+}
+
 function param_add()
 {
 	postData["project_id"] = $("#param_projectid").val();
@@ -694,7 +719,8 @@ function param_add()
 	postData["finacial_supervision"] = tmp_cwdw_id_str;
 	postData["isworking"] = $("#param_inprogress").val();
 	postData["top_area"] = $("#param_port").val();
-	$.ajax({
+	if check_param(postData){
+		$.ajax({
          type: "POST",
          url: "/shanggang/project/add",
          data: JSON.stringify(postData),
@@ -707,7 +733,12 @@ function param_add()
          error: function () {       
                 alert("新增数据失败！");       
            }       
-     });
+     	});
+	}
+	else{
+		alert("数据不完整！");
+	}
+	
 }
 
 function param_edit()

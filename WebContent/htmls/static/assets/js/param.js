@@ -719,7 +719,7 @@ function param_add()
 	postData["finacial_supervision"] = tmp_cwdw_id_str;
 	postData["isworking"] = $("#param_inprogress").val();
 	postData["top_area"] = $("#param_port").val();
-	if check_param(postData){
+	if(check_param(postData)){
 		$.ajax({
          type: "POST",
          url: "/shanggang/project/add",

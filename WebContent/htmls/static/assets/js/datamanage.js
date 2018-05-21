@@ -8,6 +8,9 @@ function DataManageInit()
 	$("#L3L1").attr("class", "LeftTextSelect");
 	
 	$("#toolbar").show();
+	$("#import_project").hide();
+	$("#select_mmsi").hide();
+	$("#toolbar_search").hide();
 	$("#btn_backup").show();
 	$("#btn_add").hide();
 	$("#btn_edit").hide();

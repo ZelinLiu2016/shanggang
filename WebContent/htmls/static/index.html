@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>上港集团航道维护保障系统</title>
+<title>上港集团工程管理系统</title>
 <link href="css/base.css" rel="stylesheet" type="text/css">
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="assets/js/jquery-1.11.3.min.js"></script>
@@ -10,6 +10,7 @@
 <script src="assets/js/sha-1.js"></script>
 <script src="assets/js/form.js"></script>
 <script src="assets/js/icheck.min.js"></script>
+<script src="assets/js/user_login.js"></script>
 <script type="text/javascript">
         function keyLogin() {
             if(event.keyCode==13) {  
@@ -33,7 +34,7 @@
 			<h2></h2>
 			<input placeholder="用户名" class="Usename" type="text" id="userId"  name="userId">
 			<input placeholder="密 码" class="Password" type="password" id="password" onkeydown = "keyLogin()" name="password">
-			<button id = "login-btn" type="button"   class="Login" onclick="login($('#loginForm')[0])">登 录</button>
+			<button id = "login-btn" type="button"   class="Login" onclick="system2_login($('#loginForm')[0])">登 录</button>
 			<div class="cb"></div>
 			</div>
 		 </form>

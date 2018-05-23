@@ -16,7 +16,9 @@ function InitShipWork()
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
 	$("#import_project").show();
+	$("#import_project_label").show();
 	$("#select_mmsi").show();
+	$("#select_mmsi_label").show();
 	$("#finish_checkbox").hide();
 	$("#finish_checkbox_label").hide();
 	
@@ -39,7 +41,9 @@ function InitShipWork()
 	}
 	var entry = "";
 	for (var d in detailed) {
-		entry += '<option value="'+d+'">'+ d+'---'+detailed[d].projectname +'</option>';
+		if (detailed[d]["isworking"] == 1){
+			entry += '<option value="'+d+'">'+ d+'---'+detailed[d].projectname +'</option>';
+		}
 	}
 	$("#import_project").append(entry);
 	$("#import_project").val("");

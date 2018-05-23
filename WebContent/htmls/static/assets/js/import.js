@@ -18,6 +18,8 @@ function InitLoadImport()
 	$("#btn_search").show();
 	$("#import_project").show();
 	$("#select_mmsi").hide();
+	$("#import_project_label").hide();
+	$("#select_mmsi_label").hide();
 	$("#finish_checkbox").hide();
 	$("#finish_checkbox_label").hide();
 	

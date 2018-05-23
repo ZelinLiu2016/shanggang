@@ -15,6 +15,8 @@ function SetShujunTable() {
 	$("#btn_show").show();
 	$("#import_project").hide();
 	$("#select_mmsi").hide();
+	$("#import_project_label").hide();
+	$("#select_mmsi_label").hide();
 	$("#toolbar_search").hide();
 	$("#btn_search").hide();
 	$("#finish_checkbox").show();

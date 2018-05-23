@@ -78,6 +78,8 @@ function InitLoadParam()
 	$("#btn_show").hide();
 	$("#import_project").hide();
 	$("#select_mmsi").hide();
+	$("#import_project_label").hide();
+	$("#select_mmsi_label").hide();
 	$("#finish_checkbox").show();
 	$("#finish_checkbox_label").show();
 	$("#finish_checkbox_label").text("显示已完成工程");
@@ -761,7 +763,8 @@ function param_edit()
 	postData["finacial_supervision"] = tmp_cwdw_id_str;
 	postData["isworking"] = $("#param_inprogress").val();
 	postData["top_area"] = $("#param_port").val();
-	$.ajax({
+	if(check_param(postData)){
+		$.ajax({
          type: "POST",
          url: "/shanggang/project/update",
          data: JSON.stringify(postData),
@@ -774,7 +777,11 @@ function param_edit()
          error: function () {       
                 alert("修改数据失败！");       
            }       
-     });
+     	});	
+	}
+	else{
+		alert("数据不完整！");
+	}
 }
 
 function param_delete(id)

@@ -5,8 +5,11 @@ var g_iPointStylePos = 0; //样式pos
 var g_iLineLayerId = 200; //线图层的id
 var g_iLineStylePos = 0;
 var g_iFaceLayerId = 300; //面图层的id
+var gg_iFaceLayerId = 301;
 var g_iFaceStylePos = 0;
+var gg_iFaceStylePos = 0;
 var g_iAddObjId = 0;
+var gg_iAddObjId = 0;
 var g_iSimpleBoxOneLineSize = 20; //信息面板添加一行对应增加了多少高度
 
 var g_iWeatherLayerId = 1000; //气象图层id
@@ -296,6 +299,30 @@ function Test_AddLayer() {
         faceStyle.iLineOpacity = 100;
 
         g_iFaceStylePos = API_AddFaceLayerStyleByPos(faceLayerPos, faceStyle);
+        API_SetLayerTextBackGroundColorByPos(faceLayerPos,true, "#0000FF", 50); //设置文字背景颜色
+    }
+	
+	 var faceLayerInfo = [];
+    faceLayerInfo.id = gg_iFaceLayerId;
+    faceLayerInfo.type = 3; //类型：1=点图层，2=线图层，3=面图层
+    faceLayerInfo.name = "面框图层"; //图层名称
+    faceLayerInfo.bShow = true; //显示
+    var faceLayerPos = API_AddNewLayer(faceLayerInfo,null); //添加图层，得到图层的pos
+    if (faceLayerPos > -1) {
+        var faceStyle = [];
+        faceStyle.borderWith = 1; //线的粗细
+        faceStyle.borderColor = "#092ee8"; //线的颜色
+        faceStyle.bFilled = false; //是否填充颜色
+        //faceStyle.fillColor = "#FFFFFF"; //填充的颜色
+        faceStyle.fillColor = "#FF0000"; //填充的颜色
+        faceStyle.iOpacity = 50; //透明度
+        faceStyle.bShowText = true; //是否显示名称
+        faceStyle.textColor = "#000000"; //名称颜色
+        faceStyle.fontSize = "12px"; //名称字体大小
+        faceStyle.iTextOpacity = 80; //透明度
+        faceStyle.iLineOpacity = 100;
+
+        gg_iFaceStylePos = API_AddFaceLayerStyleByPos(faceLayerPos, faceStyle);
         API_SetLayerTextBackGroundColorByPos(faceLayerPos,true, "#0000FF", 50); //设置文字背景颜色
     }
 

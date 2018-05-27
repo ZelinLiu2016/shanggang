@@ -321,12 +321,21 @@ function shipwork_edit()
 
 function shipwork_delete()
 {
-	mmsi = $("#shipwork_mmsi").val();
-	project_id = $("#shipwork_projectid").val();
-	route_id = $("#shipwork_routeid").val();
-	company_id = $("#shipwork_fleetid").val();
-	sdate = $("#shipwork_startdate").val();
-	edate = $("#shipwork_enddate").val();
+	var arrselections = $("#table").bootstrapTable('getSelections');
+	if (arrselections.length > 1) {
+		alert("删除数据失败！"); 
+		return;
+	}
+	if (arrselections.length <= 0) {
+		alert("删除数据失败！"); 
+		return;
+	}
+	var mmsi = arrselections[0].mmsi;
+	var company_id = arrselections[0].company_id;
+	var route_id = arrselections[0].route_id;
+	var project_id = arrselections[0].project_id;
+	var sdate = arrselections[0].startdate;
+	var edate = arrselections[0].enddate;
 	postData = {"mmsi":mmsi,"company_id":company_id,"route_id":route_id,"project_id":project_id, "startdate":sdate, "enddate":edate};
 	$.ajax({
          type: "POST",

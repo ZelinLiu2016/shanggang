@@ -11,13 +11,13 @@ package com.sg.domain;
 public class Workrecord {
 	public String mmsi;
 	public String date;
-	public String indred;
-	public String exitdred;
-	public String indump;
-	public String exitdump;
-	public int state;
+	public String indred="";
+	public String exitdred="";
+	public String indump="";
+	public String exitdump="";
+	public int state=0;
 	public int ishandled;
-	public String handlerecord;
+	public String handlerecord="";
 	public int exceed_speed;
 	
 	public int getExceed_speed() {
@@ -79,6 +79,13 @@ public class Workrecord {
 	}
 	public void setState(int state) {
 		this.state = state;
+	}
+	public void reset(){
+		this.indred="";
+		this.exitdred="";
+		this.indump="";
+		this.exitdump="";
+		this.state=0;
 	}
 	@Override
 	public String toString() {

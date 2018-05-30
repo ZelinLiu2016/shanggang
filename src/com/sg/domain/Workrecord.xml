@@ -50,6 +50,9 @@
 	    <select id="getabnormal" resultMap="WorkrecordMap">
 	    	select * from workrecord where (state=1 OR state=2 OR state=3 OR state=4) 
 	    </select>
+	    <select id="getshiplastexitdump" parameterType="String" resultType="String">
+	    	select exitdump from workrecord where mmsi=#{mmsi} order by exitdump desc limit 1
+	    </select>
 	    <delete id="deletework" parameterType="Workrecord">
 	    	delete from workrecord where mmsi=#{mmsi} AND indred=#{indred}
 	    </delete>

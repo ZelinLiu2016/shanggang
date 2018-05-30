@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
@@ -25,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import com.baidu.mapapi.model.LatLng;
 import com.sg.abnormalDetection.Point;
 import com.sg.abnormalDetection.Quadrilateral;
+import com.sg.domain.Abnormal_info;
 import com.sg.domain.Dredging_area;
 import com.sg.domain.DumpingArea;
 import com.sg.domain.Project;
@@ -40,11 +42,18 @@ import net.sf.json.JSONObject;
  * 2017-11-03
  */
 public class WorkloadTimerTask extends TimerTask {
-	
+	//实时异常监测  0正常  1作业行为异常  2未驶入抛泥区 3作业位置错误 4抛泥区错误 5瞬时超速 6连续超速
+    private static HashMap<Integer,List<Shipinfo>> ship_trajectory = new HashMap<Integer,List<Shipinfo>>();
+    private static HashMap<Integer,List<Integer>> ship_state = new HashMap<Integer,List<Integer>>();
+    private static HashMap<Integer,Abnormal_info> exceed_flag = new HashMap<Integer,Abnormal_info>();
+//    private static HashMap<Integer,List<Integer>> ship_state = new HashMap<Integer,List<Integer>>();
+    private static HashMap<Integer,Workrecord> timerecord = new HashMap<Integer,Workrecord>(); 
+    private static int max_interval = 10;//超过10min超速为连续超速
+    
 	public static SqlSession getSession() throws IOException{
 		String resource = "mybatis-config.xml";
 		InputStream inputStream = Resources.getResourceAsStream(resource);
-		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+		SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream); 
         SqlSession session=sqlSessionFactory.openSession();
         return session;
 	}
@@ -55,8 +64,8 @@ public class WorkloadTimerTask extends TimerTask {
 	@Override
 	public  void run() {
 		try {
-			workrecord();
-		} catch (IOException | ParseException e) {
+			online();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -86,6 +95,231 @@ public class WorkloadTimerTask extends TimerTask {
 				huangpu(mmsi,date);
 				
 		}
+	}
+	
+	public static void online() throws IOException{
+		SqlSession session = getSession();
+		SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dft1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String end = dft1.format(new Date());
+		List<String> mmsi_str = session.selectList("getworkingmmsilist");
+		List<Integer> mmsilist = new ArrayList<Integer>();
+		for(String str:mmsi_str){
+			String[] mm = str.split(";");
+			for(int i=0;i<mm.length;i++){
+				if(!mmsilist.contains(Integer.valueOf(mm[i])))
+					mmsilist.add(Integer.valueOf(mm[i]));
+			}
+		}
+		
+		for(int mmsi:mmsilist){
+			String begin = session.selectOne("getshiplastexitdump",String.valueOf(mmsi));
+			Project info = new Project();
+			info.setBeginDate(begin);
+			info.setEndDate(end);
+			info.setMmsilist(String.valueOf(mmsi));
+			if(session.selectList("getinfoduring",info)==null)
+				return;
+			List<Shipinfo> location_list = session.selectList("getinfoduring",info);
+//			System.out.println("开始时间："+begin);
+//			System.out.println("结束时间："+end);
+			for(Shipinfo it:location_list){
+				//实时异常检测
+				Abnormal_info abnormal = new Abnormal_info();
+				abnormal.setLat(it.lat);
+				abnormal.setLon(it.lon);
+				abnormal.setMmsi(String.valueOf(mmsi));
+				abnormal.setSpeed(it.sp);
+				abnormal.setTime(it.ti);
+				if(!ship_trajectory.containsKey(mmsi)){
+					ship_trajectory.put(mmsi, new ArrayList<Shipinfo>());
+					ship_state.put(mmsi, new ArrayList<Integer>());
+					timerecord.put(mmsi, new Workrecord());
+					exceed_flag.put(mmsi, new Abnormal_info());
+					timerecord.get(mmsi).setMmsi(String.valueOf(mmsi));
+				}
+				boolean ishuangpu = false;
+				String route_id = session.selectOne("getShipRoute_id",mmsi);
+				String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
+				String dredging_id = session.selectOne("getdredgingareabyid",route_id);
+				String dumping_str = session.selectOne("getDumpingLocation",dumping_id);
+				String dredging_str = session.selectOne("getDredgingLocation",dredging_id);
+				List<DumpingArea> otherdumping_info = session.selectList("getotherdumpingarea",dumping_id);
+				List<Dredging_area> otherdredging_info = session.selectList("getotherdredingarea",Integer.valueOf(dredging_id));
+				int speed_limit = session.selectOne("getSpeedlimit",route_id);
+				Quadrilateral dumping = new Quadrilateral(dumping_str);
+				Quadrilateral dredging = new Quadrilateral(dredging_str);
+				List<Quadrilateral> otherdumping = new ArrayList<Quadrilateral>();
+				List<Quadrilateral> otherdredging = new ArrayList<Quadrilateral>();
+				if(dredging_id.equals("5")||dredging_id.equals("6")||dredging_id.equals("7")||dredging_id.equals("8"))
+					ishuangpu = true;
+				for(Iterator<DumpingArea> iter= otherdumping_info.iterator();iter.hasNext();){
+					otherdumping.add(new Quadrilateral(iter.next().getLocation()));
+				}
+				for(Iterator<Dredging_area> iter=otherdredging_info.iterator();iter.hasNext();){
+					otherdredging.add(new Quadrilateral(iter.next().getLocation()));
+				}
+				ship_trajectory.get(mmsi).add(it);
+				LatLng point = new LatLng(Double.valueOf(it.lat),Double.valueOf(it.lon));
+				//判断是否超速
+//				System.out.println("speed_limit:"+speed_limit);
+//				System.out.println("actual speed:"+shipinfo.sp);
+				if(Double.valueOf(it.sp)>Double.valueOf(speed_limit)){
+					try {
+						if(exceed_flag.get(mmsi).abnormal_type.equals("Instant exceed speed")&&(dft1.parse(it.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.get(mmsi).time.substring(0, 19)).getTime())/1000/60>max_interval){
+							System.out.println("this exceed:"+it.ti);
+							System.out.println("last_exceed:"+exceed_flag.get(mmsi).time);		
+							abnormal.setAbnormal_type("Continuous exceed speed");
+							abnormal.setExceed_interval((int) (dft1.parse(it.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.get(mmsi).time.substring(0, 19)).getTime())/1000/60);
+//							session.insert("addAbnormal",abnormal);
+							session.commit();
+						}
+						else if(!exceed_flag.get(mmsi).abnormal_type.equals("Instant exceed speed")){
+							abnormal.setAbnormal_type("Instant exceed speed");
+							abnormal.setTime(it.ti);
+							exceed_flag.get(mmsi).setAbnormal_type("Instant exceed speed");
+							exceed_flag.get(mmsi).setTime(it.ti);
+//							session.insert("addAbnormal",abnormal);
+							session.commit();
+							}
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+//					System.out.println(abnormal.abnormal_type);
+				}
+				
+				//ship_atate: 1在正确的工作区域 2错误的工作区域 3正确的抛泥区 4错误的抛泥区 5其他区域
+				if(!ishuangpu&&(dredging.isContainsPoint(point))&&timerecord.get(mmsi).indred.equals("")){
+					ship_state.get(mmsi).add(1);
+					//in dredging area
+					timerecord.get(mmsi).setIndred(it.ti);
+					timerecord.get(mmsi).setDate(timerecord.get(mmsi).indred.substring(0, 10));							
+				}
+				else if(!ishuangpu&&dredging.isContainsPoint(point)&&!(timerecord.get(mmsi).indred.equals(""))){
+					try {
+						if(((dft1.parse(it.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).indred.substring(0, 19)).getTime())/1000/60>360)&&((dft1.parse(it.ti).getTime()-dft1.parse(timerecord.get(mmsi).indred).getTime())/1000/60<480)){
+							//作业行为异常
+							System.out.println("进抛泥区时间"+timerecord.get(mmsi).indred);
+							System.out.println("此时时间："+it.ti);
+							System.out.println("作业时间："+(dft1.parse(it.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).indred.substring(0, 19)).getTime())/1000/60);
+							abnormal.setAbnormal_type("Working behaviour abnormal");
+							timerecord.get(mmsi).setState(1);
+							ship_state.get(mmsi).add(1);
+							timerecord.get(mmsi).setExitdred(it.ti);
+//							session.insert("addAbnormal",abnormal);
+							session.commit();
+						}
+						else if((dft1.parse(it.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).indred.substring(0, 19)).getTime())/1000/60>480){
+							abnormal.setAbnormal_type("Havn't dump into dumping area");
+							timerecord.get(mmsi).setDate(timerecord.get(mmsi).indred.substring(0, 10));
+							int k=ship_state.get(mmsi).size()-1;
+							for(;k>0;k--){
+								if(ship_state.get(mmsi).get(k)==1)
+									timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+							}
+							timerecord.get(mmsi).setIndump(it.ti);
+							timerecord.get(mmsi).setExitdump(it.ti);
+							timerecord.get(mmsi).setState(2);
+//							session.insert("addAbnormal",abnormal);
+							session.insert("addworkrecord",timerecord.get(mmsi));
+							session.commit();
+							System.out.println(abnormal.abnormal_type);
+							ship_trajectory.get(mmsi).clear();
+							ship_state.get(mmsi).clear();
+							timerecord.get(mmsi).reset();;
+						}
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				else if(!ishuangpu&&WorkloadTimerTask.areascontains(otherdredging,point)&&timerecord.get(mmsi).indred.equals("")){
+					ship_state.get(mmsi).add(2);
+					//in wrong dredging area
+					abnormal.setAbnormal_type("Wrong dredging area");
+					timerecord.get(mmsi).setState(3);
+					timerecord.get(mmsi).setIndred(it.ti);
+//					session.insert("addAbnormal",abnormal);
+					session.commit();
+					System.out.println(abnormal.abnormal_type);
+				}
+				else if(dumping.isContainsPoint(point)&&!timerecord.get(mmsi).indred.equals("")&&(timerecord.get(mmsi).indump.equals(""))){
+					timerecord.get(mmsi).setIndump(it.ti);
+					ship_state.get(mmsi).add(3);
+					if(timerecord.get(mmsi).getExitdred().equals("")){
+						int k=ship_state.get(mmsi).size()-1;
+						if(timerecord.get(mmsi).state==3){ 
+							for(;k>0;k--){
+								if(ship_state.get(mmsi).get(k)==5&&ship_state.get(mmsi).get(k-1)==2){
+									timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+									System.out.println("BINGO!!!!!!!!!");
+									break;
+								}
+							}
+						}
+						else{
+							for(;k>0;k--){
+								if(ship_state.get(mmsi).get(k)==5&&ship_state.get(mmsi).get(k-1)==1){
+									timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+									break;
+								}
+							}
+						}
+					}
+				}
+				else if(!timerecord.get(mmsi).indred.equals("")&&WorkloadTimerTask.areascontains(otherdumping, point)){
+					//in wrong dredging area
+					abnormal.setAbnormal_type("Wrong dumping area");
+					timerecord.get(mmsi).setIndump(it.ti);
+					timerecord.get(mmsi).setState(4);
+					ship_state.get(mmsi).add(4);
+					int k=ship_state.get(mmsi).size()-1;
+					if(timerecord.get(mmsi).state==3){
+						for(;k>0;k--){
+							if(ship_state.get(mmsi).get(k)==5&&ship_state.get(mmsi).get(k-1)==2){
+								timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+								break;
+							}
+						}
+					}
+					else{
+						for(;k>0;k--){
+							if(ship_state.get(mmsi).get(k)==5&&ship_state.get(mmsi).get(k-1)==1){
+								timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+								break;
+							}
+						}
+					}
+//					session.insert("addAbnormal",abnormal);
+					session.commit();
+					System.out.println(abnormal.abnormal_type);
+				}
+				else if(!dumping.isContainsPoint(point)&&(timerecord.get(mmsi).getState()==0||timerecord.get(mmsi).getState()==3||timerecord.get(mmsi).getState()==1)&&!timerecord.get(mmsi).indump.equals("")){
+					timerecord.get(mmsi).setExitdump(it.ti);
+					System.out.println("出抛泥区时间："+timerecord.get(mmsi));
+					session.insert("addworkrecord",timerecord.get(mmsi));
+					session.commit();
+					ship_trajectory.get(mmsi).clear();
+					ship_state.get(mmsi).clear();
+					timerecord.get(mmsi).reset();
+				}
+				else if(timerecord.get(mmsi).getState()==4&&!WorkloadTimerTask.areascontains(otherdumping, point)&&!timerecord.get(mmsi).indump.equals("")){
+					timerecord.get(mmsi).setExitdump(it.ti);
+					session.insert("addworkrecord",timerecord.get(mmsi));
+					session.commit();
+					ship_trajectory.get(mmsi).clear();
+					ship_state.get(mmsi).clear();
+					timerecord.get(mmsi).reset();
+				}
+				else
+					ship_state.get(mmsi).add(5);
+
+			}		
+		}
+//		session.commit();
+		session.close();
+		
 	}
 	
 	public static void  huangpu(String mmsi, String today) throws IOException, NumberFormatException, ParseException{
@@ -520,40 +754,6 @@ public class WorkloadTimerTask extends TimerTask {
 		return false;
 	}
 	public static void main(String[] args) throws IOException, ParseException {
-		huangpu("412376220","2017-11-03");
-//		SimpleDateFormat msdf = new SimpleDateFormat( "yyyy-MM-dd" );
-//		Date start = msdf.parse("2017-06-11");
-//		Calendar cd = Calendar.getInstance();    
-//		cd.setTime(start);
-//		for(int i=0;i<160;i++){
-//			String timestr = msdf.format(cd.getTime());
-//			System.out.println(timestr);
-//			others("413439320",timestr);
-//			others("412208530",timestr);
-//			huangpu("413373530",timestr);
-//			huangpu("413773147",timestr);
-//			huangpu("413375760",timestr);
-//			huangpu("412358640",timestr);
-//			huangpu("413814781",timestr);
-//			huangpu("413352890",timestr);
-//			huangpu("413364060",timestr);
-//			huangpu("413364010",timestr);
-//			huangpu("413379680",timestr);
-//			huangpu("413379690",timestr);
-//			huangpu("413364210",timestr);
-//			huangpu("413364220",timestr);
-//			huangpu("413358270",timestr);
-//			huangpu("413357370",timestr);
-//			cd.add(Calendar.DATE, 1);
-//		}
+		online();
 	}
-//	huangpu("412376220",timestr);
-//	huangpu("412407280",timestr);
-//	huangpu("413362580",timestr);
-//	huangpu("413362610",timestr);
-//	huangpu("413367230",timestr);
-//	huangpu("413456030",timestr);
-//	huangpu("413771176",timestr);
-//	huangpu("413793806",timestr);
-//	huangpu("413850719",timestr);
 }

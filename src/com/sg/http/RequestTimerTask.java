@@ -45,6 +45,7 @@ import com.sg.domain.Project;
 import com.sg.domain.Shipinfo;
 import com.sg.domain.Trajectory;
 import com.sg.domain.Workload_day;
+import com.sg.domain.Workrecord;
 import com.sun.javafx.collections.MappingChange.Map;
 
 import bean.Cell;
@@ -62,11 +63,13 @@ public class RequestTimerTask extends TimerTask {
 	private static HashMap<String, List<List<Cell>>> supportTrajectoriesMap ;
     private static HashMap<String, List<Cell>> adaptiveWindowMap;
     private static HashMap<String, List<List<Cell>>> allTrajectoriesMap;
-    //实时异常监测
+    //实时异常监测  0正常  1作业行为异常  2未驶入抛泥区 3作业位置错误 4抛泥区错误 5瞬时超速 6连续超速
+  //ship_atate: 1在正确的工作区域 2错误的工作区域 3正确的抛泥区 4错误的抛泥区 5其他区域
     private static HashMap<Integer,List<Shipinfo>> ship_trajectory = new HashMap<Integer,List<Shipinfo>>();
-    private static Abnormal_info exceed_flag = new Abnormal_info();
+    private static HashMap<Integer,List<Integer>> ship_state = new HashMap<Integer,List<Integer>>();
+    private static HashMap<Integer,Abnormal_info> exceed_flag = new HashMap<Integer,Abnormal_info>();
 //    private static HashMap<Integer,List<Integer>> ship_state = new HashMap<Integer,List<Integer>>();
-    private static HashMap<Integer,List<String>> timerecord = new HashMap<Integer,List<String>>(); 
+    private static HashMap<Integer,Workrecord> timerecord = new HashMap<Integer,Workrecord>(); 
     private static int max_interval = 10;//超过10min超速为连续超速
     
 	public static String doPost(String urlStr, String strInfo) {
@@ -186,128 +189,6 @@ public class RequestTimerTask extends TimerTask {
 				session.insert("addShipInfo",shipinfo);
 				session.commit();
 //				System.out.println("INSERT SUCCESSFULLY!");
-			}
-			//实时异常检测
-			Abnormal_info abnormal = new Abnormal_info();
-			abnormal.setLat(shipinfo.lat);
-			abnormal.setLon(shipinfo.lon);
-			abnormal.setMmsi(String.valueOf(mmsi));
-			abnormal.setSpeed(shipinfo.sp);
-			abnormal.setTime(shipinfo.ti);
-			if(!ship_trajectory.containsKey(mmsi)){
-				ship_trajectory.put(mmsi, new ArrayList<Shipinfo>());
-//				ship_state.put(mmsi, new ArrayList<Integer>());
-				timerecord.put(mmsi, new ArrayList<String>());
-			}
-			String route_id = session.selectOne("getShipRoute_id",mmsi);
-			String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
-			String dredging_id = session.selectOne("getdredgingareabyid",route_id);
-			String dumping_str = session.selectOne("getDumpingLocation",dumping_id);
-			String dredging_str = session.selectOne("getDredgingLocation",dredging_id);
-			List<DumpingArea> otherdumping_info = session.selectList("getotherdumpingarea",dumping_id);
-			List<Dredging_area> otherdredging_info = session.selectList("getotherdredingarea",Integer.valueOf(dredging_id));
-			int speed_limit = session.selectOne("getSpeedlimit",route_id);
-			Quadrilateral dumping = new Quadrilateral(dumping_str);
-			Quadrilateral dredging = new Quadrilateral(dredging_str);
-			List<Quadrilateral> otherdumping = new ArrayList<Quadrilateral>();
-			List<Quadrilateral> otherdredging = new ArrayList<Quadrilateral>();
-			for(Iterator<DumpingArea> it= otherdumping_info.iterator();it.hasNext();){
-				otherdumping.add(new Quadrilateral(it.next().getLocation()));
-			}
-			for(Iterator<Dredging_area> it=otherdredging_info.iterator();it.hasNext();){
-				otherdredging.add(new Quadrilateral(it.next().getLocation()));
-			}
-			ship_trajectory.get(mmsi).add(shipinfo);
-			LatLng point = new LatLng(Double.valueOf(shipinfo.lat),Double.valueOf(shipinfo.lon));
-			//判断是否超速
-//			System.out.println("speed_limit:"+speed_limit);
-//			System.out.println("actual speed:"+shipinfo.sp);
-			if(Double.valueOf(shipinfo.sp)>Double.valueOf(speed_limit)){
-				try {
-					if(exceed_flag.abnormal_type.equals("Instant exceed speed")&&(dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.time.substring(0, 19)).getTime())/1000/60>max_interval){
-						System.out.println("this exceed:"+shipinfo.ti);
-						System.out.println("last_exceed:"+exceed_flag.time);		
-						abnormal.setAbnormal_type("Continuous exceed speed");
-						abnormal.setExceed_interval((int) (dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.time.substring(0, 19)).getTime())/1000/60);
-						exceed_flag.setAbnormal_type("");
-						exceed_flag.setTime("");
-						session.insert("addAbnormal",abnormal);
-						session.commit();
-					}
-					else if(!exceed_flag.abnormal_type.equals("Instant exceed speed")){
-						abnormal.setAbnormal_type("Instant exceed speed");
-						abnormal.setTime(shipinfo.ti);
-						exceed_flag.setAbnormal_type("Instant exceed speed");
-						exceed_flag.setTime(shipinfo.ti);
-						session.insert("addAbnormal",abnormal);
-						session.commit();
-						}
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-//				System.out.println(abnormal.abnormal_type);
-			}
-			else{
-				exceed_flag.setAbnormal_type("");
-			}
-			
-			if((dredging.isContainsPoint(point))&&timerecord.get(mmsi).isEmpty()){
-//				ship_state.get(mmsi).add(1);
-				//in dredging area
-				if(timerecord.get(mmsi).isEmpty())
-					timerecord.get(mmsi).add(shipinfo.ti);
-			}
-			else if(WorkloadTimerTask.areascontains(otherdredging,point)){
-//				ship_state.get(mmsi).add(2);
-				//in wrong dredging area
-				abnormal.setAbnormal_type("Wrong dredging area");
-				session.insert("addAbnormal",abnormal);
-				session.commit();
-				System.out.println(abnormal.abnormal_type);
-				ship_trajectory.get(mmsi).clear();
-				exceed_flag.setAbnormal_type("");;
-				timerecord.get(mmsi).clear();
-			}
-			else if(WorkloadTimerTask.areascontains(otherdumping, point)){
-//				ship_state.get(mmsi).add(3);
-				//in wrong dredging area
-				abnormal.setAbnormal_type("Wrong dumping area");
-				session.insert("addAbnormal",abnormal);
-				session.commit();
-				System.out.println(abnormal.abnormal_type);
-				ship_trajectory.get(mmsi).clear();
-//				ship_state.get(mmsi).clear();
-				exceed_flag.setAbnormal_type("");;
-				timerecord.get(mmsi).clear();
-			}
-			else if(dredging.isContainsPoint(point)&&!(timerecord.get(mmsi).isEmpty())){
-				try {
-					if(((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).get(0).substring(0, 19)).getTime())/1000/60>360)&&((dft1.parse(shipinfo.ti).getTime()-dft1.parse(timerecord.get(mmsi).get(0)).getTime())/1000/60<480)){
-						//作业行为异常
-						abnormal.setAbnormal_type("Working behaviour abnormal");
-						session.insert("addAbnormal",abnormal);
-						session.commit();
-						System.out.println(abnormal.abnormal_type);
-						ship_trajectory.get(mmsi).clear();
-//						ship_state.get(mmsi).clear();
-						exceed_flag.setAbnormal_type("");;
-						timerecord.get(mmsi).clear();
-					}
-					else if((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).get(0).substring(0, 19)).getTime())/1000/60>480){
-						abnormal.setAbnormal_type("Havn't dump into dumping area");
-						session.insert("addAbnormal",abnormal);
-						session.commit();
-						System.out.println(abnormal.abnormal_type);
-						ship_trajectory.get(mmsi).clear();
-//						ship_state.get(mmsi).clear();
-						exceed_flag.setAbnormal_type("");
-						timerecord.get(mmsi).clear();
-					}
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		}		
 //		session.commit();
@@ -458,14 +339,12 @@ public class RequestTimerTask extends TimerTask {
 		TimerTask task01 = new RequestTimerTask();  //get ship position information through interface
 		TimerTask task02 = new DeleteTimerTask();  //clean overdue data
 		TimerTask task03 = new Backup(); //backup database
-		TimerTask task06 = new WorkloadTimerTask();//everuday workrecord
-		TimerTask task04 = new WeatherRequestTimerTask();  //catch weather abnormal
-		TimerTask task05 = new CreateInvertIndexTimerTask();// create invert index
+		TimerTask task06 = new WorkloadTimerTask();
+//		TimerTask task04 = new WeatherRequestTimerTask();  //catch weather abnormal
+//		TimerTask task05 = new CreateInvertIndexTimerTask();// create invert index
 		long period01 = 1000*60;//do request every minute
-		long period02 = 24*60*1000*60;//one day
 		long period03 = 24*60*1000*60;//one day
-		long period04 = 30*1000*60;  //half an hour
-		long period05 = 30*1000*60;//one day
+		long period06 = 30*1000*60;  //half an hour
 		Calendar calendar = Calendar.getInstance();
 		Date firsttime = calendar.getTime();
 		Date firstdate = calendar.getTime();
@@ -478,7 +357,7 @@ public class RequestTimerTask extends TimerTask {
 //		timer.schedule(task04, firsttime,period04);
 //		timer.schedule(task02, firstdate,period02);
 		timer.schedule(task03, firstdate,period03);
-		timer.schedule(task06, firstdate,period03);
+		timer.schedule(task06, firsttime,period06);
 //		timer.schedule(task05, firsttime,period05);
 		
 	}

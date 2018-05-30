@@ -35,6 +35,7 @@ import com.sg.domain.Abnormal_info;
 import com.sg.domain.Dredging_area;
 import com.sg.domain.DumpingArea;
 import com.sg.domain.Shipinfo;
+import com.sg.domain.Workrecord;
 import com.sg.http.WorkloadTimerTask;
 
 /**
@@ -44,10 +45,11 @@ import com.sg.http.WorkloadTimerTask;
  */
 public class OnlineAbnormalDetection {
 	   //实时异常监测
-    private static HashMap<Integer,List<Shipinfo>> ship_trajectory = new HashMap<Integer,List<Shipinfo>>();
-    private static Abnormal_info exceed_flag = new Abnormal_info();
+	private static HashMap<Integer,List<Shipinfo>> ship_trajectory = new HashMap<Integer,List<Shipinfo>>();
+    private static HashMap<Integer,List<Integer>> ship_state = new HashMap<Integer,List<Integer>>();
+    private static HashMap<Integer,Abnormal_info> exceed_flag = new HashMap<Integer,Abnormal_info>();
 //    private static HashMap<Integer,List<Integer>> ship_state = new HashMap<Integer,List<Integer>>();
-    private static HashMap<Integer,List<String>> timerecord = new HashMap<Integer,List<String>>(); 
+    private static HashMap<Integer,Workrecord> timerecord = new HashMap<Integer,Workrecord>(); 
     private static int max_interval = 10;//超过10min超速为连续超速
     
 	public static String doPost(String urlStr, String strInfo) {
@@ -128,12 +130,12 @@ public class OnlineAbnormalDetection {
 			e1.printStackTrace();
 		}
 		int mmsi=413380190;
-		String start_str="2017-11-02 00:00:00";
+		String start_str="2017-11-11 00:00:00";
 		String end_str = "2017-11-11 23:59:59";
 		String pathUrl = "http://112.126.75.47/xmlr/getzjshiptrajectory.do";
 		String xmlInfo = "<?xml version='1.0' encoding='gb2312'?><sendparament><MMSI>"+mmsi+"</MMSI><starttime>"+start_str+"</starttime><endtime>"+end_str+"</endtime></sendparament>";
 		String result = doPost(pathUrl, xmlInfo);
-//		System.out.println("字符串是："+result);
+		System.out.println("字符串读取成功");
 		Document document = DocumentHelper.parseText(result);
 		Element node = document.getRootElement();
 		List<Element> trajectory = node.elements("shiptrajectory");
@@ -155,9 +157,12 @@ public class OnlineAbnormalDetection {
 			abnormal.setTime(shipinfo.ti);
 			if(!ship_trajectory.containsKey(mmsi)){
 				ship_trajectory.put(mmsi, new ArrayList<Shipinfo>());
-//				ship_state.put(mmsi, new ArrayList<Integer>());
-				timerecord.put(mmsi, new ArrayList<String>());
+				ship_state.put(mmsi, new ArrayList<Integer>());
+				timerecord.put(mmsi, new Workrecord());
+				exceed_flag.put(mmsi, new Abnormal_info());
+				timerecord.get(mmsi).setMmsi(String.valueOf(mmsi));
 			}
+			boolean ishuangpu = false;
 			String route_id = session.selectOne("getShipRoute_id",mmsi);
 			String dumping_id = session.selectOne("getDumpingAreabyid",route_id);
 			String dredging_id = session.selectOne("getdredgingareabyid",route_id);
@@ -170,6 +175,8 @@ public class OnlineAbnormalDetection {
 			Quadrilateral dredging = new Quadrilateral(dredging_str);
 			List<Quadrilateral> otherdumping = new ArrayList<Quadrilateral>();
 			List<Quadrilateral> otherdredging = new ArrayList<Quadrilateral>();
+			if(dredging_id.equals("5")||dredging_id.equals("6")||dredging_id.equals("7")||dredging_id.equals("8"))
+				ishuangpu = true;
 			for(Iterator<DumpingArea> it= otherdumping_info.iterator();it.hasNext();){
 				otherdumping.add(new Quadrilateral(it.next().getLocation()));
 			}
@@ -183,21 +190,19 @@ public class OnlineAbnormalDetection {
 //			System.out.println("actual speed:"+shipinfo.sp);
 			if(Double.valueOf(shipinfo.sp)>Double.valueOf(speed_limit)){
 				try {
-					if(exceed_flag.abnormal_type.equals("Instant exceed speed")&&(dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.time.substring(0, 19)).getTime())/1000/60>max_interval){
+					if(exceed_flag.get(mmsi).abnormal_type.equals("Instant exceed speed")&&(dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.get(mmsi).time.substring(0, 19)).getTime())/1000/60>max_interval){
 						System.out.println("this exceed:"+shipinfo.ti);
-						System.out.println("last_exceed:"+exceed_flag.time);		
+						System.out.println("last_exceed:"+exceed_flag.get(mmsi).time);		
 						abnormal.setAbnormal_type("Continuous exceed speed");
-						abnormal.setExceed_interval((int) (dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.time.substring(0, 19)).getTime())/1000/60);
-						exceed_flag.setAbnormal_type("");
-						exceed_flag.setTime("");
+						abnormal.setExceed_interval((int) (dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(exceed_flag.get(mmsi).time.substring(0, 19)).getTime())/1000/60);
 						session.insert("addAbnormal",abnormal);
 						session.commit();
 					}
-					else if(!exceed_flag.abnormal_type.equals("Instant exceed speed")){
+					else if(!exceed_flag.get(mmsi).abnormal_type.equals("Instant exceed speed")){
 						abnormal.setAbnormal_type("Instant exceed speed");
 						abnormal.setTime(shipinfo.ti);
-						exceed_flag.setAbnormal_type("Instant exceed speed");
-						exceed_flag.setTime(shipinfo.ti);
+						exceed_flag.get(mmsi).setAbnormal_type("Instant exceed speed");
+						exceed_flag.get(mmsi).setTime(shipinfo.ti);
 						session.insert("addAbnormal",abnormal);
 						session.commit();
 						}
@@ -207,69 +212,128 @@ public class OnlineAbnormalDetection {
 				}
 //				System.out.println(abnormal.abnormal_type);
 			}
-			else{
-				exceed_flag.setAbnormal_type("");
-			}
 			
-			if((dredging.isContainsPoint(point))&&timerecord.get(mmsi).isEmpty()){
-//				ship_state.get(mmsi).add(1);
+			//ship_atate: 1在正确的工作区域 2错误的工作区域 3正确的抛泥区 4错误的抛泥区 5其他区域
+			if(!ishuangpu&&(dredging.isContainsPoint(point))&&timerecord.get(mmsi).indred.equals("")){
+				ship_state.get(mmsi).add(1);
 				//in dredging area
-				if(timerecord.get(mmsi).isEmpty())
-					timerecord.get(mmsi).add(shipinfo.ti);
+				timerecord.get(mmsi).setIndred(shipinfo.ti);
+				timerecord.get(mmsi).setDate(timerecord.get(mmsi).indred.substring(0, 10));							
 			}
-			else if(WorkloadTimerTask.areascontains(otherdredging,point)){
-//				ship_state.get(mmsi).add(2);
-				//in wrong dredging area
-				abnormal.setAbnormal_type("Wrong dredging area");
-				session.insert("addAbnormal",abnormal);
-				session.commit();
-				System.out.println(abnormal.abnormal_type);
-				ship_trajectory.get(mmsi).clear();
-				exceed_flag.setAbnormal_type("");;
-				timerecord.get(mmsi).clear();
-			}
-			else if(WorkloadTimerTask.areascontains(otherdumping, point)){
-//				ship_state.get(mmsi).add(3);
-				//in wrong dredging area
-				abnormal.setAbnormal_type("Wrong dumping area");
-				session.insert("addAbnormal",abnormal);
-				session.commit();
-				System.out.println(abnormal.abnormal_type);
-				ship_trajectory.get(mmsi).clear();
-//				ship_state.get(mmsi).clear();
-				exceed_flag.setAbnormal_type("");;
-				timerecord.get(mmsi).clear();
-			}
-			else if(dredging.isContainsPoint(point)&&!(timerecord.get(mmsi).isEmpty())){
+			else if(!ishuangpu&&dredging.isContainsPoint(point)&&!(timerecord.get(mmsi).indred.equals(""))){
 				try {
-					if(((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).get(0).substring(0, 19)).getTime())/1000/60>360)&&((dft1.parse(shipinfo.ti).getTime()-dft1.parse(timerecord.get(mmsi).get(0)).getTime())/1000/60<480)){
+					if(((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).indred.substring(0, 19)).getTime())/1000/60>360)&&((dft1.parse(shipinfo.ti).getTime()-dft1.parse(timerecord.get(mmsi).indred).getTime())/1000/60<480)){
 						//作业行为异常
 						abnormal.setAbnormal_type("Working behaviour abnormal");
+						timerecord.get(mmsi).setState(1);
+						ship_state.get(mmsi).add(1);
 						session.insert("addAbnormal",abnormal);
 						session.commit();
 						System.out.println(abnormal.abnormal_type);
-						ship_trajectory.get(mmsi).clear();
-//						ship_state.get(mmsi).clear();
-						exceed_flag.setAbnormal_type("");;
-						timerecord.get(mmsi).clear();
 					}
-					else if((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).get(0).substring(0, 19)).getTime())/1000/60>480){
+					else if((dft1.parse(shipinfo.ti.substring(0, 19)).getTime()-dft1.parse(timerecord.get(mmsi).indred.substring(0, 19)).getTime())/1000/60>480){
 						abnormal.setAbnormal_type("Havn't dump into dumping area");
+						timerecord.get(mmsi).setDate(timerecord.get(mmsi).indred.substring(0, 10));
+						int k=ship_state.get(mmsi).size()-1;
+						for(;k>0;k--){
+							if(ship_state.get(mmsi).get(k)==1)
+								timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+						}
+						timerecord.get(mmsi).setIndump(shipinfo.ti);
+						timerecord.get(mmsi).setExitdump(shipinfo.ti);
+						timerecord.get(mmsi).setState(2);
 						session.insert("addAbnormal",abnormal);
+						session.insert("addworkrecord",timerecord.get(mmsi));
 						session.commit();
 						System.out.println(abnormal.abnormal_type);
 						ship_trajectory.get(mmsi).clear();
-//						ship_state.get(mmsi).clear();
-						exceed_flag.setAbnormal_type("");
-						timerecord.get(mmsi).clear();
+						ship_state.get(mmsi).clear();
+						timerecord.get(mmsi).reset();;
 					}
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
+			else if(!ishuangpu&&WorkloadTimerTask.areascontains(otherdredging,point)&&timerecord.get(mmsi).indred.equals("")){
+				ship_state.get(mmsi).add(2);
+				//in wrong dredging area
+				abnormal.setAbnormal_type("Wrong dredging area");
+				timerecord.get(mmsi).setState(3);
+				timerecord.get(mmsi).setIndred(shipinfo.ti);
+				session.insert("addAbnormal",abnormal);
+				session.commit();
+				System.out.println(abnormal.abnormal_type);
+			}
+			else if(dumping.isContainsPoint(point)&&!timerecord.get(mmsi).indred.equals("")){
+				timerecord.get(mmsi).setIndump(shipinfo.ti);
+				ship_state.get(mmsi).add(3);
+				int k=ship_state.get(mmsi).size()-1;
+				if(timerecord.get(mmsi).state==3){
+					for(;k>0;k--){
+						if(ship_state.get(mmsi).get(k)==5&&ship_state.get(mmsi).get(k-1)==2){
+							timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+							System.out.println("BINGO!!!!!!!!!");
+							break;
+						}
+					}
+				}
+				else{
+					for(;k>0;k--){
+						if(ship_state.get(mmsi).get(k)==5&&ship_state.get(mmsi).get(k-1)==1){
+							timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+							break;
+						}
+					}
+				}
+			}
+			else if(!timerecord.get(mmsi).indred.equals("")&&WorkloadTimerTask.areascontains(otherdumping, point)){
+				//in wrong dredging area
+				abnormal.setAbnormal_type("Wrong dumping area");
+				timerecord.get(mmsi).setIndump(shipinfo.ti);
+				timerecord.get(mmsi).setState(4);
+				ship_state.get(mmsi).add(4);
+				int k=ship_state.get(mmsi).size()-1;
+				if(timerecord.get(mmsi).state==3){
+					for(;k>0;k--){
+						if(ship_state.get(mmsi).get(k)==5&&ship_state.get(mmsi).get(k-1)==2){
+							timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+							break;
+						}
+					}
+				}
+				else{
+					for(;k>0;k--){
+						if(ship_state.get(mmsi).get(k)==5&&ship_state.get(mmsi).get(k-1)==1){
+							timerecord.get(mmsi).setExitdred(ship_trajectory.get(mmsi).get(k).ti);
+							break;
+						}
+					}
+				}
+				session.insert("addAbnormal",abnormal);
+				session.commit();
+				System.out.println(abnormal.abnormal_type);
+			}
+			else if(!dumping.isContainsPoint(point)&&(timerecord.get(mmsi).getState()==0||timerecord.get(mmsi).getState()==3||timerecord.get(mmsi).getState()==1)&&!timerecord.get(mmsi).indump.equals("")){
+				timerecord.get(mmsi).setExitdump(shipinfo.ti);
+				session.insert("addworkrecord",timerecord.get(mmsi));
+				session.commit();
+				ship_trajectory.get(mmsi).clear();
+				ship_state.get(mmsi).clear();
+				timerecord.get(mmsi).reset();
+			}
+			else if(timerecord.get(mmsi).getState()==4&&!WorkloadTimerTask.areascontains(otherdumping, point)&&!timerecord.get(mmsi).indump.equals("")){
+				timerecord.get(mmsi).setExitdump(shipinfo.ti);
+				session.insert("addworkrecord",timerecord.get(mmsi));
+				session.commit();
+				ship_trajectory.get(mmsi).clear();
+				ship_state.get(mmsi).clear();
+				timerecord.get(mmsi).reset();
+			}
+			else
+				ship_state.get(mmsi).add(5);
+
 		}		
-//		session.commit();
 		session.close();
 	}
 }

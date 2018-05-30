@@ -210,7 +210,7 @@ public class Worload_dayController {
 		project.setEndDate(json.getString("enddate"));
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		int pro_len = (int) ((sdf.parse(session.selectOne("getenddate",json.getInt("project_id"))).getTime()-sdf.parse(session.selectOne("getbegindate",json.getInt("project_id"))).getTime())/(1000*60*60*24));
-		int now = (int) ((sdf.parse(json.getString("enddate")).getTime()-sdf.parse(session.selectOne("getbegindate",json.getInt("project_id"))).getTime())/(1000*60*60*24));
+		int now = (int) ((new Date()).getTime()-sdf.parse(session.selectOne("getbegindate",json.getInt("project_id"))).getTime())/(1000*60*60*24);
 		double plan_percent = (double)now/pro_len;
 		String mmsilist = session.selectOne("getMmsilist",json.getInt("project_id"));
 		String[] mmsi = mmsilist.split(";");

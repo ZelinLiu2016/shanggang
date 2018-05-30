@@ -56,9 +56,11 @@ public class ShipController {
 		ship.setRoute_id(json.getInt("route_id"));
 		ship.setOwner(json.getString("owner"));
 		ship.setOwner_phone(json.getString("owner_phone"));
-		ship.setStartdate(json.getString(json.getString("startdate")));
-		ship.setEnddate(json.getString("enddate"));
-		ship.setProject_id(json.getInt("project_id"));
+		
+		ship.setProject_id(0);
+		//ship.setStartdate(json.getString(json.getString("startdate")));
+		//ship.setEnddate(json.getString("enddate"));
+		//ship.setProject_id(json.getInt("project_id"));
 		SqlSession session = this.getSession();
 		session.insert("addShip",ship);
 		session.update("createNewtable",json.getString("mmsi"));
@@ -102,9 +104,10 @@ public class ShipController {
 		ship.setRoute_id(json.getInt("route_id"));
 		ship.setOwner(json.getString("owner"));
 		ship.setOwner_phone(json.getString("owner_phone"));
-		ship.setStartdate(json.getString(json.getString("startdate")));
-		ship.setEnddate(json.getString("enddate"));
-		ship.setProject_id(json.getInt("project_id"));
+//		ship.setStartdate(json.getString(json.getString("startdate")));
+//		ship.setEnddate(json.getString("enddate"));
+//		ship.setProject_id(json.getInt("project_id"));
+		ship.setProject_id(0);
 		SqlSession session = this.getSession();
 		session.update("updateShip",ship);
 		session.commit();

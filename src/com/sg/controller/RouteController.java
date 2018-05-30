@@ -45,7 +45,6 @@ public class RouteController {
 	 @ResponseBody
 	public ResponseEntity<String> add(@RequestBody String pro) throws IOException{
 		System.out.println("插入数据");
-		System.out.println(pro);
 		JSONObject json = JSONObject.fromObject(pro);
 		Route route = new Route();
 		route.setRoute_id(json.getInt("route_id"));

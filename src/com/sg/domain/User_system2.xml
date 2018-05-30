@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sg.domain">
+		<resultMap id="USER_system2Map" type="com.sg.domain.User_system2">
+		<result column="USER_NAME" property="user_name" jdbcType="CHAR" />
+		<result column="PASSWORD" property="password" jdbcType="CHAR" />
+		<result column="PRIVILEGE" property="privilege" jdbcType="CHAR" />
+	</resultMap>
+	    <insert id="addUser" parameterType="User_system2" >
+	        insert into user_system2  values (#{user_name},#{password},#{privilege})    
+	    </insert>
+	    <update id="updateUser" parameterType="User_system2">
+	    	update user_system2 set password=#{password},PRIVILEGE=#{privilege} where USER_NAME=#{user_name}
+	    </update>
+	    <select id="getUsers"  resultMap="USER_system2Map">
+	    	select * from user_system2
+	    </select>
+	    <delete id="deleteUser" parameterType="String" >
+	        delete from user_system2 where USER_NAME=#{user_name} 
+	    </delete>
+	    <select id="getUserPassword" parameterType="String" resultType="String">
+	    	select PASSWORD from user_system2 where USER_NAME=#{user_name}
+	    </select>
+	</mapper>

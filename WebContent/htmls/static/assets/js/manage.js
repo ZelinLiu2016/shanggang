@@ -164,6 +164,17 @@ function InitManageTable() {
     $('#datatable').show();
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
+			if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(10, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 			document.getElementById("manage_update_label").className = "modal-title glyphicon glyphicon-plus";
             $("#manage_update_label").text("新增");
 			$("#manage_fleetid").val("");
@@ -176,7 +187,8 @@ function InitManageTable() {
 			$('#manage_add_button').show();
 			$('#manage_edit_button').hide();
 			$('#manage_delete_button').hide();
-        });
+			}
+		});
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
             var arrselections = $("#table").bootstrapTable('getSelections');
@@ -210,6 +222,17 @@ function InitManageTable() {
             if (arrselections.length <= 0) {
                 return;
             }
+			if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(12, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 			if(isCompanyInUse(arrselections[0].fleetid))
 			{
 				confirm("该公司属于某在建项目，不能删除！")
@@ -219,7 +242,7 @@ function InitManageTable() {
 					manage_delete(arrselections[0].fleetid);
 				}
 			}
-			
+			}
             /*$("#manage_update_label").text("删除");
 			$("#manage_fleetid").val(arrselections[0].fleetid);
 			$("#manage_name").val(arrselections[0].name);
@@ -277,6 +300,17 @@ function manage_add()
 
 function manage_edit()
 {
+	if(sessionStorage.length == 0)
+	{
+		alert("会话过期，请重新登录！ ");
+		self.location='index.html';
+		return;
+	}
+	if(!authority_sys2(11, sessionStorage.privilege))
+	{
+		 alert("当前用户无权限进行该操作！ ");
+	}
+	else{
 	postData["company_id"] = $("#manage_fleetid").val();
 	postData["company_name"] = $("#manage_name").val();
 	postData["address"] = $("#manage_address").val();
@@ -297,6 +331,7 @@ function manage_edit()
                 alert("修改数据失败！");       
            }       
      });
+	}
 }
 
 function isCompanyInUse(id)

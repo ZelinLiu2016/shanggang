@@ -127,6 +127,17 @@ function InitShujunTable()
 	$('#datatable').show();
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
+		if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(10, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 		var body = document.getElementById("shujun_update_body");
 		while(body.hasChildNodes()) //当div下还存在子节点时 循环继续  
 		{  
@@ -151,6 +162,7 @@ function InitShujunTable()
 		$('#shujun_add_button').show();
 		$('#shujun_edit_button').hide();
 		$('#shujun_delete_button').hide();
+			}
         });
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
@@ -206,11 +218,22 @@ function InitShujunTable()
             if (arrselections.length <= 0) {
                 return;
             }
+			if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(12, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 			dredging_id = arrselections[0].dredgingid;
 			if(confirm("确定要删除吗？")){
 				shujun_delete(dredging_id);
 			}
-			
+			}
 			/*$("#paoniquyu").val(area_id);
 			$("#paonigangqu").val(port);
 			var body = document.getElementById("paoni_update_body");
@@ -341,6 +364,17 @@ function shujun_add()
 
 function shujun_edit()
 {
+	if(sessionStorage.length == 0)
+	{
+		alert("会话过期，请重新登录！ ");
+		self.location='index.html';
+		return;
+	}
+	if(!authority_sys2(11, sessionStorage.privilege))
+	{
+		 alert("当前用户无权限进行该操作！ ");
+	}
+	else{
 	dredging_id = $("#shujunquyu").val();
 	dredging_name = $("#shujunmingcheng").val();
 	dredging_harbor = $("#shujungangqu").val();
@@ -364,6 +398,7 @@ function shujun_edit()
                 alert("修改数据失败！");
            }
      });
+	}
 }
 
 function shujun_delete(id)

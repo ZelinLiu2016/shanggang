@@ -115,6 +115,17 @@ function InitPaoniTable()
 	$('#datatable').show();
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
+		if(sessionStorage.length == 0)
+		{
+			alert("会话过期，请重新登录！ ");
+			self.location='index.html';
+			return;
+		}
+		if(!authority_sys2(10, sessionStorage.privilege))
+		{
+			 alert("当前用户无权限进行该操作！ ");
+		}
+		else{
 		var body = document.getElementById("paoni_update_body");
 		while(body.hasChildNodes()) //当div下还存在子节点时 循环继续  
 		{  
@@ -138,6 +149,7 @@ function InitPaoniTable()
 		$('#paoni_add_button').show();
 		$('#paoni_edit_button').hide();
 		$('#paoni_delete_button').hide();
+		}
         });
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
@@ -191,12 +203,23 @@ function InitPaoniTable()
             if (arrselections.length <= 0) {
                 return;
             }
+			if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(12, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 			area_id = arrselections[0].areaid;
 			port = arrselections[0].port;
 			if(confirm("确定要删除吗？")){
 				paoni_delete(area_id);
 			}
-			
+			}
 			/*$("#paoniquyu").val(area_id);
 			$("#paonigangqu").val(port);
 			var body = document.getElementById("paoni_update_body");
@@ -328,6 +351,17 @@ function paoni_add()
 
 function paoni_edit()
 {
+	if(sessionStorage.length == 0)
+	{
+		alert("会话过期，请重新登录！ ");
+		self.location='index.html';
+		return;
+	}
+	if(!authority_sys2(11, sessionStorage.privilege))
+	{
+		 alert("当前用户无权限进行该操作！ ");
+	}
+	else{
 	area_id = $("#paoniquyu").val();
 	port = $("#paonigangqu").val();
     var locationstr = "";
@@ -350,6 +384,7 @@ function paoni_edit()
                 alert("修改数据失败！");  
            }       
      });
+	}
 }
 
 function paoni_delete(id)
@@ -511,6 +546,53 @@ function draw_area(arrObjPo)
 
 		objInfo.layerPos = layerPos;
 		objInfo.objId = g_iAddObjId;
+		objInfo.name = objName;
+		objInfo.showText = objName;
+		objInfo.layerStylePos = layerStylePos;
+		arrExpAttrValue.push("来一个扩展字段");
+		
+
+		lineobjPos = API_AddNewObject(objInfo, arrObjPo, arrExpAttrValue);
+		if (lineobjPos > -1) {
+			bAddResult = true;
+		}
+	}
+	API_ReDrawLayer();
+	API_SetCurDrawDynamicUseType(DynamicSymbolType.none);
+}
+
+function draw_area_board(arrObjPo)
+{
+	if(arrObjPo.length == 0)
+	{
+		return;
+	}
+	API_SetCurDrawDynamicUseType(DynamicSymbolType.drawFace);
+	var objType = DynamicSymbolType.drawFace;
+	var objName = "";
+	//坐标的数组
+	API_SetMapViewCenter(arrObjPo[0].x/10000000, arrObjPo[0].y/10000000, 40000);
+	var drawObjPoNum = arrObjPo.length;
+	for (var i = 0; i < drawObjPoNum; i++) {
+		AddCorner(arrObjPo[i],i+1);
+	}
+	if (objType == "3" && drawObjPoNum < parseInt(3)) {
+		alert("绘制的点数量不够组成一个面物标，请再添加绘制点。");
+		return;
+	}
+	var layerStylePos = 0;
+	var layerPos = -1;
+//添加面
+	layerPos = API_GetLayerPosById(gg_iFaceLayerId); //获取图层的pos
+	layerStylePos = gg_iFaceStylePos;
+	var bAddResult = false;
+	if (layerPos > -1) {
+		gg_iAddObjId++;
+		var objInfo = [];
+		var arrExpAttrValue = []; //扩展字段，假如没有可以传入null
+
+		objInfo.layerPos = layerPos;
+		objInfo.objId = gg_iAddObjId;
 		objInfo.name = objName;
 		objInfo.showText = objName;
 		objInfo.layerStylePos = layerStylePos;

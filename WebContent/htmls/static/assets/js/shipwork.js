@@ -144,6 +144,17 @@ function InitShipWorkTable()
 	$('#datatable').show();
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
+		if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(10, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 		document.getElementById("shipwork_update_label").className = "modal-title glyphicon glyphicon-plus";
 		var select_work = document.getElementById("shipwork_fleetid");
 		while(select_work.hasChildNodes()) 
@@ -177,6 +188,7 @@ function InitShipWorkTable()
 		$('#shipwork_add_button').show();
 		$('#shipwork_edit_button').hide();
 		$('#shipwork_delete_button').hide();
+			}
         });
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
@@ -230,6 +242,17 @@ function InitShipWorkTable()
 		if (arrselections.length <= 0) {
 			return;
 		}
+		if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(12, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 		var mmsi = arrselections[0].mmsi;
 		var company_id = arrselections[0].company_id;
 		var route_id = arrselections[0].route_id;
@@ -239,6 +262,7 @@ function InitShipWorkTable()
 		if(confirm("确定要删除吗？")){
 			shipwork_delete();
 		}
+			}
     });
 }
 
@@ -296,6 +320,17 @@ function shipwork_add()
 
 function shipwork_edit()
 {
+	if(sessionStorage.length == 0)
+	{
+		alert("会话过期，请重新登录！ ");
+		self.location='index.html';
+		return;
+	}
+	if(!authority_sys2(11, sessionStorage.privilege))
+	{
+		 alert("当前用户无权限进行该操作！ ");
+	}
+	else{
 	mmsi = $("#shipwork_mmsi").val();
 	project_id = $("#shipwork_projectid").val();
 	route_id = $("#shipwork_routeid").val();
@@ -317,6 +352,7 @@ function shipwork_edit()
                 alert("修改数据失败！");       
            }       
      });
+	}
 }
 
 function shipwork_delete()

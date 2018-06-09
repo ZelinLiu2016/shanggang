@@ -430,6 +430,17 @@ function InitParamTable() {
     $('#datatable').show();
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
+			if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(10, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 			document.getElementById("param_update_label").className = "modal-title glyphicon glyphicon-plus";
 			tmp_pngq_id_str = "";
 			tmp_sjgq_id_str = "";
@@ -459,6 +470,7 @@ function InitParamTable() {
 			$('#param_add_button').show();
 			$('#param_edit_button').hide();
 			$('#param_delete_button').hide();
+			}
         });
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
@@ -506,7 +518,7 @@ function InitParamTable() {
         });
 	$("#btn_delete").off('click');
 	$("#btn_delete").click(function () {
-            var arrselections = $("#table").bootstrapTable('getSelections');
+			var arrselections = $("#table").bootstrapTable('getSelections');
 			console.log(arrselections);
             if (arrselections.length > 1) {
                 return;
@@ -514,6 +526,17 @@ function InitParamTable() {
             if (arrselections.length <= 0) {
                 return;
             }
+			if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(12, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 			project_id = arrselections[0].projectid;
 			if(confirm("确定要删除吗？")){
 				param_delete(project_id);
@@ -538,6 +561,7 @@ function InitParamTable() {
 			//$('#param_add_button').hide();
 			//$('#param_edit_button').hide();
 			//$('#param_delete_button').show();
+			}
         });
 }
 
@@ -745,6 +769,17 @@ function param_add()
 
 function param_edit()
 {
+	if(sessionStorage.length == 0)
+	{
+		alert("会话过期，请重新登录！ ");
+		self.location='index.html';
+		return;
+	}
+	if(!authority_sys2(11, sessionStorage.privilege))
+	{
+		 alert("当前用户无权限进行该操作！ ");
+	}
+	else{
 	postData["project_id"] = $("#param_projectid").val();
 	postData["projectname"] = $("#param_projectname").val();
 	postData["dumpingarea"] = tmp_pngq_id_str;
@@ -781,6 +816,7 @@ function param_edit()
 	}
 	else{
 		alert("数据不完整！");
+	}
 	}
 }
 

@@ -163,7 +163,7 @@ function DirtError(i)
 			if(arrObjPo.length == 0){
 				alert("疏浚区域位置数据缺失！ ")
 			}
-			draw_area(arrObjPo);
+			draw_area_board(arrObjPo);
 		}
 		
 		var dumpingid = arrselections[0].dumping_id;

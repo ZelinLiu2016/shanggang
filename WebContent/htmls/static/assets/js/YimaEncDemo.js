@@ -266,7 +266,7 @@ function Test_AddLayer() {
     if (lineLayerPos > -1) {
         var lineStyle = [];
         lineStyle.borderWith = 1; //线的粗细
-        lineStyle.borderColor = "#0000FF"; //线的颜色
+        lineStyle.borderColor = "#000079"; //线的颜色
         lineStyle.iOpacity = 80; //透明度
         lineStyle.bShowText = true; //是否显示名称
         lineStyle.textColor = "#000000"; //名称颜色
@@ -310,8 +310,8 @@ function Test_AddLayer() {
     var faceLayerPos = API_AddNewLayer(faceLayerInfo,null); //添加图层，得到图层的pos
     if (faceLayerPos > -1) {
         var faceStyle = [];
-        faceStyle.borderWith = 1; //线的粗细
-        faceStyle.borderColor = "#092ee8"; //线的颜色
+        faceStyle.borderWith = 5; //线的粗细
+        faceStyle.borderColor = "#FFFF00"; //线的颜色
         faceStyle.bFilled = false; //是否填充颜色
         //faceStyle.fillColor = "#FFFFFF"; //填充的颜色
         faceStyle.fillColor = "#FF0000"; //填充的颜色

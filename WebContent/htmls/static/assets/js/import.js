@@ -239,6 +239,17 @@ function InitImportTable() {
 	});
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
+		if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(10, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 		document.getElementById("import_update_label").className = "modal-title glyphicon glyphicon-plus";
 		var select_work = document.getElementById("import_fleetid");
 		while(select_work.hasChildNodes()) 
@@ -280,6 +291,7 @@ function InitImportTable() {
 		$('#import_delete_button').hide();
 		$("#import_owner").val("");
 		$("#import_ownerphone").val("");
+		}
 	});
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
@@ -342,8 +354,20 @@ function InitImportTable() {
 		if (arrselections.length <= 0) {
 			return;
 		}
+		if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(12, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 		if(confirm("确定要删除吗？")){
 			import_delete(arrselections[0].mmsi);
+		}
 		}
 		/*$("#import_update_label").text("删除");
 		$("#import_mmsl").val(arrselections[0].mmsi);
@@ -427,6 +451,17 @@ function import_add()
 
 function import_edit()
 {
+	if(sessionStorage.length == 0)
+	{
+		alert("会话过期，请重新登录！ ");
+		self.location='index.html';
+		return;
+	}
+	if(!authority_sys2(11, sessionStorage.privilege))
+	{
+		 alert("当前用户无权限进行该操作！ ");
+	}
+	else{
 	postData["mmsi"] = $("#import_mmsl").val();
 	postData["shipname"] = $("#import_shipname").val();
 	postData["imo"] = $("#import_imo").val();
@@ -454,6 +489,7 @@ function import_edit()
                 alert("修改数据失败！");       
            }       
      });
+	}
 }
 
 function import_delete(mmsi)

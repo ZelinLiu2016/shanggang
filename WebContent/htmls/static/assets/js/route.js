@@ -171,6 +171,17 @@ function InitRouteTable()
 	$('#datatable').show();
 	$("#btn_add").off('click');
 	$("#btn_add").click(function () {
+		if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(10, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 		var select_work = document.getElementById("route_work");
 		while(select_work.hasChildNodes()) 
 		{
@@ -218,6 +229,7 @@ function InitRouteTable()
 		$('#route_add_button').show();
 		$('#route_edit_button').hide();
 		$('#route_delete_button').hide();
+			}
         });
 	$("#btn_edit").off('click');
 	$("#btn_edit").click(function () {
@@ -296,9 +308,21 @@ function InitRouteTable()
             if (arrselections.length <= 0) {
                 return;
             }
+			if(sessionStorage.length == 0)
+			{
+				alert("会话过期，请重新登录！ ");
+				self.location='index.html';
+				return;
+			}
+			if(!authority_sys2(12, sessionStorage.privilege))
+			{
+				 alert("当前用户无权限进行该操作！ ");
+			}
+			else{
 			route_id = arrselections[0].routeid;
 			if(confirm("确定要删除吗？")){
 				route_delete(route_id);
+			}
 			}
 			/*harbor = arrselections[0].harbor;
 			dumping_area = arrselections[0].dumping;
@@ -451,6 +475,17 @@ function route_add()
 
 function route_edit()
 {
+	if(sessionStorage.length == 0)
+	{
+		alert("会话过期，请重新登录！ ");
+		self.location='index.html';
+		return;
+	}
+	if(!authority_sys2(11, sessionStorage.privilege))
+	{
+		 alert("当前用户无权限进行该操作！ ");
+	}
+	else{
 	route_id = $("#route_id").val();
 	harbor = $("#route_work").val();
 	dumping_area = $("#route_paoni").val();
@@ -475,6 +510,7 @@ function route_edit()
                 alert("修改数据失败！");       
            }       
      });
+	}
 }
 
 function route_delete(id)

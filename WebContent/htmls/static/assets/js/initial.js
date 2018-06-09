@@ -49,6 +49,9 @@ $(document).ready(function() {
     // $("#plotForTransection2").hide();
 	//authority();
 	//preWarning();
+	if (sessionStorage.length == 0){
+		self.location='index.html';
+	}
 	AddBorder();
 	// getDepthLevel();
 	//$("#quanjing").click();
@@ -294,9 +297,40 @@ function authority(){
 		if(sessionStorage.privilege[4 + i*7]=="Y" || sessionStorage.privilege == "admin") {
 			$("#dataOutput").show();
 		}
-	}
-	
+	}	
 }
+
+function authority_sys2(func_type, privilege_str)
+{
+	var auth = false;
+	switch(func_type)
+	{
+		case 10:
+			var p = privilege_str[2];
+			auth = p == "Y";
+			break;
+		case 11:
+			var p = privilege_str[3];
+			auth = p == "Y";
+			break;
+		case 12:
+			var p = privilege_str[4];
+			auth = p == "Y";
+			break;
+		case 0:
+			var p = privilege_str[0];
+			auth = p == "Y";
+			break;
+		case 1:
+			var p = privilege_str[1];
+			auth = p == "Y";
+			break;
+		default:
+			auth = false;
+	}
+	return auth;
+}
+
 
 function pfullView() {
 	dredging_area = "";
@@ -709,10 +743,8 @@ function set_port_menu()
 			var pid = port_project[allPorts[i]][j];
 			if(pid in detailed)
 			{
-				if (detailed[pid].isworking == 1){
-					var pname = detailed[pid].projectname;
-					entry+='<li class="Last"><a style="padding:0px;" href="#" onclick = '+ 'choose_menu_project('+pid+')>' + pname + '</a></li>';
-				}
+				var pname = detailed[pid].projectname;
+				entry+='<li class="Last"><a style="padding:0px;" href="#" onclick = '+ 'choose_menu_project('+pid+')>' + pname + '</a></li>';
 			}
 		}
 		$("#"+allPortsID[i]).append(entry);
@@ -893,7 +925,8 @@ function startup_show()
 	for(var i = 0;i<allParam.length;++i)
 	{
 		if (allParam[i].isworking == 1){
-				tmpparam.push(allParam[i]);
+			var a = allParam[i];
+			tmpparam.push(allParam[i]);
 		}
 	}
     $('#startup_table').bootstrapTable({
@@ -910,11 +943,11 @@ function startup_show()
 		},
 		{
 			field: 'capacity',
-			title: '抛泥方量'
+			title: '设计方量'
 		},
 		{
-			field: 'mudratio',
-			title: '泥浆比'
+			field: 'shipnum',
+			title: '船舶数量'
 		},
 		{
 			field: 'startdate',
@@ -922,7 +955,7 @@ function startup_show()
 		},
 		{
 			field: 'enddate',
-			title: '结束日期'
+			title: '预计结束日期'
 		}
 		]});
 	$("#startup_modal").modal('show');

@@ -845,6 +845,17 @@ function InitErrorTable()
 
 function error_mark()
 {
+	if(sessionStorage.length == 0)
+	{
+		alert("会话过期，请重新登录！ ");
+		self.location='index.html';
+		return;
+	}
+	if(!authority_sys2(1, sessionStorage.privilege))
+	{
+		 alert("当前用户无权限进行该操作！ ");
+	}
+	else{
 	var arrselections = $("#table").bootstrapTable('getSelections');
 	if (arrselections.length > 1) {
 		return;
@@ -869,6 +880,7 @@ function error_mark()
 		
 	}
 	$("#error_mark_info").modal('show');
+	}
 }
 
 function error_mark_confirm()

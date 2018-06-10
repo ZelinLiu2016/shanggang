@@ -463,6 +463,48 @@ function DTMonInit()
 				{
 					if(is_data_valid(historyData))
 					{
+						var dredgingid = arrselections[0].dredging_id;
+						if(dredgingid in allDredging)
+						{
+							var arrObjPo = [];
+							for(var i = 0;i<sj_coorDict[dredgingid].length;++i)
+							{
+								arrObjPo.push({x:convertToLatitu(sj_coorDict[dredgingid][i].x),y:convertToLatitu(sj_coorDict[dredgingid][i].y)})
+							}
+							if(arrObjPo.length == 0){
+								alert("疏浚区域位置数据缺失！ ")
+							}
+							draw_area_board(arrObjPo);
+						}
+		
+						var dumpingid = arrselections[0].dumping_id;
+						if(dumpingid in allDumping)
+						{
+							var arrObjPo = [];
+							for(var i = 0;i<coorDict[dumpingid].length;++i)
+							{
+								arrObjPo.push({x:convertToLatitu(coorDict[dumpingid][i].x),y:convertToLatitu(coorDict[dumpingid][i].y)})
+							}
+							if(arrObjPo.length == 0){
+								alert("抛泥区域位置数据缺失！ ")
+							}
+							draw_area(arrObjPo);
+						}
+		
+						routeid = arrselections[0].route_id;
+						var buttomPoint = routeCoorDict[routeid];
+						var coorNum = buttomPoint.length;
+						if(coorNum > 0){
+							API_SetMapViewCenter(convertToLatitu(buttomPoint[0].x)/10000000, convertToLatitu(buttomPoint[0].y)/10000000, 80000);
+							var arrObjPo = [];
+							for (var i = 0; i < coorNum; i++) {
+								arrObjPo.push({x:convertToLatitu(buttomPoint[i].x),y:convertToLatitu(buttomPoint[i].y)});
+							}
+							AddNewLine(arrObjPo);
+						}
+						else{
+							alert("航线坐标点数据缺失！")
+						}
 						$('html, body').animate({
 						scrollTop: $("#mapBody").offset().top
 						}, 100);
@@ -593,7 +635,7 @@ function fillDateData(data)
 	allDetect = [];
 	for(var i = 0;i<data.length;++i){
 		allDetect.push({"mmsi":data[i].mmsi,"exitdred":data[i].exitdred,"exitdump":data[i].exitdump,
-		"indred":data[i].indred,"indump":data[i].indump});
+		"indred":data[i].indred,"indump":data[i].indump, "route_id":data[i].route_id, "dredging_id":data[i].work_area,"dumping_id":data[i].dumping_area});
 	}
 }
 

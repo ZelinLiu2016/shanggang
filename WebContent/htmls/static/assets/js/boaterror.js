@@ -200,6 +200,7 @@ function DirtError(i)
 	})
 
 	$("#mapBody").show();
+	$("#startup_table_div").hide();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
 	$("#monitor_search_modal").show();

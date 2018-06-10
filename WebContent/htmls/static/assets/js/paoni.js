@@ -24,6 +24,7 @@ function SetPaoniTable() {
 	$("#finish_checkbox_label").hide();
 	
 	$("#mapBody").show();
+	$("#startup_table_div").hide();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
 	$("#detailtable").hide();

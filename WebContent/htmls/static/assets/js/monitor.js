@@ -93,6 +93,7 @@ function RTMonInit()
 	})
 	
 	$("#mapBody").show();
+	$("#startup_table_div").hide();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
 	$("#detailtable").hide();
@@ -299,6 +300,7 @@ function HSMonInit()
 	})
 	var today_str = GetTodayDate();
 	$("#mapBody").show();
+	$("#startup_table_div").hide();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
 	$("#detailtable").hide();
@@ -528,6 +530,7 @@ function DTMonInit()
 	})
 	
 	$("#mapBody").show();
+	$("#startup_table_div").hide();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
 	$("#detailtable").hide();

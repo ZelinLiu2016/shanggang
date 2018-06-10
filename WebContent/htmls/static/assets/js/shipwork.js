@@ -10,7 +10,7 @@ function InitShipWork()
     $("#toolbar").show();
 	$("#btn_backup").hide();
 	$("#btn_add").show();
-	$("#btn_edit").show();
+	$("#btn_edit").hide();
 	$("#btn_delete").show();
 	$("#btn_show").hide();
 	$("#toolbar_search").hide();
@@ -367,7 +367,7 @@ function shipwork_delete()
 		return;
 	}
 	var mmsi = arrselections[0].mmsi;
-	var company_id = arrselections[0].company_id;
+	var company_id = arrselections[0].fleetid;
 	var route_id = arrselections[0].route_id;
 	var project_id = arrselections[0].project_id;
 	var sdate = arrselections[0].startdate;

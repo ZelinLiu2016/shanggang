@@ -33,6 +33,7 @@ function system2_auto_login(userid, password)
 	pwd = password;
 	username = userid;
 	md5pwd = SHA1(pwd);
+	var login_data = {"username": username, "password": md5pwd};
 	$.ajax({
 		url: "/shanggang/user_sys2/verification",
 		type: "POST",

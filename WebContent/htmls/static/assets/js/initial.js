@@ -959,5 +959,4 @@ function startup_show()
 			title: '预计结束日期'
 		}
 		]});
-	$("#startup_modal").modal('show');
 }

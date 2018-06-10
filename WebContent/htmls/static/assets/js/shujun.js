@@ -29,6 +29,7 @@ function SetShujunTable() {
 	});
 	
 	$("#mapBody").show();
+	$("#startup_table_div").hide();
 	$("#data_clean").hide();
 	$("#detail_information").hide();
 	$("#detailtable").hide();

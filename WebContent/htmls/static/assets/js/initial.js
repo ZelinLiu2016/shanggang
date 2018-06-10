@@ -51,6 +51,7 @@ $(document).ready(function() {
 	//preWarning();
 	if (sessionStorage.length == 0){
 		self.location='index.html';
+		return;
 	}
 	AddBorder();
 	// getDepthLevel();

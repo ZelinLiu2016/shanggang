@@ -43,8 +43,8 @@ function InitBoatErrorTable() {
 	$('#table').bootstrapTable('destroy');
     $('#table').bootstrapTable({
     data: allBoatError,
-    height:280,
-	pagination: true,
+    //height:280,
+	pagination: false,
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,
@@ -332,7 +332,7 @@ function InitDirtTable()
 		$('#table').bootstrapTable({
 		data: allError,
 		//height:380,
-		pagination: true,
+		pagination: false,
 		pageSize: 5,
 		clickToSelect: true,
 		singleSelect:true,
@@ -345,7 +345,7 @@ function InitDirtTable()
 		$('#table').bootstrapTable({
 		data: allError,
 		//height:380,
-		pagination: true,
+		pagination: false,
 		pageSize: 5,
 		clickToSelect: true,
 		singleSelect:true,
@@ -619,7 +619,7 @@ function InitSpeedTable()
     $('#table').bootstrapTable({
     data: allError,
     //height:380,
-	pagination: true,
+	pagination: false,
     pageSize: 5,
 	clickToSelect: true,
 	singleSelect:true,

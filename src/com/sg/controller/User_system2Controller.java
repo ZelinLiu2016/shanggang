@@ -2,6 +2,7 @@ package com.sg.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.io.Resources;
@@ -77,18 +78,23 @@ public class User_system2Controller {
 	
 	@RequestMapping(value="/verification",method=RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<String> verification(@RequestBody String pro) throws IOException{
+	public ResponseEntity<HashMap<String,String>> verification(@RequestBody String pro) throws IOException{
 		JSONObject json = JSONObject.fromObject(pro);
+		HashMap<String,String> res = new HashMap<String,String>();
 		String name = json.getString("username");
 		String password = json.getString("password");
 		SqlSession session = this.getSession();
-		String true_password = session.selectOne("getUserPassword",name);
-		System.out.println(true_password);
-		if(true_password==null)
-			return new ResponseEntity<String>("Not exist!",HttpStatus.OK);
-		else if(true_password.equals(password))
-			return new ResponseEntity<String>("RIGHT!",HttpStatus.OK);
-		else
-			return new ResponseEntity<String>("WRONG!",HttpStatus.OK);
+		User_system2 user_info = session.selectOne("getUser",name);
+		if(user_info==null||!password.equals(user_info.getPassword())){
+			res.put("isSuccess", "0");
+			return new ResponseEntity<HashMap<String,String>>(res,HttpStatus.OK);
+		}
+		else{
+			System.out.println(user_info.getPassword());
+			res.put("isSuccess", "1");
+			res.put("name", user_info.getUser_name());
+			res.put("privilege", user_info.getPrivilege());
+			return new ResponseEntity<HashMap<String,String>>(res,HttpStatus.OK);
+		}
 	}
 }

@@ -5,6 +5,7 @@ package com.sg.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,16 +48,30 @@ public class WorkrecordController {
 	
 	@RequestMapping(value="/daterecord",method=RequestMethod.POST)
 	 @ResponseBody
-	public ResponseEntity<List<Workrecord>> add(@RequestBody String pro) throws IOException{
+	public ResponseEntity<List<JSONObject>> add(@RequestBody String pro) throws IOException{
 		JSONObject json = JSONObject.fromObject(pro);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
 		System.out.println("获得mmsi为"+json.getString("mmsi")+"的船只日期"+json.getString("date")+"的工作记录");
 		SqlSession session = this.getSession();
+		List<JSONObject> res_str = new ArrayList<JSONObject>();
 		Workrecord request = new Workrecord();
 		request.setMmsi(json.getString("mmsi"));
 		request.setDate(json.getString("date"));
 		List<Workrecord> record = session.selectList("listonedayrecord",request);
+		for(Workrecord rec:record){
+			rec.indred=rec.indred.substring(0, 19);
+			rec.exitdred=rec.exitdred.substring(0, 19);
+			rec.indump=rec.indump.substring(0, 19);
+			rec.exitdump=rec.exitdump.substring(0, 19);
+			String temp = "{"+rec.toString();
+			String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(rec.mmsi));
+			Route route = session.selectOne("getRouteinfoByid",route_id);
+			temp = temp + ", \"route_id\":\""+route_id+"\", \"dumping_area\":\"" + route.getDumping_area() +"\","+" \"work_area\":\""+route.getHarbor()+"\","+" \"route_location\":\""+route.getLocation()+"\"}";
+			JSONObject string_to_json = JSONObject.fromObject(temp);
+			res_str.add(string_to_json);
+		}
 		session.close();
-	    return new ResponseEntity<List<Workrecord>>(record, HttpStatus.OK);
+	    return new ResponseEntity<List<JSONObject>>(res_str, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/recorddate",method=RequestMethod.POST)
@@ -113,6 +128,10 @@ public class WorkrecordController {
 		List<Workrecord> res = session.selectList("getabnormal");
 		for(Iterator<Workrecord> iter = res.iterator();iter.hasNext();){
 			Workrecord rec = (Workrecord)iter.next();
+			rec.indred=rec.indred.substring(0, 19);
+			rec.exitdred=rec.exitdred.substring(0, 19);
+			rec.indump=rec.indump.substring(0, 19);
+			rec.exitdump=rec.exitdump.substring(0, 19);
 			String temp = "{"+rec.toString();
 			String route_id = session.selectOne("getShipRoute_id",Integer.valueOf(rec.mmsi));
 			Route route = session.selectOne("getRouteinfoByid",route_id);

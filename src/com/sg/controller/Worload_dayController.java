@@ -206,11 +206,13 @@ public class Worload_dayController {
 		System.out.println("查询工程编号为"+json.getInt("project_id")+"的进度");
 		Project project = new Project();
 		project.setBeginDate(session.selectOne("getbegindate",json.getInt("project_id")));
-		System.out.println(project.getBeginDate());
 		project.setEndDate(json.getString("enddate"));
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		int pro_len = (int) ((sdf.parse(session.selectOne("getenddate",json.getInt("project_id"))).getTime()-sdf.parse(session.selectOne("getbegindate",json.getInt("project_id"))).getTime())/(1000*60*60*24));
-		int now = (int) ((new Date()).getTime()-sdf.parse(session.selectOne("getbegindate",json.getInt("project_id"))).getTime())/(1000*60*60*24);
+		long now = ((new Date()).getTime()-sdf.parse(project.getBeginDate()).getTime())/(1000*60*60*24);
+		System.out.println((new Date()).getTime());
+		System.out.println(sdf.parse(project.getBeginDate()).getTime());
+		System.out.println(((new Date()).getTime()-sdf.parse(project.getBeginDate()).getTime())/(1000*60*60*24));
 		double plan_percent = (double)now/pro_len;
 		String mmsilist = session.selectOne("getMmsilist",json.getInt("project_id"));
 		String[] mmsi = mmsilist.split(";");

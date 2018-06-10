@@ -1,0 +1,14 @@
+verification返回格式
+{
+isSuccess: 1,0    #1 for success 0 for fail
+name: sjtucit     # the user name shown on the right top side
+privilege: "YYYYY"   # read from sql
+userId:           # the user's ID
+}
+
+更新数据库中用户表
+权限暂时用“YYYYY”表示
+每位分别表示 动态信息查看，动态信息修改，静态信息新增，静态信息修改，静态信息删除
+
+
+***时间的返回形式应不带小数点
